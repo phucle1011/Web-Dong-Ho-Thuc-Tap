@@ -16,10 +16,10 @@ import Register from "./pages/authenticator/Register";
 import BookingTickets from "./pages/client/BookingTickets";
 
 //------------ADMIN-------------
-import OrderGetAll from "./pages/admin/order/getAll";
-import OrderDetail from "./pages/admin/order/detail";
-import OrderHistoryGetAll from "./pages/admin/orderHistory/getAll";
-import OrderHistoryDetail from "./pages/admin/orderHistory/detail";
+// import OrderGetAll from "./pages/admin/order/getAll";
+// import OrderDetail from "./pages/admin/order/detail";
+// import OrderHistoryGetAll from "./pages/admin/orderHistory/getAll";
+// import OrderHistoryDetail from "./pages/admin/orderHistory/detail";
 
 
 const AppRoutes = () => {
@@ -64,14 +64,14 @@ const AppRoutes = () => {
       {/*--------------------ADMIN-------------------- */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Dashboard />} />
-        <Route path="orders">
+        {/* <Route path="orders">
           <Route path="getAll" element={<OrderGetAll />} />
           <Route path="detail/:id" element={<OrderDetail/>}/>
         </Route>
         <Route path="order_history">
           <Route path="getAll" element={<OrderHistoryGetAll/>} />
           <Route path="detail/:id" element={<OrderHistoryDetail/>}/>
-        </Route>
+        </Route> */}
       </Route>
     </Routes>
   );
