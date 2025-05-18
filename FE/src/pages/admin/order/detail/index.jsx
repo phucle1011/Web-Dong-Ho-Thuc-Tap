@@ -33,7 +33,7 @@ function OrderDetail() {
   };
   
   const totalAmount = Array.isArray(orderDetails) ? orderDetails.reduce(
-    (sum, item) => sum + item.quantity * item.price, 
+    (sum, item) => sum + item.quantity * item.productVariant.price, 
     0
   ) : 0;
 
@@ -70,7 +70,7 @@ function OrderDetail() {
             {orderDetails.map((item, index) => (
               <tr key={index}>
                 <td className="border p-2">{order.status}</td>
-                <td className="border p-2">{item.product.name}</td>
+                <td className="border p-2">{item.productVariant.variantProduct.name}</td>
                 <td className="border p-2">{item.quantity}</td>
                 <td className="border p-2">{Number(item.price).toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</td>
                 <td className="border p-2">{Number(item.quantity * item.price).toLocaleString("vi-VN", { style: "currency", currency: "VND" })}</td>

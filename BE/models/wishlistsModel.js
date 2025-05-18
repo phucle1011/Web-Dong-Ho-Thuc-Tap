@@ -11,7 +11,7 @@ const WishlistModel = connection.define('wishlists', {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    product_id: {
+    product_variant_id: {
         type: DataTypes.INTEGER,
         allowNull: true
     }
