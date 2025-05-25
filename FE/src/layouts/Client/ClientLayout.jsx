@@ -1,13 +1,13 @@
-// import { Outlet } from "react-router-dom";
-// import Header from "../../components/Client/Header/Header";
-// import Footer from "../../components/Client/Footer/Footer";
+import { Outlet } from "react-router-dom";
+import Header from "../../components/Client/Header/Header";
+import Footer from "../../components/Client/Footer/Footer";
 
 const ClientLayout = () => {
   return (
     <>
-      {/* <Header />
+      <Header />
       <Outlet />
-      <Footer /> */}
+      <Footer />
     </>
   );
 };

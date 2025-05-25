@@ -13,6 +13,7 @@ import { Outlet } from "react-router";
 import Payment from "./pages/Client/Payment/Payment"
 import ShippingAddressManager from "./pages/Client/ShippingAddress.Manager/ShippingAddressManager"
 
+// --- [ADMIN] --- //
 import Dashboard from "./view/pages/admin/home/home";
 
 function AdminLayout() {
