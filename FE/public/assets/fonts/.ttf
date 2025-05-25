@@ -1,8 +1,0 @@
-@font-face {
-    font-family: "Godwit";
-    src: url("/fonts/Godwit.ttf") format("truetype");
-}
-
-body {
-    font-family: "Godwit", sans-serif;
-}

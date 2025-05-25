@@ -1,0 +1,80 @@
+/* Reset CSS */
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #121212;
+    color: #ffffff;
+} */
+
+.admin-sidebar {
+    width: 220px;
+    height: 100vh;
+    background-color: #181818;
+    padding: 20px;
+    position: fixed;
+}
+
+.admin-sidebar .navbar-brand {
+    font-size: 1.5rem;
+    color: #ff4757;
+    text-align: center;
+}
+
+.admin-sidebar .nav-link {
+    color: #ffffff;
+    padding: 10px;
+    margin: 5px 0;
+    transition: 0.3s;
+}
+
+.admin-sidebar .nav-link:hover {
+    background-color: #d8acea;
+    border-radius: 5px;
+    color: #121212;
+}
+/* 
+.admin-container {
+    margin-left: 240px;
+    padding: 20px;
+} */
+
+h2 {
+    color: #ff4757;
+    text-align: center;
+}
+
+.table {
+    background-color: #181818;
+    color: #ffffff;
+    border-color: #ff4757;
+}
+
+.table th {
+    background-color: #ff4757;
+    color: #121212;
+}
+
+.btn-warning {
+    background-color: #ffa502;
+    border: none;
+    color: #121212;
+}
+
+.btn-danger {
+    background-color: #ff4757;
+    border: none;
+    color: #ffffff;
+}
+
+.footer {
+    background-color: #181818;
+    color: #ffffff;
+    text-align: center;
+    padding: 15px;
+    margin-top: 20px;
+}

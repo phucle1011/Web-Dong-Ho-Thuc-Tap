@@ -15,10 +15,6 @@ const CommentModel = connection.define('comments', {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    parent_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true
-    },
     rating: {
         type: DataTypes.INTEGER,
         allowNull: false 

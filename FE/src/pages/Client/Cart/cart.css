@@ -1,0 +1,197 @@
+/* === CART CONTAINER === */
+.cart-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* === CART MAIN === */
+.cart-main {
+    flex: 3;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* === CART SIDEBAR === */
+.cart-sidebar {
+    flex: 1;
+    background: #d0d0d3;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.cart-sidebar h2 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.cart-sidebar .summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    flex-wrap: nowrap;
+    gap: 10px;
+}
+
+.cart-sidebar .summary-item span {
+    flex-shrink: 0;
+}
+
+.cart-sidebar .total-price {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #6a0dad;
+}
+
+.cart-sidebar .discounted-price {
+    text-decoration: line-through;
+    color: red;
+}
+
+.cart-sidebar .discount-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    align-content: center;
+    align-items: stretch;
+    flex-direction: column;
+}
+
+.cart-sidebar .discount-section > input {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.cart-sidebar .apply-discount {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.cart-sidebar .apply-discount input {
+    flex: 1;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.cart-sidebar .apply-discount-button {
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cart-sidebar .apply-discount-button:hover {
+    background-color: #bc81e6;
+}
+
+/* === TABLE STYLES === */
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Cố định kích thước các ô */
+}
+
+.cart-table th,
+.cart-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.cart-table th:first-child,
+.cart-table td:first-child {
+    width: 40px;
+}
+
+/* === ITEM STYLES === */
+.cart-item-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.cart-item-color-select,
+.cart-item-size-select,
+.cart-item-quantity-input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.cart-item-remove-button {
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin: 5px;
+}
+
+.cart-item-remove-button:hover {
+    background-color: #bc81e6;
+}
+
+input[type="checkbox"] {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.cart-item-quantity {
+    width: 80px;
+    text-align: center;
+}
+
+.cart-item-quantity-input {
+    width: 50px;
+    text-align: center;
+}
+
+/* === CHỐNG XUỐNG DÒNG "VND" === */
+.cart-item-price {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cart-item-price span {
+    font-weight: bold;
+}
+
+/* === BUTTON STYLES === */
+.cart-checkout-button {
+    background-color: #6a0dad;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.cart-checkout-button:hover {
+    background-color: #bc81e6;
+}

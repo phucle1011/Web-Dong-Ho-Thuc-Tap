@@ -1,0 +1,46 @@
+/* Container and title */
+.shipping-address-manager-container {
+    /* Style thêm nếu cần */
+  }
+  
+  .shipping-address-manager-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  /* Form card */
+  .shipping-address-manager-form {
+    border: 1px solid #dee2e6;
+  }
+  
+  /* Input custom */
+  .shipping-address-manager-input {
+    /* Có thể thêm padding hoặc style ghi đè nếu cần */
+  }
+  
+  /* Save button */
+  .shipping-address-manager-btn-save {
+    width: 100%;
+  }
+  
+  /* Saved addresses card */
+  .shipping-address-manager-saved {
+    border: 1px solid #dee2e6;
+  }
+  
+  /* Saved title */
+  .shipping-address-manager-saved-title {
+    font-size: 1.25rem;
+  }
+  
+  /* List item */
+  .shipping-address-manager-list-item {
+    margin-bottom: 10px;
+  }
+  
+  /* No address message */
+  .shipping-address-manager-no-address {
+    font-style: italic;
+    text-align: center;
+  }
+  

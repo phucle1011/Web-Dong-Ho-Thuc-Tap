@@ -1,0 +1,83 @@
+.featured-products {
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    background-color: white;
+}
+
+.featured-products h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    position: relative;
+    display: inline-block;
+}
+
+.featured-products h2::after {
+    content: "";
+    width: 50%;
+    height: 4px;
+    background: #6a0dad;
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border: 1px solid #ddd;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.product-card img {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.product-card h3 {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.product-card p {
+    font-size: 16px;
+    font-weight: 500;
+    color: #6a0dad;
+}
+
+.featured-products .slick-dots {
+    bottom: -30px;
+}
+
+.featured-products .slick-dots li button:before {
+    font-size: 12px;
+    color: #6a0dad;
+    opacity: 0.6;
+    transition: all 0.3s ease-in-out;
+}
+
+.featured-products .slick-dots li.slick-active button:before {
+    opacity: 1;
+    transform: scale(1.3);
+}

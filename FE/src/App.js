@@ -1,80 +1,58 @@
-//--------------------CLIENT--------------------
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AdminLayout from "./layouts/AdminLayouts";
-import ClientLayout from "./layouts/ClientLayouts";
-import Dashboard from "./pages/admin/dashboard";
-import Home from "./pages/client/Home";
-import Bus from "./pages/client/Bus";
-import AboutUs from "./pages/client/About-us";
-import Blog from "./pages/client/Blog";
-import Contact from "./pages/client/Contact";
-import BusDetail from "./pages/client/BusDetail";
-import BookingHistory from "./pages/client/BookingHistory";
-import Profile from "./pages/client/Profile";
-import Login from "./pages/authenticator/Login";
-import Register from "./pages/authenticator/Register";
-import BookingTickets from "./pages/client/BookingTickets";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ClientLayout from "./layouts/Client/ClientLayout";
+import Home from "./pages/Client/Home/Home";
+import "./assets/styles/global.css"
+import Shop from "./pages/Client/Shop/Shop";
+import ContactPage from "./pages/Client/Contact/Contact";
+import ProfilePage from "./pages/Client/Profile/Profile";
+import Login from "./pages/Client/Login/login";
+import Register from "./pages/Client/Register/register";
+import Cart from "./pages/Client/Cart/cart";
+import ProductDetail from "./pages/Client/ProductDetail/ProductDetail";
+import { Outlet } from "react-router";
+import Payment from "./pages/Client/Payment/Payment"
+import ShippingAddressManager from "./pages/Client/ShippingAddress.Manager/ShippingAddressManager"
 
-//------------ADMIN-------------
-import OrderGetAll from "./pages/admin/order/getAll";
-import OrderDetail from "./pages/admin/order/detail";
-import OrderHistoryGetAll from "./pages/admin/orderHistory/getAll";
-import OrderHistoryDetail from "./pages/admin/orderHistory/detail";
+import Dashboard from "./view/pages/admin/home/home";
 
-
-const AppRoutes = () => {
+function AdminLayout() {
   return (
-    <Routes>
+    <div>
 
-      {/*--------------------CLIENT-------------------- */}
-      <Route path="/" element={<ClientLayout />}>
-        <Route index element={<Home />} />
-        <Route path="bus" element={<Bus />} />
-        <Route path="about" element={<AboutUs />} />
-        <Route path="blog" element={<Blog />} />
-        <Route path="contact" element={<Contact />} />
-
-        {/* Các route cần bảo vệ được bọc riêng lẻ bằng <PrivateRoute> */}
-        <Route
-          path="bookingHistory"
-          element={
-            <BookingHistory />
-          }
-        />
-        <Route
-          path="profile"
-          element={
-            <Profile />
-          }
-        />
-        <Route
-          path="bookingTickets/:tripId"
-          element={
-            <BookingTickets />
-          }
-        />
-      </Route>
-
-      <Route path="login" element={<Login />} />
-      <Route path="register" element={<Register />} />
-      {/* <Route path="resetForm" element={<ResetForm />} />
-      <Route path="resetPassword/:token" element={<ResetPassword />} /> */}
-
-
-      {/*--------------------ADMIN-------------------- */}
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Dashboard />} />
-        <Route path="orders">
-          <Route path="getAll" element={<OrderGetAll />} />
-          <Route path="detail/:id" element={<OrderDetail/>}/>
-        </Route>
-        <Route path="order_history">
-          <Route path="getAll" element={<OrderHistoryGetAll/>} />
-          <Route path="detail/:id" element={<OrderHistoryDetail/>}/>
-        </Route>
-      </Route>
-    </Routes>
+      <Outlet />
+    </div>
   );
-};
+}
 
-export default AppRoutes;
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<ClientLayout />}>
+          <Route index element={<Home />} />
+          <Route path="shop" element={<Shop />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="product/:id" element={<ProductDetail />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="payment" element={<Payment />} />
+          <Route path="shipping-address-manager" element={<ShippingAddressManager />} />
+        </Route>
+
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Dashboard />} />
+          {/* <Route path="orders">
+            <Route path="getAll" element={<OrderGetAll />} />
+            <Route path="detail/:id" element={<OrderDetail />} />
+          </Route> */}
+        </Route>
+
+        <Route path="*" element={<h2>Trang không tồn tại</h2>} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;

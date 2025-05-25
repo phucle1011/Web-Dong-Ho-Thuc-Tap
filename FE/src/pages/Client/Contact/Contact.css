@@ -1,0 +1,113 @@
+.card-custom {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 25px;
+    border: none;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease-in-out;
+    min-height: 100%;
+}
+
+.card-custom:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Form & Bản đồ - Đảm bảo chiều cao bằng nhau */
+.equal-height {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+}
+
+.equal-height-1 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Form */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #6A0DAD;
+    box-shadow: 0px 0px 8px rgba(108, 99, 255, 0.3);
+}
+
+/* Nút gửi */
+.btn-primary {
+    background: #6A0DAD;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #6A0DAD;
+}
+
+
+.social-links a {
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    text-decoration: underline;
+}
+
+.list-unstyled {
+    list-style: none;
+    padding-left: 0;
+}
+
+.list-unstyled li a {
+    text-decoration: none;
+    color: inherit;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.list-unstyled li a:hover {
+    color: #6A0DAD;
+}
+
+.list-unstyled li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.equal-height ul{
+    list-style: none;
+    padding-left: 0;
+}
+
+.faq-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.faq-list li:hover {
+    color: #6A0DAD;
+    cursor: pointer;
+}
+
+/* Bản đồ */
+.map-container {
+    flex: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}

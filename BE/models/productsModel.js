@@ -19,10 +19,6 @@ const ProductModel = connection.define('products', {
             type: DataTypes.STRING,
             allowNull: true
         },
-        brand_id: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
         category_id: {
             type: DataTypes.INTEGER,
             allowNull: false

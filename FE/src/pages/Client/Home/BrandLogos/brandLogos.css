@@ -1,0 +1,50 @@
+.brand-container {
+    text-align: center;
+    padding: 50px 20px;
+}
+
+.brand-container h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.brand-logo {
+    display: flex !important;  /* Đảm bảo Slick giữ layout flex */
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.brand-logo img {
+    width: 200px; /* Đặt kích thước cố định cho tất cả logo */
+    height: auto; /* Giữ tỉ lệ ảnh */
+    max-height: 150px; /* Đảm bảo không quá lớn */
+    object-fit: contain; /* Tránh méo ảnh */
+}
+
+.brand-logo img:hover {
+    filter: grayscale(5%);
+    transform: scale(1.1);
+}
+
+/* Slick slider chỉnh lại cho hiển thị theo hàng ngang */
+.slick-slide .brand{
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .brand-logo img {
+        width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .brand-logo img {
+        width: 100px;
+    }
+}

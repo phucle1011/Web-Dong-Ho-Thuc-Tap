@@ -1,0 +1,126 @@
+/* Import font đẹp hơn */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+.banner-container {
+    position: relative;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Slider chung */
+.shop-banner-slider .slick-slider {
+    position: relative;
+}
+
+/* Ẩn dấu chấm của slider mặc định */
+.shop-banner-slider .slick-dots {
+    bottom: 15px;
+}
+
+.shop-banner-slider .slick-dots li button:before {
+    font-size: 12px;
+    color: white;
+    opacity: 0.5;
+}
+
+.shop-banner-slider .slick-dots li.slick-active button:before {
+    color: #fff;
+    opacity: 1;
+}
+
+/* Slide */
+.banner-slide {
+    position: relative;
+    height: 500px;
+}
+
+/* Hình nền */
+.banner {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Lớp phủ tối để dễ nhìn text */
+.banner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Nội dung banner */
+.banner-content {
+    position: relative;
+    text-align: center;
+    color: white;
+    max-width: 600px;
+    z-index: 2;
+}
+
+/* Tiêu đề */
+.banner-content h1 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Mô tả */
+.banner-content p {
+    color: #fff;
+    font-size: 1.2rem;
+    font-weight: 300;
+    margin-bottom: 15px;
+}
+
+/* Nút Mua Ngay */
+.btn-shop {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #6a0dad;
+    background: white;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-shop:hover {
+    background: #6a0dad;
+    color: white;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+    .banner-slide {
+        height: 280px;
+    }
+
+    .banner-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .banner-content p {
+        font-size: 1rem;
+    }
+
+    .btn-shop {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+}
