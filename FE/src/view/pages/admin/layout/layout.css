@@ -1,15 +1,11 @@
-/* Reset CSS */
-/* * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+.admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px; 
+  height: 100vh;
+  z-index: 1000;
 }
-
-body {
-    background-color: #121212;
-    color: #ffffff;
-} */
 
 .admin-sidebar {
     width: 220px;
@@ -37,11 +33,6 @@ body {
     border-radius: 5px;
     color: #121212;
 }
-/* 
-.admin-container {
-    margin-left: 240px;
-    padding: 20px;
-} */
 
 h2 {
     color: #ff4757;

@@ -60,172 +60,163 @@ function OrderDetail() {
     : 0;
 
   return (
-    <div><HeaderAdmin />
-      <div className="container mx-auto p-4">
-        <style>{`
-        @media print {
-          .no-print {
-            display: none !important;
-          }
-          body {
-            background: white !important;
-          }
-        }
-      `}</style>
+    <div className="flex min-h-screen bg-gray-100 mb-4">
+      <HeaderAdmin />
+      <div className="flex-1 p-6" style={{ marginLeft: "16rem" }}>
+        <div className="max-w-6xl mx-auto bg-white p-6 rounded shadow">
+          <div className="mt-5 mb-2">
+            <h2 className="text-2xl font-bold text-red-500 mb-2">Chi tiết đơn hàng</h2>
+          </div>
+          <div className="bg-white shadow rounded p-4 mb-4">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h1 className="h5 m-0">Thông tin khách hàng</h1>
+              <button onClick={() => window.print()} className="btn btn-primary">
+                In hóa đơn
+              </button>
+            </div>
 
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Chi tiết đơn hàng</h2>
-          <button
-            onClick={() => window.print()}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            In hóa đơn
-          </button>
-        </div>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label">Mã đơn</label>
+                <input
+                  type="text"
+                  value={order.order_code || ""}
+                  readOnly
+                  className="form-control bg-light"
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Họ tên</label>
+                <input
+                  type="text"
+                  value={user.name || ""}
+                  readOnly
+                  className="form-control bg-light"
+                />
+              </div>
 
-        <div className="bg-white shadow-md rounded-md p-4 mb-6">
-          <div className="flex justify-between items-center mb-3">
-            <h1 className="text-xl font-semibold">Thông tin khách hàng</h1>
+              <div className="col-md-6">
+                <label className="form-label">Số điện thoại</label>
+                <input
+                  type="text"
+                  value={user.phone || ""}
+                  readOnly
+                  className="form-control bg-light"
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Email</label>
+                <input
+                  type="text"
+                  value={user.email || ""}
+                  readOnly
+                  className="form-control bg-light"
+                />
+              </div>
+
+              <div className="col-md-6">
+                <label className="form-label">Địa chỉ</label>
+                <input
+                  type="text"
+                  value={order.shipping_address || ""}
+                  readOnly
+                  className="form-control bg-light"
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label">Phương thức thanh toán</label>
+                <input
+                  type="text"
+                  value={order.payment_method || ""}
+                  readOnly
+                  className="form-control bg-light"
+                />
+              </div>
+
+              <div className="col-md-6">
+                <label className="form-label">Ngày đặt hàng</label>
+                <input
+                  type="text"
+                  value={
+                    order.created_at
+                      ? new Date(order.created_at).toLocaleDateString()
+                      : ""
+                  }
+                  readOnly
+                  className="form-control bg-light"
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Mã đơn</label>
-              <input
-                type="text"
-                value={order.order_code || ""}
-                readOnly
-                className="w-full border rounded p-2 bg-gray-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Họ tên</label>
-              <input
-                type="text"
-                value={user.name || ""}
-                readOnly
-                className="w-full border rounded p-2 bg-gray-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Số điện thoại</label>
-              <input
-                type="text"
-                value={user.phone || ""}
-                readOnly
-                className="w-full border rounded p-2 bg-gray-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
-              <input
-                type="text"
-                value={user.email || ""}
-                readOnly
-                className="w-full border rounded p-2 bg-gray-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Địa chỉ</label>
-              <input
-                type="text"
-                value={order.shipping_address || ""}
-                readOnly
-                className="w-full border rounded p-2 bg-gray-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Phương thức thanh toán</label>
-              <input
-                type="text"
-                value={order.payment_method || ""}
-                readOnly
-                className="w-full border rounded p-2 bg-gray-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Ngày đặt hàng</label>
-              <input
-                type="text"
-                value={
-                  order.created_at
-                    ? new Date(order.created_at).toLocaleDateString()
-                    : ""
-                }
-                readOnly
-                className="w-full border rounded p-2 bg-gray-100"
-              />
-            </div>
-          </div>
-        </div>
 
-        <div className="bg-white shadow-md rounded-md p-4">
-          <h3 className="font-semibold mb-3">Sản phẩm</h3>
-          <table className="w-full border-collapse border text-center">
-            <thead>
-              <tr className="bg-gray-200">
-                <th className="border p-2">Trạng thái</th>
-                <th className="border p-2">Tên sản phẩm</th>
-                <th className="border p-2">Số lượng</th>
-                <th className="border p-2">Đơn giá</th>
-                <th className="border p-2">Thành tiền</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orderDetails.length > 0 ? (
-                orderDetails.map((item, index) => (
-                  <tr key={index}>
-                    <td className="border p-2">
-                      {translateStatus(order.status)}
-                    </td>
-                    <td className="border p-2">
-                      {item.productVariant?.variantProduct?.name ||
-                        "Không có tên sản phẩm"}
-                    </td>
-                    <td className="border p-2">{item.quantity}</td>
-                    <td className="border p-2">
-                      {Number(item.price).toLocaleString("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      })}
-                    </td>
-                    <td className="border p-2">
-                      {(item.quantity * parseFloat(item.price)).toLocaleString(
-                        "vi-VN",
-                        { style: "currency", currency: "VND" }
-                      )}
+          <div className="bg-white shadow-md rounded-md p-4">
+            <h3 className="font-semibold mb-3">Sản phẩm</h3>
+            <table className="w-full border-collapse border text-center">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border p-2">Trạng thái</th>
+                  <th className="border p-2">Tên sản phẩm</th>
+                  <th className="border p-2">Số lượng</th>
+                  <th className="border p-2">Đơn giá</th>
+                  <th className="border p-2">Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderDetails.length > 0 ? (
+                  orderDetails.map((item, index) => (
+                    <tr key={index}>
+                      <td className="border p-2">
+                        {translateStatus(order.status)}
+                      </td>
+                      <td className="border p-2">
+                        {item.productVariant?.variantProduct?.name ||
+                          "Không có tên sản phẩm"}
+                      </td>
+                      <td className="border p-2">{item.quantity}</td>
+                      <td className="border p-2">
+                        {Number(item.price).toLocaleString("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                        })}
+                      </td>
+                      <td className="border p-2">
+                        {(item.quantity * parseFloat(item.price)).toLocaleString(
+                          "vi-VN",
+                          { style: "currency", currency: "VND" }
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="border p-2 text-center">
+                      Không có sản phẩm nào
                     </td>
                   </tr>
-                ))
-              ) : (
+                )}
+              </tbody>
+              <tfoot>
                 <tr>
-                  <td colSpan={5} className="border p-2 text-center">
-                    Không có sản phẩm nào
-                  </td>
+                  <th colSpan={4} className="text-end p-2 border">
+                    Tổng cộng:
+                  </th>
+                  <th className="p-2 border">
+                    {totalAmount.toLocaleString("vi-VN")} đ
+                  </th>
                 </tr>
-              )}
-            </tbody>
-            <tfoot>
-              <tr>
-                <th colSpan={4} className="text-end p-2 border">
-                  Tổng cộng:
-                </th>
-                <th className="p-2 border">
-                  {totalAmount.toLocaleString("vi-VN")} đ
-                </th>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+              </tfoot>
+            </table>
+          </div>
 
-        <div className="mt-4 flex gap-4 no-print">
-
-          <button
-            onClick={() => navigate("/admin/orders/getAll")}
-            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-          >
-            Quay lại
-          </button>
+          <div className="mt-6 flex justify-end gap-4 no-print mb-4">
+            <button
+              onClick={() => navigate("/admin/orders/getAll")}
+              className="btn btn-primary ms-2"
+            >
+              Quay lại
+            </button>
+          </div>
         </div>
       </div>
     </div>

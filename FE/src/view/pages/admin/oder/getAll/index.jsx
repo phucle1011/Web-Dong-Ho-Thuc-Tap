@@ -341,7 +341,7 @@ const Order = () => {
                   placeholderText="Chọn ngày kết thúc"
                 />
                 <button
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded self-end ms-4 min-w-[70px] text-xs"
+                  className="bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded self-end ms-4 min-w-[70px] text-xs"
                   onClick={handleFilterByDate}
                 >
                   Lọc theo ngày
@@ -351,7 +351,7 @@ const Order = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-6 border-b border-gray-200 px-6 py-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           {[
             { key: "", label: "Tất cả", color: "bg-gray-800", textColor: "text-white", count: statusCounts.all },
             { key: "pending", label: "Chờ xác nhận", color: "bg-amber-300", textColor: "text-amber-800", count: statusCounts.pending },
@@ -362,12 +362,13 @@ const Order = () => {
             { key: "cancelled", label: "Đã hủy", color: "bg-rose-300", textColor: "text-rose-800", count: statusCounts.cancelled },
           ].map(({ key, label, color, textColor, count }) => (
             <button
-              key={key}
+              key={key || "all"}
               onClick={() => handleFilterClick(key)}
-              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-semibold ${statusFilter === key ? "bg-blue-900 text-white" : "bg-white text-gray-700"}`}
+              className={`m-2 flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-semibold ${statusFilter === key ? "bg-blue-900 text-white" : `${color} ${textColor}`
+                }`}
             >
               <span>{label}</span>
-              <span className={`${color} ${textColor} rounded-md px-2 py-0.5 text-xs font-semibold leading-none`}>{count}</span>
+              <span className="rounded-md px-2 py-0.5 text-xs font-semibold leading-none">{count}</span>
             </button>
           ))}
         </div>
@@ -380,7 +381,7 @@ const Order = () => {
             placeholder="Vui lòng nhập mã đơn hàng hoặc tên khách hàng..."
             className="search-input"
           />
-          <button onClick={handleSearchSubmit} className="search-button">
+          <button onClick={handleSearchSubmit} className="search-button mb-2">
             Tìm kiếm
           </button>
           {searchTerm && (
@@ -389,7 +390,7 @@ const Order = () => {
                 setSearchTerm("");
                 fetchOrders(currentPage, statusFilter);
               }}
-              className="search-button"
+              className="search-button mb-2"
               style={{ marginLeft: "0" }}
             >
               Xem tất cả
@@ -435,7 +436,7 @@ const Order = () => {
                         </select>
                       </td>
                       <td className="p-2 border border-gray-300 flex gap-2 flex-wrap">
-                        <Link to={`/admin/orders/detail/${order.id}`} className="bg-blue-500 text-white py-1 px-3 rounded">Xem</Link>
+                        <Link to={`/admin/orders/detail/${order.id}`} className="detail bg-blue-500 text-white py-1 px-3 rounded">Xem</Link>
                         <button onClick={() => handleTrackOrder(order.order_code)} className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded">
                           Vị trí
                         </button>

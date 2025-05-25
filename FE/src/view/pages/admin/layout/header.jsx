@@ -1,5 +1,3 @@
-// header.jsx
-import React from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./layout.css";
@@ -13,7 +11,7 @@ const HeaderAdmin = () => {
       <nav className="nav flex-column">
         <Link to="/Admin" className="nav-link text-white">Tổng Quan</Link>
         <Link to="/admin/product" className="nav-link text-white">Quản lý sản phẩm</Link>
-        <Link to="/admin/categories" className="nav-link text-white">Quản lý loại sản phẩm</Link>
+        <Link to="/admin/categories/getAll" className="nav-link text-white">Quản lý loại sản phẩm</Link>
         <Link to="/admin/orders/getAll" className="nav-link text-white">Quản lý đơn hàng</Link>
         <Link to="/admin/users" className="nav-link text-white">Quản lý người dùng</Link>
         <Link to="/admin/comments" className="nav-link text-white">Quản lý bình luận</Link>

@@ -1,3 +1,4 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ClientLayout from "./layouts/Client/ClientLayout";
 import Home from "./pages/Client/Home/Home";
@@ -17,6 +18,9 @@ import ShippingAddressManager from "./pages/Client/ShippingAddress.Manager/Shipp
 import Dashboard from "./view/pages/admin/home/home";
 import OrderGetAll from "./view/pages/admin/oder/getAll";
 import OrderDetail from "./view/pages/admin/oder/detail";
+import CategoryGetAll from './view/pages/admin/category/getAll';
+import CategoryCreate from './view/pages/admin/category/create';
+import CategoryEdit from './view/pages/admin/category/edit';
 
 function AdminLayout() {
   return (
@@ -49,6 +53,11 @@ function App() {
           <Route path="orders">
             <Route path="getAll" element={<OrderGetAll />} />
             <Route path="detail/:id" element={<OrderDetail />} />
+          </Route>
+          <Route path="categories">
+            <Route path="getAll" element={<CategoryGetAll />} />
+            <Route path="create" element={<CategoryCreate />} />
+            <Route path="edit/:id" element={<CategoryEdit />} />
           </Route>
         </Route>
 
