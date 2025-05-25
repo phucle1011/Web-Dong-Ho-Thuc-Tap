@@ -14,7 +14,7 @@ const HeaderAdmin = () => {
         <Link to="/Admin" className="nav-link text-white">Tổng Quan</Link>
         <Link to="/admin/product" className="nav-link text-white">Quản lý sản phẩm</Link>
         <Link to="/admin/categories" className="nav-link text-white">Quản lý loại sản phẩm</Link>
-        <Link to="/admin/orders" className="nav-link text-white">Quản lý đơn hàng</Link>
+        <Link to="/admin/orders/getAll" className="nav-link text-white">Quản lý đơn hàng</Link>
         <Link to="/admin/users" className="nav-link text-white">Quản lý người dùng</Link>
         <Link to="/admin/comments" className="nav-link text-white">Quản lý bình luận</Link>
         <Link to="/admin/addresses" className="nav-link text-white">Quản lý địa chỉ</Link>

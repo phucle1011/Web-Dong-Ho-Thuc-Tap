@@ -15,6 +15,8 @@ import ShippingAddressManager from "./pages/Client/ShippingAddress.Manager/Shipp
 
 // --- [ADMIN] --- //
 import Dashboard from "./view/pages/admin/home/home";
+import OrderGetAll from "./view/pages/admin/oder/getAll";
+import OrderDetail from "./view/pages/admin/oder/detail";
 
 function AdminLayout() {
   return (
@@ -44,10 +46,10 @@ function App() {
 
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
-          {/* <Route path="orders">
+          <Route path="orders">
             <Route path="getAll" element={<OrderGetAll />} />
             <Route path="detail/:id" element={<OrderDetail />} />
-          </Route> */}
+          </Route>
         </Route>
 
         <Route path="*" element={<h2>Trang không tồn tại</h2>} />

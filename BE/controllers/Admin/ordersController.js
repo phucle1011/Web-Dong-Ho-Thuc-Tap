@@ -5,6 +5,7 @@ const ProductModel = require('../../models/productsModel');
 const UserModel = require('../../models/usersModel');
 const { Op } = require('sequelize');
 const axios = require('axios');
+const ExcelJS = require('exceljs');
 
 class OrderController {
 
@@ -12,13 +13,28 @@ class OrderController {
         try {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
-
             const offset = (page - 1) * limit;
+            const { status, searchTerm } = req.query;
+
+            const where = {};
+
+            if (status) {
+                where.status = status;
+            }
+
+            if (searchTerm) {
+                where[Op.or] = [
+                    { '$user.name$': { [Op.like]: `%${searchTerm}%` } },
+                    { '$user.phone$': { [Op.like]: `%${searchTerm}%` } },
+                    { code: { [Op.like]: `%${searchTerm}%` } }
+                ];
+            }
 
             const orders = await OrderModel.findAndCountAll({
+                where,
                 order: [['created_at', 'DESC']],
-                limit: limit,
-                offset: offset,
+                limit,
+                offset,
                 include: [
                     {
                         model: OrderDetailsModel,
@@ -27,12 +43,12 @@ class OrderController {
                         include: [
                             {
                                 model: ProductVariantsModel,
-                                as: 'productVariant',
+                                as: 'variant',
                                 attributes: ['price'],
                                 include: [
                                     {
                                         model: ProductModel,
-                                        as: 'variantProduct',
+                                        as: 'product',
                                         attributes: ['name']
                                     }
                                 ]
@@ -53,13 +69,31 @@ class OrderController {
                 return orderData;
             });
 
+            const allStatuses = ['pending', 'confirmed', 'shipping', 'completed', 'delivered', 'cancelled'];
+            const countPromises = allStatuses.map(status =>
+                OrderModel.count({ where: { status: status } })
+            );
+            const countsByStatus = await Promise.all(countPromises);
+
+            const counts = {
+                all: await OrderModel.count(),
+                pending: countsByStatus[0],
+                confirmed: countsByStatus[1],
+                shipping: countsByStatus[2],
+                completed: countsByStatus[3],
+                delivered: countsByStatus[4],
+                cancelled: countsByStatus[5],
+            };
+
             res.status(200).json({
                 status: 200,
                 message: "Lấy danh sách thành công",
                 data: result,
                 totalPages: Math.ceil(orders.count / limit),
                 currentPage: page,
+                counts
             });
+
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
@@ -77,12 +111,12 @@ class OrderController {
                         include: [
                             {
                                 model: ProductVariantsModel,
-                                as: 'productVariant',
+                                as: 'variant',
                                 attributes: ['price'],
                                 include: [
                                     {
                                         model: ProductModel,
-                                        as: 'variantProduct',
+                                        as: 'product',
                                         attributes: ['name']
                                     }
                                 ]
@@ -161,11 +195,11 @@ class OrderController {
                 return res.status(404).json({ message: "Id không tồn tại" });
             }
 
-            if (order.status !== "Chờ xác nhận") {
+            if (order.status !== "pending") {
                 return res.status(400).json({ message: "Chỉ được hủy đơn hàng có trạng thái là 'Chờ xác nhận'" });
             }
 
-            order.status = "Đã hủy";
+            order.status = "cancelled";
             await order.save();
 
             res.status(200).json({
@@ -210,12 +244,12 @@ class OrderController {
                         include: [
                             {
                                 model: ProductVariantsModel,
-                                as: 'productVariant',
+                                as: 'variant',
                                 attributes: ['price'],
                                 include: [
                                     {
                                         model: ProductModel,
-                                        as: 'variantProduct',
+                                        as: 'product',
                                         attributes: ['name'],
                                     },
                                 ],
@@ -321,6 +355,165 @@ class OrderController {
             });
         }
     }
+
+    static async exportExcel(req, res) {
+        try {
+            const { start_date, end_date } = req.query;
+            const where = {};
+
+            if (start_date && end_date) {
+                const start = new Date(`${start_date}T00:00:00+07:00`);
+                const end = new Date(`${end_date}T23:59:59+07:00`);
+
+                where.created_at = {
+                    [Op.between]: [start, end],
+                };
+            }
+
+            const orders = await OrderModel.findAll({
+                where,
+                order: [['created_at', 'DESC']],
+                include: [
+                    {
+                        model: OrderDetailsModel,
+                        as: 'orderDetails',
+                        attributes: ['quantity', 'price'],
+                        include: [
+                            {
+                                model: ProductVariantsModel,
+                                as: 'variant',
+                                attributes: ['price'],
+                                include: [
+                                    {
+                                        model: ProductModel,
+                                        as: 'product',
+                                        attributes: ['name'],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        model: UserModel,
+                        as: 'user',
+                        attributes: ['name', 'email', 'phone'],
+                    },
+                ],
+            });
+
+            const workbook = new ExcelJS.Workbook();
+            const worksheet = workbook.addWorksheet('Đơn hàng');
+
+            worksheet.columns = [
+                { header: 'Mã đơn hàng', key: 'order_code', width: 20 },
+                { header: 'Tên khách hàng', key: 'customer_name', width: 25 },
+                { header: 'Số điện thoại', key: 'phone', width: 15 },
+                { header: 'Ngày tạo', key: 'created_at', width: 20 },
+                { header: 'Trạng thái', key: 'status', width: 15 },
+                { header: 'Tổng tiền', key: 'total_price', width: 15 },
+                { header: 'Sản phẩm', key: 'products', width: 40 },
+            ];
+
+            orders.forEach(order => {
+                const products = order.orderDetails.map(detail => {
+                    const name = detail.productVariant?.variantProduct?.name || '';
+                    const quantity = detail.quantity;
+                    return `${name} (x${quantity})`;
+                }).join(', ');
+
+                worksheet.addRow({
+                    order_code: order.order_code,
+                    customer_name: order.user?.name || '',
+                    phone: order.user?.phone || '',
+                    created_at: new Date(order.created_at).toLocaleString('vi-VN', {
+                        timeZone: 'Asia/Ho_Chi_Minh',
+                    }),
+                    status: order.status,
+                    total_price: order.total_price,
+                    products,
+                });
+            });
+
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', 'attachment; filename=orders.xlsx');
+
+            await workbook.xlsx.write(res);
+            res.end();
+        } catch (error) {
+            console.error('Lỗi xuất Excel:', error);
+            res.status(500).json({ error: 'Xuất Excel thất bại' });
+        }
+    }
+
+   static async filterByDate(req, res) {
+    try {
+        const { startDate, endDate } = req.query;
+
+        if (!startDate || !endDate) {
+            return res.status(400).json({ message: 'Thiếu ngày bắt đầu hoặc kết thúc.' });
+        }
+
+        const start = new Date(`${startDate}T00:00:00+07:00`);
+        const end = new Date(`${endDate}T23:59:59+07:00`);
+
+        if (isNaN(start) || isNaN(end)) {
+            return res.status(400).json({ message: 'Ngày không hợp lệ.' });
+        }
+
+        const where = {
+            created_at: {
+                [Op.between]: [start, end]
+            }
+        };
+
+        const orders = await OrderModel.findAll({
+            where,
+            order: [['created_at', 'DESC']],
+            include: [
+                {
+                    model: OrderDetailsModel,
+                    as: 'orderDetails',
+                    attributes: ['quantity', 'price'],
+                    include: [
+                        {
+                            model: ProductVariantsModel,
+                            as: 'variant',
+                            attributes: ['price'],
+                            include: [
+                                {
+                                    model: ProductModel,
+                                    as: 'product',
+                                    attributes: ['name']
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    model: UserModel,
+                    as: 'user',
+                    attributes: ['id', 'name', 'email', 'phone']
+                }
+            ]
+        });
+
+        const result = orders.map(order => {
+            const orderData = order.toJSON();
+            delete orderData.user_id;
+            return orderData;
+        });
+
+        res.status(200).json({
+            status: 200,
+            message: 'Lọc đơn hàng theo ngày thành công',
+            data: result
+        });
+
+    } catch (error) {
+        console.error('Lỗi lọc đơn hàng theo ngày:', error);
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+}
 
 }
 

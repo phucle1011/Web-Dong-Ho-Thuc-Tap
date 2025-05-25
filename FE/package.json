@@ -14,6 +14,7 @@
     "lucide-react": "^0.485.0",
     "react": "^19.0.0",
     "react-cookie": "^8.0.1",
+    "react-datepicker": "^8.3.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
     "react-icons": "^5.5.0",
@@ -21,8 +22,8 @@
     "react-router-dom": "^7.4.0",
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.3",
+    "react-toastify": "^11.0.5",
     "slick-carousel": "^1.8.1",
-    "tailwindcss": "^4.0.15",
     "web-vitals": "^2.1.4",
     "yup": "^1.6.1"
   },
@@ -49,5 +50,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.7"
   }
 }

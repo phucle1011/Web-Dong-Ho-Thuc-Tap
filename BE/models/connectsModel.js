@@ -14,7 +14,6 @@ const ProductVariantsModel = require('./productVariantsModel');
 UserModel.hasMany(AddressesModel, { foreignKey: 'user_id', as: 'addresses' });
 AddressesModel.belongsTo(UserModel, { foreignKey: 'user_id', as: 'user' });
 
-
 // Product - Comment
 ProductModel.hasMany(CommentModel, { foreignKey: 'product_id', as: 'comments' });
 CommentModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'product' });
@@ -55,7 +54,7 @@ OrderDetailModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'ordere
 ProductModel.hasMany(OrderDetailModel, { foreignKey: 'product_id', as: 'orderItems' });
 
 // OrderDetailModel - ProductVariants
-OrderDetailModel.belongsTo(ProductVariantsModel, { foreignKey: 'product_variant_id', as: 'productVariant' }); 
+OrderDetailModel.belongsTo(ProductVariantsModel, { foreignKey: 'product_variant_id', as: 'variant' }); 
 ProductVariantsModel.hasMany(OrderDetailModel, { foreignKey: 'product_variant_id', as: 'orderDetails' });
 
 // ProductVariantsModel - ProductModel
