@@ -38,20 +38,19 @@ function translateStatus(status) {
 const getStatusesForOrder = (currentStatus) => {
   switch (currentStatus) {
     case "pending":
-      return ["pending", "confirmed", "shipping", "completed", "delivered", "cancelled"];
-    case "confirmed":
-      return ["confirmed", "shipping", "completed", "delivered", "cancelled"];
-    case "shipping":
-    case "shipped":
-      return ["shipping", "completed", "delivered", "cancelled"];
-    case "completed":
-    case "delivered":
-      return ["completed", "delivered", "cancelled"];
-    case "cancelled":
-    case "canceled":
-      return ["cancelled"];
-    default:
-      return ["pending", "confirmed", "shipping", "completed", "delivered", "cancelled"];
+        return ["pending", "confirmed", "shipping", "completed", "delivered", "cancelled"];
+      case "confirmed":
+        return ["confirmed", "shipping", "completed", "delivered", "cancelled"];
+      case "shipping":
+        return ["shipping", "completed", "delivered"];
+      case "completed":
+        return ["completed", "delivered"];
+      case "delivered":
+        return ["delivered"];
+      case "cancelled":
+        return ["cancelled"];
+      default:
+        return ["pending", "confirmed", "shipping", "completed", "delivered", "cancelled"];
   }
 };
 

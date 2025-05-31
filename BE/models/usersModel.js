@@ -26,30 +26,31 @@ const UserModel = connection.define('users', {
     },
     avatar: {
         type: DataTypes.STRING,
-        allowNull: false 
+        allowNull: false
     },
     role: {
-        type: DataTypes.ENUM('user','admin'),
+        type: DataTypes.ENUM('user', 'admin'),
         allowNull: false,
         defaultValue: 'user'
     },
-    email_verified_at: {
-        type: DataTypes.DATE,
-        allowNull: false 
-    },
-    remember_token: {
-        type: DataTypes.STRING,
-        allowNull: false 
-    },
     status: {
-        type: DataTypes.ENUM('active','inactive','pending','locked'),
+        type: DataTypes.ENUM('active', 'inactive', 'pending', 'locked'),
         allowNull: false,
         defaultValue: 'active'
     },
+    email_verified_at: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    remember_token: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     lockout_reason: {
         type: DataTypes.STRING,
-        allowNull: false
-    }    
+        allowNull: true
+    }
+
 }, {
     tableName: 'users',
     timestamps: true,

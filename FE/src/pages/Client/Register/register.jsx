@@ -17,7 +17,7 @@ const Register = () => {
 
     const onSubmit = async (data) => {
         try {
-            const res = await axios.post(`${Constants.DOMAIN_API}/user/register`, data);
+            const res = await axios.post(`${Constants.DOMAIN_API}/register`, data);
             console.log("Đăng ký thành công:", res.data);
             navigate("/login");
         } catch (err) {

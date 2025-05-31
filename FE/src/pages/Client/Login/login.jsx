@@ -18,7 +18,7 @@ const Login = () => {
 
     const handleLogin = async ({ email, password }) => {
         try {
-            const res = await axios.post(`${Constants.DOMAIN_API}/user/login`, {
+            const res = await axios.post(`${Constants.DOMAIN_API}/login`, {
                 email,
                 password
             });
