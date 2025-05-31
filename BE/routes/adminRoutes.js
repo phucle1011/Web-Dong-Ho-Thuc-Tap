@@ -5,7 +5,7 @@ const CategoryController = require('../controllers/Admin/categoriesController');
 const ProductController = require('../controllers/Admin/productsController');
 
 const DashboardController = require('../controllers/Admin/dashboardController');
-
+const CommentController = require('../controllers/Admin/commentController');
 //------------------[ ADMIN ROUTES ]------------------
 
 //------------------[ ORDERS ]------------------
@@ -50,5 +50,8 @@ router.get('/product-variants', ProductController.getAllVariants);
 router.delete('/product-variants/deleteAttributeValueById/:id', ProductController.deleteAttributeValueById);
 // router.post('/products/imagesClauding/:public_id', ProductController.deleteImagesClauding);
 
+//------------------[ COMMENTS ]------------------\
+router.get('/comment/list', CommentController.getAllComments);
+router.get('/comment/detail/:id', CommentController.getCommentById);
 
 module.exports = router;

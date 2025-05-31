@@ -26,6 +26,7 @@ import ProductAdd from "./view/pages/admin/product/addProduct";
 import AddVariant from "./view/pages/admin/product/addVariant";
 import ProductDetail from "./view/pages/admin/product/detail";
 import EditVariant from "./view/pages/admin/product/editVariant";
+import Comment from './view/pages/admin/comment/index';
 function AdminLayout() {
   return (
     <div>
@@ -57,6 +58,10 @@ function App() {
           <Route path="orders">
             <Route path="getAll" element={<OrderGetAll />} />
             <Route path="detail/:id" element={<OrderDetail />} />
+          </Route>
+            <Route path="comments">
+            <Route path="getAll" element={<Comment />} />
+            {/* <Route path="detail/:id" element={<OrderDetail />} /> */}
           </Route>
           <Route path="categories">
             <Route path="getAll" element={<CategoryGetAll />} />

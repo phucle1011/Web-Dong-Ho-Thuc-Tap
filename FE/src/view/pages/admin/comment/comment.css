@@ -1,0 +1,108 @@
+/* ===== Định dạng Sidebar ===== */
+.sidebar {
+    width: 250px;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    background-color: #fff; /* Chuyển sang màu trắng */
+    padding-top: 20px;
+    z-index: 1000;
+}
+
+/* ===== Định dạng chung cho container bình luận ===== */
+.comment-container {
+    margin-left: 250px; /* Đẩy nội dung ra khỏi sidebar */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% - 250px); /* Đảm bảo nội dung không bị đè bởi sidebar */
+    padding: 20px;
+    background-color: #f9f9f9; /* Màu nền container là trắng sáng */
+}
+
+/* ===== Định dạng khung bình luận ===== */
+.comment-wrapper {
+    width: 100%;
+    max-width: 1600px; /* Giới hạn kích thước hiển thị */
+    background-color: #fff; /* Màu nền khung bình luận là trắng */
+}
+
+/* ===== Hộp chứa bảng ===== */
+.comment-box {
+    background: #e0e0ff; /* Màu nền tím nhạt */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(128, 0, 255, 0.6); /* Tím sáng cho bóng đổ */
+    text-align: center;
+}
+
+/* ===== Tiêu đề ===== */
+.comment-title {
+    color: #800080; /* Màu tím đậm */
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* ===== Định dạng bảng bình luận ===== */
+.comment-table {
+    width: 100%;
+    max-width: 1500px;
+    border-collapse: collapse;
+    text-align: center;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* ===== Tiêu đề bảng ===== */
+.comment-table th {
+    background-color: #800080; /* Màu tím đậm cho tiêu đề bảng */
+    color: white;
+    padding: 16px;
+    font-size: 18px;
+    text-transform: uppercase;
+}
+
+/* ===== Dữ liệu trong bảng ===== */
+.comment-table td {
+    background-color: #fff; /* Màu nền trắng cho dữ liệu */
+    color: #800080; /* Màu chữ tím đậm */
+    padding: 16px;
+    font-size: 18px;
+    border: 1px solid rgba(128, 0, 255, 0.5); /* Đường viền tím nhạt */
+}
+
+/* ===== Hiệu ứng hover ===== */
+.comment-table tr:hover {
+    background-color: rgba(128, 0, 255, 0.2); /* Màu nền hover tím nhạt */
+    transition: 0.3s;
+}
+
+/* ===== Nút hành động ===== */
+.edit-btn, .delete-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.edit-btn {
+    background-color: #8a2be2; /* Màu tím cho nút chỉnh sửa */
+    color: white;
+}
+
+.delete-btn {
+    background-color: #d100ff; /* Màu tím nhạt cho nút xóa */
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #7a1bbf; /* Màu tím đậm hơn khi hover */
+}
+
+.delete-btn:hover {
+    background-color: #c100cc; /* Màu tím đậm cho hover nút xóa */
+}

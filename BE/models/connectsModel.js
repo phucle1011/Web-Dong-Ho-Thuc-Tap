@@ -17,9 +17,11 @@ const VariantImageModel = require('../models/variantImagesModel');
 UserModel.hasMany(AddressesModel, { foreignKey: 'user_id', as: 'addresses' });
 AddressesModel.belongsTo(UserModel, { foreignKey: 'user_id', as: 'user' });
 
+
+
 // Product - Comment
 ProductModel.hasMany(CommentModel, { foreignKey: 'product_id', as: 'comments' });
-CommentModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'product' });
+CommentModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'commentedProduct' });
 
 // User - Comment
 CommentModel.belongsTo(UserModel, { foreignKey: 'user_id', as: 'user' });
@@ -32,17 +34,28 @@ UserModel.hasMany(OrderModel, { foreignKey: 'user_id', as: 'orders' });
 OrderModel.belongsTo(UserModel, { foreignKey: 'user_id', as: 'user' });
 
 
+
+
 // Category - Product
 CategoriesModel.hasMany(ProductModel, { foreignKey: 'category_id', as: 'products' });
 ProductModel.belongsTo(CategoriesModel, { foreignKey: 'category_id', as: 'category' });
+
+// comment - OrderDetail
+CommentModel.belongsTo(OrderDetailModel, { foreignKey: 'order_detail_id', as: 'orderDetail' });
+OrderDetailModel.hasMany(CommentModel, { foreignKey: 'order_detail_id', as: 'comments' });
+
 
 // User - Cart
 UserModel.hasMany(CartDetailModel, { foreignKey: 'user_id', as: 'carts' });
 CartDetailModel.belongsTo(UserModel, { foreignKey: 'user_id', as: 'user' });
 
-// Product - Cart
-ProductModel.hasMany(CartDetailModel, { foreignKey: 'product_id', as: 'carts' });
-CartDetailModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'product' });
+// Product - ProductVariant
+ProductModel.hasMany(ProductVariantsModel, { foreignKey: 'product_id', as: 'variants' });
+ProductVariantsModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'product' }); // ✅ alias: product
+
+// ProductVariant - Cart
+ProductVariantsModel.hasMany(CartDetailModel, { foreignKey: 'product_variant_id', as: 'carts' });
+CartDetailModel.belongsTo(ProductVariantsModel, { foreignKey: 'product_variant_id', as: 'variant' }); // ✅ alias: variant
 
 
 // Orders - OrderDetails
@@ -50,14 +63,13 @@ OrderModel.hasMany(OrderDetailModel, { foreignKey: 'order_id', as: 'orderDetails
 OrderDetailModel.belongsTo(OrderModel, { foreignKey: 'order_id', as: 'order' });
 
 // OrderDetails - Product
-OrderDetailModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'product' });
-
-// OrderItems - Product
-OrderDetailModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'orderedProduct' }); 
+OrderDetailModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'orderedProduct' });
 ProductModel.hasMany(OrderDetailModel, { foreignKey: 'product_id', as: 'orderItems' });
 
-// OrderDetailModel - ProductVariants
-OrderDetailModel.belongsTo(ProductVariantsModel, { foreignKey: 'product_variant_id', as: 'variant' }); 
+
+
+// OrderDetail - ProductVariant
+OrderDetailModel.belongsTo(ProductVariantsModel, { foreignKey: 'product_variant_id', as: 'variant' });
 ProductVariantsModel.hasMany(OrderDetailModel, { foreignKey: 'product_variant_id', as: 'orderDetails' });
 
 // ProductVariant - Product
@@ -74,10 +86,6 @@ ProductVariantAttributeValueModel.belongsTo(ProductAttributeModel, { foreignKey:
 // ProductVariant - VariantImage
 ProductVariantsModel.hasMany(VariantImageModel, { foreignKey: 'variant_id', as: 'images' });
 VariantImageModel.belongsTo(ProductVariantsModel, { foreignKey: 'variant_id', as: 'variant' }); // ✅ alias: variant
-
-// Product - ProductVariant
-ProductModel.hasMany(ProductVariantsModel, { foreignKey: 'product_id', as: 'variants' });
-ProductVariantsModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'products' }); // ✅ alias: product
 
 // Export all models
 module.exports = {
