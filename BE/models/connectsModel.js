@@ -7,6 +7,9 @@ const CategoriesModel = require('./categoriesModel');
 const CartDetailModel = require('./cartDetailsModel');
 const OrderDetailModel = require('./orderDetailsModel');
 const ProductVariantsModel = require('./productVariantsModel');
+const ProductAttributeModel = require('../models/productAttributesModel');
+const ProductVariantAttributeValueModel = require('../models/productVariantAttributeValuesModel');
+const VariantImageModel = require('../models/variantImagesModel');
 
 //--------------------- [ Thiết lập quan hệ ]------------------------
 
@@ -57,13 +60,24 @@ ProductModel.hasMany(OrderDetailModel, { foreignKey: 'product_id', as: 'orderIte
 OrderDetailModel.belongsTo(ProductVariantsModel, { foreignKey: 'product_variant_id', as: 'variant' }); 
 ProductVariantsModel.hasMany(OrderDetailModel, { foreignKey: 'product_variant_id', as: 'orderDetails' });
 
-// ProductVariantsModel - ProductModel
-ProductVariantsModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'variantProduct' }); 
-ProductModel.hasMany(ProductVariantsModel, { foreignKey: 'product_id', as: 'variants' });
-
-
 // ProductVariant - Product
 ProductVariantsModel.belongsTo(ProductModel, { foreignKey: 'product_id' });
+
+// ProductVariant - ProductVariantAttributeValue
+ProductVariantsModel.hasMany(ProductVariantAttributeValueModel, { foreignKey: 'product_variant_id', as: 'attributeValues' });
+ProductVariantAttributeValueModel.belongsTo(ProductVariantsModel, { foreignKey: 'product_variant_id', as: 'variant' }); // ✅ alias: variant
+
+// ProductAttribute - ProductVariantAttributeValue
+ProductAttributeModel.hasMany(ProductVariantAttributeValueModel, { foreignKey: 'product_attribute_id', as: 'values' });
+ProductVariantAttributeValueModel.belongsTo(ProductAttributeModel, { foreignKey: 'product_attribute_id', as: 'attribute' });
+
+// ProductVariant - VariantImage
+ProductVariantsModel.hasMany(VariantImageModel, { foreignKey: 'variant_id', as: 'images' });
+VariantImageModel.belongsTo(ProductVariantsModel, { foreignKey: 'variant_id', as: 'variant' }); // ✅ alias: variant
+
+// Product - ProductVariant
+ProductModel.hasMany(ProductVariantsModel, { foreignKey: 'product_id', as: 'variants' });
+ProductVariantsModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'products' }); // ✅ alias: product
 
 // Export all models
 module.exports = {
@@ -76,4 +90,7 @@ module.exports = {
   CartDetailModel,
   OrderDetailModel,
   ProductVariantsModel,
+  ProductAttributeModel,
+  ProductVariantAttributeValueModel,
+  VariantImageModel,
 };

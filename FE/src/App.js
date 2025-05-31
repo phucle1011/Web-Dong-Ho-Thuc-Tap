@@ -9,7 +9,7 @@ import ProfilePage from "./pages/Client/Profile/Profile";
 import Login from "./pages/Client/Login/login";
 import Register from "./pages/Client/Register/register";
 import Cart from "./pages/Client/Cart/cart";
-import ProductDetail from "./pages/Client/ProductDetail/ProductDetail";
+import ClientProductDetail from "./pages/Client/ProductDetail/ProductDetail";
 import { Outlet } from "react-router";
 import Payment from "./pages/Client/Payment/Payment"
 import ShippingAddressManager from "./pages/Client/ShippingAddress.Manager/ShippingAddressManager"
@@ -21,7 +21,11 @@ import OrderDetail from "./view/pages/admin/oder/detail";
 import CategoryGetAll from './view/pages/admin/category/getAll';
 import CategoryCreate from './view/pages/admin/category/create';
 import CategoryEdit from './view/pages/admin/category/edit';
-
+import ProductList from "./view/pages/admin/product/getAll";
+import ProductAdd from "./view/pages/admin/product/addProduct";
+import AddVariant from "./view/pages/admin/product/addVariant";
+import ProductDetail from "./view/pages/admin/product/detail";
+import EditVariant from "./view/pages/admin/product/editVariant";
 function AdminLayout() {
   return (
     <div>
@@ -40,7 +44,7 @@ function App() {
           <Route path="shop" element={<Shop />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="profile" element={<ProfilePage />} />
-          <Route path="product/:id" element={<ProductDetail />} />
+          <Route path="product/:id" element={<ClientProductDetail />} />
           <Route path="cart" element={<Cart />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
@@ -59,6 +63,13 @@ function App() {
             <Route path="create" element={<CategoryCreate />} />
             <Route path="edit/:id" element={<CategoryEdit />} />
           </Route>
+            <Route path="products">
+          <Route path="getAll" element={<ProductList />} />
+          <Route path="create" element={<ProductAdd />} />
+          <Route path="addVariant/:productId" element={<AddVariant />} />
+          <Route path="detail/:id" element={<ProductDetail />} />
+          <Route path="editVariant/:id" element={<EditVariant />} />
+        </Route>
         </Route>
 
         <Route path="*" element={<h2>Trang không tồn tại</h2>} />

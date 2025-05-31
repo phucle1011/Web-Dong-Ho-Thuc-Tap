@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const OrderController = require('../controllers/Admin/ordersController');
 const CategoryController = require('../controllers/Admin/categoriesController');
+const ProductController = require('../controllers/Admin/productsController');
+
 const DashboardController = require('../controllers/Admin/dashboardController');
 
 //------------------[ ADMIN ROUTES ]------------------
@@ -28,5 +30,25 @@ router.get('/dashboard/counts', DashboardController.getCounts);
 router.get('/dashboard/revenue/days', DashboardController.getRevenueByDaysInMonth);
 router.get('/dashboard/revenue/months', DashboardController.getRevenueByMonthsInYear);
 router.get('/dashboard/revenue', DashboardController.getRevenueByCustomRange);
+
+
+//------------------[ PRODUCT ]------------------\
+router.get('/products', ProductController.get);
+router.get('/products/:id', ProductController.getById);
+router.post('/products', ProductController.createProduct);
+router.post('/products/:product_id/variants', ProductController.addVariant);
+router.delete('/products/:id', ProductController.delete);
+router.get('/products/productList/search', ProductController.searchProducts);
+router.post('/variants/:variant_id/images', ProductController.addVariantImages);
+router.put("/variants/:variant_id", ProductController.updateVariant);
+router.put("/products/:id", ProductController.update);
+router.delete('/variant-images/:image_id', ProductController.deleteSingleVariantImage);
+router.get("/product-attributes", ProductController.getAllAttributes);
+router.delete("/variants/:variant_id", ProductController.deleteVariant);
+router.get("/variants/:variant_id", ProductController.getVariantById);
+router.get('/product-variants', ProductController.getAllVariants);
+router.delete('/product-variants/deleteAttributeValueById/:id', ProductController.deleteAttributeValueById);
+// router.post('/products/imagesClauding/:public_id', ProductController.deleteImagesClauding);
+
 
 module.exports = router;
