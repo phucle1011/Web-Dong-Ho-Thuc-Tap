@@ -141,18 +141,6 @@ function Cart() {
                         </tbody>
                     </table>
                 </div>
-
-                <div className="cart-sidebar">
-                    <h2>Tóm tắt đơn hàng</h2>
-                    <p>Tổng ({selectedItems.length} mục): {calculateTotal().toLocaleString()} đ</p>
-                    <div className="discount-section">
-                        <input type="text" placeholder="Nhập mã giảm giá" className="discount-input" />
-                        <button className="apply-discount-button">Áp dụng</button>
-                    </div>
-                    <button className="cart-checkout-button" disabled={!selectedItems.length} >
-                        <Link to="/payment" className="text-decoration-none text-white">Thanh toán</Link>
-                    </button>
-                </div>
             </div>
 
         </main>
