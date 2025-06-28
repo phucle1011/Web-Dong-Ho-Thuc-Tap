@@ -87,205 +87,193 @@ const AdminProductDetail = () => {
   if (!formData) return <div>Đang tải...</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <HeaderAdmin />
-      <div className="bg-white shadow rounded-md p-4">
-        <h2 className="text-2xl font-semibold mb-4">Chỉnh sửa sản phẩm</h2>
+   <div className="container mt-4">
+  <div className="bg-white shadow-sm rounded p-4 border">
+    <h2 className="h4 fw-semibold mb-4">Chỉnh sửa sản phẩm</h2>
 
-        <div className="flex gap-6 mb-4">
-          <img
-            src={formData.thumbnail || "https://via.placeholder.com/150"}
-            alt={formData.name}
-            className="w-40 h-40 object-cover rounded"
+    <div className="row mb-4">
+      <div className="col-md-3">
+        <img
+          src={formData.thumbnail || "https://via.placeholder.com/150"}
+          alt={formData.name}
+          className="img-fluid rounded border"
+        />
+      </div>
+      <div className="col-md-9">
+        <div className="mb-3">
+          <label className="form-label fw-semibold">Tên sản phẩm:</label>
+          <input
+            type="text"
+            name="name"
+            className="form-control"
+            value={formData.name}
+            onChange={handleChange}
           />
-          <div className="flex flex-col gap-3 flex-1">
-            <div>
-              <label className="font-semibold">Tên sản phẩm:</label>
-              <input
-                type="text"
-                name="name"
-                className="border rounded p-2 w-full"
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold">Mô tả:</label>
-              <textarea
-                name="description"
-                className="border rounded p-2 w-full"
-                rows={4}
-                value={formData.description}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold">Trạng thái:</label>
-              <select
-                name="status"
-                className="border rounded p-2 w-full"
-                value={formData.status}
-                onChange={handleChange}
-              >
-                <option value={1}>Hiển thị</option>
-                <option value={0}>Ẩn</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="font-semibold">Danh mục:</label>
-              <input
-                type="text"
-                className="border rounded p-2 w-full"
-                value={formData.category?.name || "Không có"}
-                readOnly
-              />
-            </div>
-          </div>
         </div>
 
-        <div className="flex gap-3 mt-4">
-          <button
-            onClick={handleSave}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            disabled={saving}
-          >
-            {saving ? "Đang lưu..." : "Lưu"}
-          </button>
-          <Link
-            to="/admin/products/getAll"
-            className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600"
-          >
-            Quay lại
-          </Link>
+        <div className="mb-3">
+          <label className="form-label fw-semibold">Mô tả:</label>
+          <textarea
+            name="description"
+            className="form-control"
+            rows={4}
+            value={formData.description}
+            onChange={handleChange}
+          />
         </div>
 
-        {/* Bảng biến thể vẫn giữ nguyên như cũ */}
-       {product.variants?.length > 0 && (
-  <div className="mt-6">
-    <h3 className="text-lg font-semibold mb-2">Biến thể sản phẩm:</h3>
-    <table className="w-full border-collapse border border-gray-300">
-      <thead>
-        <tr className="bg-gray-200">
-          <th className="p-2 border">#</th> {/* Cột thứ tự */}
-          <th className="p-2 border">SKU</th>
-          <th className="p-2 border">Giá</th>
-          <th className="p-2 border">Kho</th>
-          <th className="p-2 border">Thuộc tính</th>
-          <th className="p-2 border">Ảnh</th>
-          <th className="p-2 border">Hành động</th>
-        </tr>
-      </thead>
-      <tbody>
-        {product.variants.map((variant, index) => (
-          <tr key={variant.id} className="border-b">
-            <td className="p-2 border text-center">{index + 1}</td> {/* Hiển thị STT */}
-            <td className="p-2 border">{variant.sku}</td>
-            <td className="p-2 border">
-              {Number(variant.price).toLocaleString()} đ
-            </td>
-            <td className="p-2 border">
-              {variant.stock !== undefined ? variant.stock : "Chưa có"}
-            </td>
-            <td className="p-2 border">
-              {variant.attributeValues?.map((av) => (
-                <div
-                  key={av.id}
-                  className="flex items-center gap-2 mb-1"
-                >
-                  <strong>{av.attribute?.name}:</strong>
-                  {av.attribute?.name.toLowerCase() === "color" ? (
-                    <div
-                      className="w-6 h-6 rounded border"
-                      style={{ backgroundColor: av.value }}
-                      title={av.value}
-                    ></div>
+        <div className="mb-3">
+          <label className="form-label fw-semibold">Trạng thái:</label>
+          <select
+            name="status"
+            className="form-select"
+            value={formData.status}
+            onChange={handleChange}
+          >
+            <option value={1}>Hiển thị</option>
+            <option value={0}>Ẩn</option>
+          </select>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label fw-semibold">Danh mục:</label>
+          <input
+            type="text"
+            className="form-control"
+            value={formData.category?.name || "Không có"}
+            readOnly
+          />
+        </div>
+      </div>
+    </div>
+
+    <div className="d-flex gap-2">
+      <button
+        onClick={handleSave}
+        className="btn btn-primary"
+        disabled={saving}
+      >
+        {saving ? "Đang lưu..." : "Lưu"}
+      </button>
+      <Link to="/admin/products/getAll" className="btn btn-secondary">
+        Quay lại
+      </Link>
+    </div>
+
+    {product.variants?.length > 0 && (
+      <div className="mt-5">
+        <h5 className="mb-3">Biến thể sản phẩm:</h5>
+        <table className="table table-bordered">
+          <thead className="table-light">
+            <tr>
+              <th>#</th>
+              <th>SKU</th>
+              <th>Giá</th>
+              <th>Kho</th>
+              <th>Thuộc tính</th>
+              <th>Ảnh</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            {product.variants.map((variant, index) => (
+              <tr key={variant.id}>
+                <td className="text-center">{index + 1}</td>
+                <td>{variant.sku}</td>
+                <td>{Number(variant.price).toLocaleString()} đ</td>
+                <td>{variant.stock ?? "Chưa có"}</td>
+                <td>
+                  {variant.attributeValues?.map((av) => (
+                    <div key={av.id} className="mb-1">
+                      <strong>{av.attribute?.name}:</strong>
+                      {av.attribute?.name.toLowerCase() === "color" ? (
+                        <span
+                          className="d-inline-block rounded border ms-2"
+                          style={{ backgroundColor: av.value, width: '20px', height: '20px' }}
+                          title={av.value}
+                        ></span>
+                      ) : (
+                        <span className="ms-2">{av.value}</span>
+                      )}
+                    </div>
+                  ))}
+                </td>
+                <td className="text-center">
+                  {variant.images?.length > 0 ? (
+                    <img
+                      src={variant.images[0].image_url}
+                      alt="Variant"
+                      width="60"
+                      className="img-thumbnail"
+                      onClick={() => handleImageClick(variant.images, 0)}
+                      style={{ cursor: 'pointer' }}
+                    />
                   ) : (
-                    <span>{av.value}</span>
+                    <span>Không có ảnh</span>
                   )}
-                </div>
-              ))}
-            </td>
-            <td className="p-2 border text-center">
-              <div className="flex justify-center items-center h-full">
-                {variant.images && variant.images.length > 0 ? (
-                  <img
-                    key={variant.images[0].id}
-                    src={variant.images[0].image_url}
-                    alt="Variant"
-                    width="60"
-                    className="cursor-pointer rounded border"
-                    onClick={() => handleImageClick(variant.images, 0)}
-                  />
-                ) : (
-                  <span>Không có ảnh</span>
-                )}
-              </div>
-            </td>
-            <td className="p-2 border text-center">
-              <div className="flex gap-2 justify-center">
-                <Link
-                  to={`/admin/products/editVariant/${variant.id}`}
-                  className="bg-yellow-500 text-white py-1 px-3 rounded"
-                >
-                                    <i className="fa-solid fa-pen-to-square"></i>
+                </td>
+                <td className="text-center">
+                  <div className="d-flex justify-content-center gap-2">
+                    <Link
+                      to={`/admin/products/editVariant/${variant.id}`}
+                      className="btn btn-warning btn-sm"
+                    >
+                      <i className="fa-solid fa-pen-to-square"></i>
+                    </Link>
+                    <button
+                      onClick={() => setSelectedProduct(variant)}
+                      className="btn btn-danger btn-sm"
+                    >
+                      <i className="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
-                </Link>
-                <button
-                  onClick={() => setSelectedProduct(variant)}
-                  className="bg-red-500 text-white py-1 px-3 rounded"
-                >
-                  <i className="fa-solid fa-trash"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-
-    {selectedProduct && (
-      <FormDelete
-        isOpen={true}
-        onClose={() => setSelectedProduct(null)}
-        onConfirm={deleteProduct}
-        message={`Bạn có chắc chắn muốn xóa sản phẩm "${selectedProduct.name}" không?`}
-      />
+        {selectedProduct && (
+          <FormDelete
+            isOpen={true}
+            onClose={() => setSelectedProduct(null)}
+            onConfirm={deleteProduct}
+            message={`Bạn có chắc chắn muốn xóa sản phẩm "${selectedProduct.name}" không?`}
+          />
+        )}
+      </div>
     )}
   </div>
-)}
 
-      </div>
-      {/* Modal hiển thị ảnh lớn */}
-      <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        size="lg"
-        centered
-        backdrop="static"
-        animation={true}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Xem ảnh </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Carousel interval={null} defaultActiveIndex={startIndex}>
-            {selectedImages.map((img) => (
-              <Carousel.Item key={img.id}>
-                <img
-                  className="d-block w-100"
-                  src={img.image_url}
-                  alt="Bình luận"
-                  style={{ maxHeight: "70vh", objectFit: "contain" }}
-                />
-              </Carousel.Item>
-            ))}
-          </Carousel>
-        </Modal.Body>
-      </Modal>
-    </div>
+  {/* Modal hiển thị ảnh lớn */}
+  <Modal
+    show={showModal}
+    onHide={() => setShowModal(false)}
+    size="lg"
+    centered
+    backdrop="static"
+    animation={true}
+  >
+    <Modal.Header closeButton>
+      <Modal.Title>Xem ảnh</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      <Carousel interval={null} defaultActiveIndex={startIndex}>
+        {selectedImages.map((img) => (
+          <Carousel.Item key={img.id}>
+            <img
+              className="d-block w-100"
+              src={img.image_url}
+              alt="Ảnh lớn"
+              style={{ maxHeight: "70vh", objectFit: "contain" }}
+            />
+          </Carousel.Item>
+        ))}
+      </Carousel>
+    </Modal.Body>
+  </Modal>
+</div>
+
   );
 };
 

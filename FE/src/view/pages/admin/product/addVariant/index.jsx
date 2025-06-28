@@ -99,244 +99,215 @@ const handleCancel = async () => {
 
 
   return (
-    <div className="max-w-screen-xl mx-auto bg-white p-10 md:p-16 rounded shadow mt-2 mb-2">
-      <HeaderAdmin />
-      <h2 className="text-2xl font-semibold mb-6">Thêm biến thể sản phẩm</h2>
+    <div className="container bg-white p-4 p-md-5 mt-3 mb-3 shadow rounded">
+  <h2 className="h4 fw-bold mb-4">Thêm biến thể sản phẩm</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* SKU */}
-        <div>
-          <label className="block font-medium mb-2">Mã SKU *</label>
-          <input
-            type="text"
-            value={sku}
-            onChange={(e) => setSku(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          />
-          {errors.sku && (
-            <p className="text-red-600 text-sm mt-1">{errors.sku}</p>
-          )}
-        </div>
+  <form onSubmit={handleSubmit}>
+    {/* SKU */}
+    <div className="mb-3">
+      <label className="form-label">Mã SKU *</label>
+      <input
+        type="text"
+        value={sku}
+        onChange={(e) => setSku(e.target.value)}
+        className="form-control"
+      />
+      {errors.sku && <div className="text-danger small mt-1">{errors.sku}</div>}
+    </div>
 
-        {/* Giá */}
-        <div>
-          <label className="block font-medium mb-2">Giá *</label>
-          <input
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          />
-          {errors.price && (
-            <p className="text-red-600 text-sm mt-1">{errors.price}</p>
-          )}
-        </div>
+    {/* Giá */}
+    <div className="mb-3">
+      <label className="form-label">Giá *</label>
+      <input
+        type="number"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+        className="form-control"
+      />
+      {errors.price && <div className="text-danger small mt-1">{errors.price}</div>}
+    </div>
 
-        {/* Tồn kho */}
-        <div>
-          <label className="block font-medium mb-2">Số lượng tồn kho *</label>
-          <input
-            type="number"
-            value={stock}
-            onChange={(e) => setStock(e.target.value)}
-            className="w-full border px-3 py-2 rounded"
-          />
-          {errors.stock && (
-            <p className="text-red-600 text-sm mt-1">{errors.stock}</p>
-          )}
-        </div>
+    {/* Tồn kho */}
+    <div className="mb-3">
+      <label className="form-label">Số lượng tồn kho *</label>
+      <input
+        type="number"
+        value={stock}
+        onChange={(e) => setStock(e.target.value)}
+        className="form-control"
+      />
+      {errors.stock && <div className="text-danger small mt-1">{errors.stock}</div>}
+    </div>
 
-        {/* Thuộc tính biến thể */}
-        <div>
-          <label className="block font-medium mb-2">
-            Thuộc tính biến thể *
-          </label>
-          {attributes.map((attr, index) => {
-            const selectedAttr = allAttributes.find(
-              (a) => a.id.toString() === attr.attribute_id.toString()
-            );
-            const isColor = selectedAttr?.name?.toLowerCase() === "color";
+    {/* Thuộc tính biến thể */}
+    <div className="mb-4">
+      <label className="form-label fw-semibold">Thuộc tính biến thể *</label>
+      {attributes.map((attr, index) => {
+        const selectedAttr = allAttributes.find(
+          (a) => a.id.toString() === attr.attribute_id.toString()
+        );
+        const isColor = selectedAttr?.name?.toLowerCase() === "color";
 
-            return (
-              <div key={index} className="flex gap-4 mb-2 items-center">
-                {/* Tên thuộc tính (không thay đổi sau khi đã chọn) */}
-                <div className="w-1/2">
-                  {selectedAttr ? (
-                    <input
-                      type="text"
-                      value={selectedAttr.name}
-                      disabled
-                      className="w-full border px-3 py-2 rounded bg-gray-100 text-gray-600"
-                    />
-                  ) : (
-                    <select
-                      value={attr.attribute_id}
-                      onChange={(e) =>
-                        handleAttributeChange(
-                          index,
-                          "attribute_id",
-                          e.target.value
-                        )
-                      }
-                      className="w-full border px-3 py-2 rounded"
-                    >
-                      <option value="">-- Chọn thuộc tính --</option>
-                      {allAttributes
-                        .filter((opt) => {
-                          // Lọc bỏ những attribute_id đã được chọn ở các dòng khác
-                          return !attributes.some(
-                            (a, i) =>
-                              a.attribute_id === opt.id.toString() &&
-                              i !== index
-                          );
-                        })
-                        .map((opt) => (
-                          <option key={opt.id} value={opt.id}>
-                            {opt.name}
-                          </option>
-                        ))}
-                    </select>
-                  )}
-                  {errors[`attr_${index}_id`] && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors[`attr_${index}_id`]}
-                    </p>
-                  )}
-                </div>
-
-                {/* Giá trị thuộc tính */}
-                <div className="w-1/2">
-                  <input
-                    type={isColor ? "color" : "text"}
-                    placeholder={isColor ? "" : "Giá trị"}
-                    value={attr.value}
-                    onChange={(e) =>
-                      handleAttributeChange(index, "value", e.target.value)
-                    }
-                    className={`w-full border rounded ${
-                      isColor ? "h-12 p-1" : "px-4 py-3"
-                    }`}
-                  />
-
-                  {errors[`attr_${index}_value`] && (
-                    <p className="text-red-600 text-sm mt-1">
-                      {errors[`attr_${index}_value`]}
-                    </p>
-                  )}
-                </div>
-
-                {attributes.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeAttributeRow(index)}
-                    className="text-red-600 hover:text-red-800 p-1 rounded"
-                    aria-label="Xóa thuộc tính"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a1 1 0 00-1 1v1h6V4a1 1 0 00-1-1m-4 0h4"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            );
-          })}
-
-          <button
-            type="button"
-            onClick={addAttributeRow}
-            className="text-blue-600 hover:underline text-sm"
-          >
-            + Thêm thuộc tính
-          </button>
-        </div>
-
-        {/* Ảnh biến thể */}
-        <div>
-          <label className="block font-medium mb-2">Ảnh biến thể</label>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={async (e) => {
-              const files = Array.from(e.target.files);
-              setUploading(true);
-              const uploadedImages = [];
-
-              for (const file of files) {
-                try {
-                  const { url, public_id } = await uploadToCloudinary(file);
-                  uploadedImages.push({ url, public_id });
-                } catch (error) {
-                  console.error("Lỗi upload ảnh:", error);
-                }
-              }
-
-              setImages((prev) => [...prev, ...uploadedImages]);
-
-              setUploading(false);
-            }}
-            className="w-full border px-3 py-2 rounded"
-          />
-
-          {/* Hiển thị ảnh */}
-          <div className="mt-4 flex flex-wrap gap-4">
-            {images.map((url, index) => (
-              <div key={index} className="relative group">
-                <img
-                  src={url}
-                  alt={`variant-${index}`}
-                  className="w-24 h-24 object-cover rounded border"
+        return (
+          <div className="row g-2 align-items-center mb-2" key={index}>
+            {/* Tên thuộc tính */}
+            <div className="col-md-5">
+              {selectedAttr ? (
+                <input
+                  type="text"
+                  value={selectedAttr.name}
+                  disabled
+                  className="form-control bg-light text-muted"
                 />
+              ) : (
+                <select
+                  value={attr.attribute_id}
+                  onChange={(e) =>
+                    handleAttributeChange(index, "attribute_id", e.target.value)
+                  }
+                  className="form-select"
+                >
+                  <option value="">-- Chọn thuộc tính --</option>
+                  {allAttributes
+                    .filter((opt) => {
+                      return !attributes.some(
+                        (a, i) =>
+                          a.attribute_id === opt.id.toString() && i !== index
+                      );
+                    })
+                    .map((opt) => (
+                      <option key={opt.id} value={opt.id}>
+                        {opt.name}
+                      </option>
+                    ))}
+                </select>
+              )}
+              {errors[`attr_${index}_id`] && (
+                <div className="text-danger small mt-1">
+                  {errors[`attr_${index}_id`]}
+                </div>
+              )}
+            </div>
+
+            {/* Giá trị thuộc tính */}
+            <div className="col-md-5">
+              <input
+                type={isColor ? "color" : "text"}
+                placeholder={isColor ? "" : "Giá trị"}
+                value={attr.value}
+                onChange={(e) =>
+                  handleAttributeChange(index, "value", e.target.value)
+                }
+                className={`form-control ${isColor ? "form-control-color" : ""}`}
+              />
+              {errors[`attr_${index}_value`] && (
+                <div className="text-danger small mt-1">
+                  {errors[`attr_${index}_value`]}
+                </div>
+              )}
+            </div>
+
+            {/* Xóa thuộc tính */}
+            <div className="col-md-2 text-end">
+              {attributes.length > 1 && (
                 <button
                   type="button"
-                  onClick={() => {
-                    const updated = [...images];
-                    updated.splice(index, 1);
-                    setImages(updated);
-                  }}
-                  className="absolute top-0 right-0 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full opacity-80 group-hover:opacity-100"
+                  onClick={() => removeAttributeRow(index)}
+                  className="btn btn-outline-danger btn-sm"
+                  title="Xóa"
                 >
-                  ×
+                  <i className="fas fa-trash-alt"></i>
                 </button>
-              </div>
-            ))}
+              )}
+            </div>
           </div>
-        </div>
+        );
+      })}
 
-        {/* Submit */}
-        <div className="flex justify-start gap-2 mt-8">
-          <button
-            type="submit"
-            disabled={uploading}
-            className={`bg-[#073272] text-white px-6 py-3 rounded transition ${
-              uploading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#052354]"
-            }`}
-          >
-            Tạo biến thể
-          </button>
-
-          <button
-  type="button"
-  onClick={handleCancel}
-  className="bg-gray-200 text-gray-800 px-6 py-3 rounded hover:bg-gray-300 transition flex items-center justify-center"
->
-  Quay lại
-</button>
-
-        </div>
-      </form>
+      <button
+        type="button"
+        onClick={addAttributeRow}
+        className="btn btn-link p-0 text-primary"
+      >
+        + Thêm thuộc tính
+      </button>
     </div>
+
+    {/* Ảnh biến thể */}
+    <div className="mb-4">
+      <label className="form-label">Ảnh biến thể</label>
+      <input
+        type="file"
+        multiple
+        accept="image/*"
+        onChange={async (e) => {
+          const files = Array.from(e.target.files);
+          setUploading(true);
+          const uploadedImages = [];
+
+          for (const file of files) {
+            try {
+              const { url, public_id } = await uploadToCloudinary(file);
+              uploadedImages.push({ url, public_id });
+            } catch (error) {
+              console.error("Lỗi upload ảnh:", error);
+            }
+          }
+
+          setImages((prev) => [...prev, ...uploadedImages]);
+          setUploading(false);
+        }}
+        className="form-control"
+      />
+
+      {/* Hiển thị ảnh */}
+      <div className="row mt-3">
+        {images.map((img, index) => (
+          <div className="col-auto position-relative me-2 mb-2" key={index}>
+            <img
+              src={img}
+              alt={`variant-${index}`}
+              className="img-thumbnail"
+              style={{ width: "90px", height: "90px", objectFit: "cover" }}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                const updated = [...images];
+                updated.splice(index, 1);
+                setImages(updated);
+              }}
+              className="btn btn-sm btn-danger position-absolute top-0 end-0 translate-middle"
+              style={{ padding: "2px 6px" }}
+            >
+              ×
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Submit & Cancel */}
+    <div className="d-flex gap-2 mt-4">
+      <button
+        type="submit"
+        disabled={uploading}
+        className={`btn btn-primary px-4 ${uploading ? "disabled opacity-50" : ""}`}
+      >
+        Tạo biến thể
+      </button>
+
+      <button
+        type="button"
+        onClick={handleCancel}
+        className="btn btn-secondary"
+      >
+        Quay lại
+      </button>
+    </div>
+  </form>
+</div>
+
   );
 }
 

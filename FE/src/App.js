@@ -27,9 +27,15 @@ import AddVariant from "./view/pages/admin/product/addVariant";
 import ProductDetail from "./view/pages/admin/product/detail";
 import EditVariant from "./view/pages/admin/product/editVariant";
 import Comment from './view/pages/admin/comment/index';
+import HeaderAdmin from "./view/pages/admin/layout/header";
+import Attribute from "./view/pages/admin/product/attribute/getAll";
+import AttributeEdit from "./view/pages/admin/product/attribute/detail";
+import AttributeCreate from "./view/pages/admin/product/attribute/create";
+
 function AdminLayout() {
   return (
     <div>
+  <HeaderAdmin />
 
       <Outlet />
     </div>
@@ -74,6 +80,12 @@ function App() {
           <Route path="addVariant/:productId" element={<AddVariant />} />
           <Route path="detail/:id" element={<ProductDetail />} />
           <Route path="editVariant/:id" element={<EditVariant />} />
+        </Route>
+        <Route path="attribute">
+          <Route path="getAll" element={<Attribute />} />
+          <Route path="edit/:id" element={<AttributeEdit />} />
+          <Route path="create" element={<AttributeCreate />} />
+
         </Route>
         </Route>
 

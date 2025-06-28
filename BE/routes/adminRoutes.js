@@ -3,6 +3,7 @@ const router = express.Router();
 const OrderController = require('../controllers/Admin/ordersController');
 const CategoryController = require('../controllers/Admin/categoriesController');
 const ProductController = require('../controllers/Admin/productsController');
+const ProductAttributeController = require('../controllers/Admin/product_attributesController');
 
 const DashboardController = require('../controllers/Admin/dashboardController');
 const CommentController = require('../controllers/Admin/commentController');
@@ -49,6 +50,14 @@ router.get("/variants/:variant_id", ProductController.getVariantById);
 router.get('/product-variants', ProductController.getAllVariants);
 router.delete('/product-variants/deleteAttributeValueById/:id', ProductController.deleteAttributeValueById);
 // router.post('/products/imagesClauding/:public_id', ProductController.deleteImagesClauding);
+
+//------------------[ ProductAttributeController ]------------------\
+
+router.get('/attribute', ProductAttributeController.getAll);
+router.post('/attribute', ProductAttributeController.create);
+router.get('/attribute/:id', ProductAttributeController.getById);
+router.put('/attribute/:id', ProductAttributeController.update);
+router.delete('/attribute/:id', ProductAttributeController.delete);
 
 //------------------[ COMMENTS ]------------------\
 router.get('/comment/list', CommentController.getAllComments);

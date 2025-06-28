@@ -179,31 +179,38 @@ const [selectedBrand, setSelectedBrand] = useState("");
 
   return (
 
-    <>
-  <HeaderAdmin />
-  <div className="container py-3">
+   <>
+  <div className="container py-4">
     <div className="card shadow-sm">
       <div className="card-body">
-
         {/* Tiêu đề */}
-        <h2 className="h5 mb-4">Danh sách sản phẩm</h2>
+        <h2 className="h5 mb-4 fw-bold">Danh sách sản phẩm</h2>
 
-        {/* Thanh công cụ (thêm + tìm kiếm) */}
-        <div className="d-flex justify-content-between flex-wrap gap-2 mb-3">
-          <Link to="/admin/products/create" className="btn btn-primary">
-            + Thêm sản phẩm
-          </Link>
+        {/* Thanh công cụ (thêm + tìm kiếm + thuộc tính) */}
+        <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <div className="d-flex flex-wrap gap-2">
+            <Link to="/admin/products/create" className="btn btn-primary">
+              + Thêm sản phẩm
+            </Link>
+
+            <Link
+              to="/admin/attribute/getall"
+              className="btn btn-info text-white"
+              title="Danh sách thuộc tính"
+            >
+              <i className="fa-solid fa-list me-1"></i>Danh sách thuộc tính
+            </Link>
+          </div>
 
           <div className="d-flex flex-wrap gap-2">
             <input
               type="text"
               value={searchInput}
               onChange={handleSearchInputChange}
-              placeholder="Tìm kiếm theo tên sản phẩm..."
-              className="form-control"
               onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
+              className="form-control"
+              placeholder="Tìm kiếm theo tên sản phẩm..."
             />
-
             <select
               className="form-select"
               value={selectedCategory}
@@ -216,17 +223,13 @@ const [selectedBrand, setSelectedBrand] = useState("");
                 </option>
               ))}
             </select>
-
-            <button
-              onClick={handleSearchSubmit}
-              className="btn btn-dark"
-            >
+            <button className="btn btn-dark" onClick={handleSearchSubmit}>
               Tìm kiếm
             </button>
           </div>
         </div>
 
-        {/* Bảng danh sách sản phẩm */}
+        {/* Bảng sản phẩm */}
         <div className="table-responsive">
           <table className="table table-bordered table-hover mt-3">
             <thead className="table-light">
@@ -259,11 +262,19 @@ const [selectedBrand, setSelectedBrand] = useState("");
                         src={product.thumbnail || "https://via.placeholder.com/60"}
                         alt={product.name}
                         className="img-thumbnail"
-                        style={{ width: "60px", height: "60px", objectFit: "cover" }}
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          objectFit: "cover",
+                        }}
                       />
                     </td>
                     <td>
-                      <span className={`badge ${product.status === 1 ? 'bg-success' : 'bg-danger'}`}>
+                      <span
+                        className={`badge ${
+                          product.status === 1 ? "bg-success" : "bg-danger"
+                        }`}
+                      >
                         {product.status === 1 ? "Hiển thị" : "Ẩn"}
                       </span>
                     </td>
@@ -274,17 +285,20 @@ const [selectedBrand, setSelectedBrand] = useState("");
                     </td>
                     <td className="text-center">
                       {product.variants
-                        ? product.variants.reduce((sum, v) => sum + (v.stock || 0), 0)
+                        ? product.variants.reduce(
+                            (sum, v) => sum + (v.stock || 0),
+                            0
+                          )
                         : 0}
                     </td>
                     <td>
-                      <div className="d-flex gap-2 justify-content-center">
+                      <div className="d-flex justify-content-center gap-2">
                         <Link
                           to={`/admin/products/detail/${product.id}`}
                           className="btn btn-success btn-sm"
                           title="Xem chi tiết"
                         >
-                          <FaEye />
+                          <i className="fa-solid fa-eye"></i>
                         </Link>
                         <Link
                           to={`/admin/products/addVariant/${product.id}`}
@@ -294,11 +308,11 @@ const [selectedBrand, setSelectedBrand] = useState("");
                           <i className="fa-solid fa-pen-to-square"></i>
                         </Link>
                         <button
-                          onClick={() => setSelectedProduct(product)}
                           className="btn btn-danger btn-sm"
+                          onClick={() => setSelectedProduct(product)}
                           title="Xoá sản phẩm"
                         >
-                          <FaTrash />
+                          <i className="fa-solid fa-trash"></i>
                         </button>
                       </div>
                     </td>
@@ -345,7 +359,11 @@ const [selectedBrand, setSelectedBrand] = useState("");
                 return (
                   <button
                     key={page}
-                    className={`btn ${currentPage === page ? 'btn-primary' : 'btn-outline-primary'}`}
+                    className={`btn ${
+                      currentPage === page
+                        ? "btn-primary"
+                        : "btn-outline-primary"
+                    }`}
                     onClick={() => handlePageChange(page)}
                   >
                     {page}
@@ -357,7 +375,9 @@ const [selectedBrand, setSelectedBrand] = useState("");
 
             {currentPage < totalPages - 1 && (
               <>
-                {currentPage < totalPages - 2 && <span className="btn disabled">...</span>}
+                {currentPage < totalPages - 2 && (
+                  <span className="btn disabled">...</span>
+                )}
                 <button
                   className="btn btn-outline-secondary"
                   onClick={() => handlePageChange(totalPages)}
@@ -397,6 +417,8 @@ const [selectedBrand, setSelectedBrand] = useState("");
     )}
   </div>
 </>
+
+
 
 
   );

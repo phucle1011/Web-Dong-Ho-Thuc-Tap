@@ -168,84 +168,74 @@ const EditVariantForm = () => {
   if (!variant) return <p>Đang tải dữ liệu...</p>;
 
   return (
-    <><HeaderAdmin />
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-5xl mx-auto p-10 bg-white shadow-lg rounded-lg space-y-8"
-    >
-      <h2 className="text-3xl font-bold text-center mb-6">
-        Chỉnh sửa biến thể
-      </h2>
+    <>
+  <form
+    onSubmit={handleSubmit}
+    className="container my-5 p-4 bg-white shadow rounded"
+  >
+    <h2 className="h3 text-center fw-bold mb-4">Chỉnh sửa biến thể</h2>
 
-      {/* Thông tin cơ bản */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div>
-          <label htmlFor="sku" className="block text-sm font-medium mb-1">
-            SKU
-          </label>
-          <input
-            type="text"
-            id="sku"
-            name="sku"
-            value={formData.sku}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            placeholder="Mã SKU"
-          />
-        </div>
-        <div>
-          <label htmlFor="price" className="block text-sm font-medium mb-1">
-            Giá
-          </label>
-          <input
-            type="number"
-            id="price"
-            name="price"
-            value={formData.price}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            placeholder="Giá"
-          />
-        </div>
-        <div>
-          <label htmlFor="stock" className="block text-sm font-medium mb-1">
-            Tồn kho
-          </label>
-          <input
-            type="number"
-            id="stock"
-            name="stock"
-            value={formData.stock}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-            placeholder="Tồn kho"
-          />
-        </div>
+    {/* Thông tin cơ bản */}
+    <div className="row g-3 mb-4">
+      <div className="col-md-4">
+        <label htmlFor="sku" className="form-label">SKU</label>
+        <input
+          type="text"
+          id="sku"
+          name="sku"
+          value={formData.sku}
+          onChange={handleChange}
+          className="form-control"
+          placeholder="Mã SKU"
+        />
       </div>
+      <div className="col-md-4">
+        <label htmlFor="price" className="form-label">Giá</label>
+        <input
+          type="number"
+          id="price"
+          name="price"
+          value={formData.price}
+          onChange={handleChange}
+          className="form-control"
+          placeholder="Giá"
+        />
+      </div>
+      <div className="col-md-4">
+        <label htmlFor="stock" className="form-label">Tồn kho</label>
+        <input
+          type="number"
+          id="stock"
+          name="stock"
+          value={formData.stock}
+          onChange={handleChange}
+          className="form-control"
+          placeholder="Tồn kho"
+        />
+      </div>
+    </div>
 
-      {/* Thuộc tính */}
-      <fieldset className="border rounded p-4">
-        <legend className="font-semibold text-lg px-2">Thuộc tính</legend>
-        <div className="space-y-4 mt-2">
-          {formData.attributes.map((attr, index) => {
-            const selectedAttr = attributesList.find(
-              (item) => item.id === parseInt(attr.attribute_id)
-            );
-            const isColor =
-              selectedAttr?.name.toLowerCase() === "color" ||
-              selectedAttr?.name.toLowerCase() === "màu";
+    {/* Thuộc tính */}
+    <fieldset className="border rounded p-3 mb-4">
+      <legend className="float-none w-auto px-2 fw-semibold">Thuộc tính</legend>
+      <div className="d-flex flex-column gap-3 mt-2">
+        {formData.attributes.map((attr, index) => {
+          const selectedAttr = attributesList.find(
+            (item) => item.id === parseInt(attr.attribute_id)
+          );
+          const isColor =
+            selectedAttr?.name.toLowerCase() === "color" ||
+            selectedAttr?.name.toLowerCase() === "màu";
 
-            return (
-              <div
-                key={index}
-                className="flex flex-col md:flex-row items-center gap-4"
-              >
+          return (
+            <div key={index} className="row g-2 align-items-center">
+              <div className="col-md-4">
                 <select
                   value={attr.attribute_id}
                   onChange={(e) =>
                     handleAttributeChange(index, "attribute_id", e.target.value)
                   }
-                  className="border p-2 rounded w-full md:w-1/3"
+                  className="form-select"
                 >
                   <option value="">Chọn thuộc tính</option>
                   {attributesList
@@ -262,7 +252,9 @@ const EditVariantForm = () => {
                       </option>
                     ))}
                 </select>
+              </div>
 
+              <div className="col-md-4">
                 {isColor ? (
                   <input
                     type="color"
@@ -270,131 +262,103 @@ const EditVariantForm = () => {
                     onChange={(e) =>
                       handleAttributeChange(index, "value", e.target.value)
                     }
-                    className="border rounded w-full md:w-1/3 h-10"
+                    className="form-control form-control-color"
                   />
                 ) : (
                   <input
                     type="text"
-                    placeholder="Giá trị"
                     value={attr.value}
+                    placeholder="Giá trị"
                     onChange={(e) =>
                       handleAttributeChange(index, "value", e.target.value)
                     }
-                    className="border p-2 rounded w-full md:w-1/3"
+                    className="form-control"
                   />
                 )}
+              </div>
 
+              <div className="col-md-2">
                 <button
                   type="button"
                   onClick={() => handleDeleteAttribute(attr.id)}
-                  className="text-red-600 hover:text-red-800 p-1 rounded"
+                  className="btn btn-outline-danger"
                   aria-label="Xóa thuộc tính"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a1 1 0 00-1 1v1h6V4a1 1 0 00-1-1m-4 0h4"
-                    />
-                  </svg>
+                  <i className="fa fa-trash"></i>
                 </button>
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
 
-          {formData.attributes.length < attributesList.length && (
-  <button
-    type="button"
-    onClick={addAttributeField}
-    className="text-blue-600 hover:underline"
-  >
-    + Thêm thuộc tính
-  </button>
-)}
+        {formData.attributes.length < attributesList.length && (
+          <button
+            type="button"
+            onClick={addAttributeField}
+            className="btn btn-link text-primary p-0"
+          >
+            + Thêm thuộc tính
+          </button>
+        )}
+      </div>
+    </fieldset>
 
-        </div>
-      </fieldset>
-
-      {/* Ảnh biến thể */}
-      <fieldset className="border rounded p-4">
-        <legend className="font-semibold text-lg px-2">Ảnh biến thể</legend>
-        <div className="space-y-4 mt-2">
-          {formData.images.map((img, index) => (
-            <div key={index} className="flex items-center gap-4">
+    {/* Ảnh biến thể */}
+    <fieldset className="border rounded p-3 mb-4">
+      <legend className="float-none w-auto px-2 fw-semibold">Ảnh biến thể</legend>
+      <div className="d-flex flex-column gap-3 mt-2">
+        {formData.images.map((img, index) => (
+          <div key={index} className="row g-3 align-items-center">
+            <div className="col-auto">
               {img.url && (
                 <img
                   src={img.url}
                   alt={`image-${index}`}
-                  className="h-16 w-16 object-cover rounded"
+                  className="img-thumbnail"
+                  style={{ width: "60px", height: "60px", objectFit: "cover" }}
                 />
               )}
+            </div>
+            <div className="col">
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleImageChange(e, index)}
-                className="flex-1 border p-2 rounded"
+                className="form-control"
               />
+            </div>
+            <div className="col-auto">
               <button
                 type="button"
                 onClick={() => handleDeleteImage(index)}
-                className="text-red-600 hover:text-red-800 p-1 rounded"
-                aria-label="Xóa ảnh"
+                className="btn btn-outline-danger"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4m-4 0a1 1 0 00-1 1v1h6V4a1 1 0 00-1-1m-4 0h4"
-                  />
-                </svg>
+                <i className="fa fa-trash"></i>
               </button>
             </div>
-          ))}
+          </div>
+        ))}
 
-          <button
-            type="button"
-            onClick={addImageField}
-            className="text-blue-600 hover:underline"
-          >
-            + Thêm ảnh
-          </button>
-        </div>
-      </fieldset>
+        <button
+          type="button"
+          onClick={addImageField}
+          className="btn btn-link text-primary p-0"
+        >
+          + Thêm ảnh
+        </button>
+      </div>
+    </fieldset>
 
-      {/* Nút submit */}
-      <div className="flex gap-x-3 justify-start">
-  <button
-    type="submit"
-    className="bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-4 rounded text-sm"
-  >
-    Cập nhật
-  </button>
+    {/* Nút submit */}
+    <div className="d-flex gap-3">
+      <button type="submit" className="btn btn-primary">Cập nhật</button>
+      <Link to="/admin/products/getAll" className="btn btn-secondary">
+        Quay lại
+      </Link>
+    </div>
+  </form>
+</>
 
-  <Link
-    to="/admin/products/getAll"
-    className="bg-gray-200 text-gray-800 py-1.5 px-4 rounded hover:bg-gray-300 transition flex items-center justify-center text-sm"
-  >
-    Quay lại
-  </Link>
-</div>
-
-
-    </form>
-    </>
   );
 };
 

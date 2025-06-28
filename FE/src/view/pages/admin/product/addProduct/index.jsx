@@ -19,7 +19,6 @@ const AddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
   const [thumbnailFile, setThumbnailFile] = useState(null);
 
   // Gọi API lấy danh sách danh mục và thương hiệu
@@ -33,10 +32,8 @@ const AddProduct = () => {
 
       // Chỉ lấy các category và brand có status = 1
       const activeCategories = (catRes.data.data || []).filter(cat => cat.status === "active");
-      const activeBrands = (brandRes.data.data || []).filter(brand => brand.status === "active");
 
       setCategories(activeCategories);
-      setBrands(activeBrands);
     } catch (err) {
       console.error("Lỗi khi load category/brand:", err);
     }
@@ -81,86 +78,58 @@ const AddProduct = () => {
 
   return (
     
-    <div className="max-w-screen-xl mx-auto bg-white p-5 md:p-10 rounded shadow mt-2 mb-2">
-<HeaderAdmin />
-  <h2 className="text-2xl font-semibold mb-6">Thêm sản phẩm mới</h2>
+    <div className="container bg-white p-4 p-md-5 rounded shadow mt-2 mb-2">
+  <h2 className="h5 mb-4 fw-semibold">Thêm sản phẩm mới</h2>
 
-  {message && <p className="mb-4 text-sm text-blue-600">{message}</p>}
+  {message && <p className="mb-3 text-primary small">{message}</p>}
 
   <form onSubmit={handleSubmit(onSubmit)} noValidate>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="row g-4">
       {/* Tên sản phẩm */}
-      <div>
-        <label className="block font-medium mb-1 text-sm">Tên sản phẩm *</label>
+      <div className="col-md-6">
+        <label className="form-label small fw-medium">Tên sản phẩm *</label>
         <input
           type="text"
-          className="w-full border px-3 py-2 rounded text-sm"
+          className="form-control form-control-sm"
           {...register("name", {
             required: "Tên sản phẩm không được để trống",
             minLength: { value: 3, message: "Tối thiểu 3 ký tự" },
           })}
         />
-        {errors.name && (
-          <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
-        )}
+        {errors.name && <div className="text-danger small mt-1">{errors.name.message}</div>}
       </div>
 
       {/* Slug */}
-      <div>
-        <label className="block font-medium mb-1 text-sm">Slug *</label>
+      <div className="col-md-6">
+        <label className="form-label small fw-medium">Slug *</label>
         <input
           type="text"
-          className="w-full border px-3 py-2 rounded text-sm"
+          className="form-control form-control-sm"
           {...register("slug", { required: "Slug không được để trống" })}
         />
-        {errors.slug && (
-          <p className="text-red-500 text-xs mt-1">{errors.slug.message}</p>
-        )}
+        {errors.slug && <div className="text-danger small mt-1">{errors.slug.message}</div>}
       </div>
 
       {/* Mô tả */}
-      <div className="md:col-span-2">
-        <label className="block font-medium mb-1 text-sm">Mô tả *</label>
+      <div className="col-12">
+        <label className="form-label small fw-medium">Mô tả *</label>
         <textarea
           rows={4}
-          className="w-full border px-3 py-2 rounded text-sm"
-          {...register("description", {
-            required: "Mô tả không được để trống",
-          })}
+          className="form-control form-control-sm"
+          {...register("description", { required: "Mô tả không được để trống" })}
         ></textarea>
-        {errors.description && (
-          <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>
-        )}
+        {errors.description && <div className="text-danger small mt-1">{errors.description.message}</div>}
       </div>
 
-      {/* Thương hiệu */}
-      <div>
-        <label className="block font-medium mb-1 text-sm">Thương hiệu *</label>
-        <select
-          className="w-full border px-3 py-2 rounded text-sm"
-          {...register("brand_id", { required: "Vui lòng chọn thương hiệu" })}
-        >
-          <option value="">-- Chọn thương hiệu --</option>
-          {Array.isArray(brands) &&
-            brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-        </select>
-        {errors.brand_id && (
-          <p className="text-red-500 text-xs mt-1">{errors.brand_id.message}</p>
-        )}
-      </div>
+      
+      
 
       {/* Danh mục */}
-      <div>
-        <label className="block font-medium mb-1 text-sm">Danh mục *</label>
+      <div className="col-md-6">
+        <label className="form-label small fw-medium">Danh mục *</label>
         <select
-          className="w-full border px-3 py-2 rounded text-sm"
-          {...register("category_id", {
-            required: "Vui lòng chọn danh mục",
-          })}
+          className="form-select form-select-sm"
+          {...register("category_id", { required: "Vui lòng chọn danh mục" })}
         >
           <option value="">-- Chọn danh mục --</option>
           {Array.isArray(categories) &&
@@ -170,58 +139,50 @@ const AddProduct = () => {
               </option>
             ))}
         </select>
-        {errors.category_id && (
-          <p className="text-red-500 text-xs mt-1">{errors.category_id.message}</p>
-        )}
+        {errors.category_id && <div className="text-danger small mt-1">{errors.category_id.message}</div>}
       </div>
 
       {/* Ảnh sản phẩm */}
-      <div>
-        <label className="block font-medium mb-1 text-sm">Ảnh sản phẩm *</label>
+      <div className="col-md-6">
+        <label className="form-label small fw-medium">Ảnh sản phẩm *</label>
         <input
           type="file"
-          className="w-full border px-3 py-2 rounded text-sm"
           accept="image/*"
+          className="form-control form-control-sm"
           onChange={(e) => setThumbnailFile(e.target.files[0])}
         />
       </div>
 
       {/* Trạng thái */}
-      <div>
-        <label className="block font-medium mb-1 text-sm">Trạng thái *</label>
+      <div className="col-md-6">
+        <label className="form-label small fw-medium">Trạng thái *</label>
         <select
-          className="w-full border px-3 py-2 rounded text-sm"
+          className="form-select form-select-sm"
           {...register("status", { required: "Trạng thái là bắt buộc" })}
         >
           <option value="1">Hiển thị</option>
           <option value="0">Ẩn</option>
         </select>
-        {errors.status && (
-          <p className="text-red-500 text-xs mt-1">{errors.status.message}</p>
-        )}
+        {errors.status && <div className="text-danger small mt-1">{errors.status.message}</div>}
       </div>
     </div>
 
     {/* Nút submit */}
-    <div className="mt-8 flex items-center gap-4">
-  <button
-    type="submit"
-    disabled={loading}
-    className="bg-[#073272] text-white px-6 py-2 rounded hover:bg-[#052354] transition"
-  >
-    {loading ? "Đang thêm..." : "Thêm sản phẩm"}
-  </button>
-
-  <Link
-  to="/admin/products/getAll"
-  className="bg-gray-200 text-gray-800 px-6 py-2 rounded hover:bg-gray-300 transition"
->
-  Quay lại
-</Link>
-</div>
-
+    <div className="mt-4 d-flex gap-2">
+      <button
+        type="submit"
+        disabled={loading}
+        className="btn btn-primary btn-sm"
+      >
+        {loading ? "Đang thêm..." : "Thêm sản phẩm"}
+      </button>
+      <Link to="/admin/products/getAll" className="btn btn-secondary btn-sm">
+        Quay lại
+      </Link>
+    </div>
   </form>
 </div>
+
 
 
   );
