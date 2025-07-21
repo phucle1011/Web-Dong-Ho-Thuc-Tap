@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const AuthController = require('../controllers/Client/authController');
 const CartController = require('../controllers/Client/cartsController');
+const ShippingController = require('../controllers/Client/shippingController');
+const OrderController = require('../controllers/Client/ordersController');
 
 //------------------[ CLIENT ROUTES ]------------------
 
@@ -15,8 +17,21 @@ router.post("/reset-password", AuthController.resetPassword);
 //------------------[ CARTS ]------------------
 router.get("/carts", CartController.getCartByUser);
 router.post("/add-to-carts", CartController.addToCart);
-router.put("/update-to-carts/:userId/:productVariantId", CartController.updateCartItem);
-router.delete("/delete-to-carts/:userId/:productVariantId", CartController.removeCartItem);
-router.delete("/clear-cart/:userId", CartController.clearCartByUser);
+router.put("/update-to-carts/:productVariantId", CartController.updateCartItem);
+router.delete("/delete-to-carts/:productVariantId", CartController.removeCartItem);
+router.delete("/clear-cart", CartController.clearCartByUser);
+
+//------------------[ SHIPPING ]------------------
+router.post('/shipping/shipping-fee', ShippingController.calculateShippingFee);
+
+//------------------[ ORDERS ]------------------
+router.get("/orders", OrderController.get);
+router.post("/orders", OrderController.create);
+router.post("/orders-momo", OrderController.createMomoUrl);
+router.post("/payment-notification", OrderController.momoPaymentNotification);
+router.post("/orders-vnpay", OrderController.createVNPayUrl);
+router.get("/vnpay-callback", OrderController.handleVNPayCallback);
+router.put("/orders/cancel/:id", OrderController.cancelOrder);
+router.put("/orders/confirm-delivered/:id", OrderController.confirmDelivered);
 
 module.exports = router;

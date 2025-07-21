@@ -2,7 +2,7 @@ import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import React, { useEffect, useState } from "react";
-import { FaChevronLeft, FaChevronRight, FaAngleDoubleLeft, FaAngleDoubleRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaAngleDoubleLeft, FaAngleDoubleRight, FaEye } from "react-icons/fa";
 import Constants from "../../../../../Constants";
 import { toast } from "react-toastify";
 import FormDelete from "../../../../components/formDelete";
@@ -38,19 +38,19 @@ function translateStatus(status) {
 const getStatusesForOrder = (currentStatus) => {
   switch (currentStatus) {
     case "pending":
-        return ["pending", "confirmed", "shipping", "completed", "delivered", "cancelled"];
-      case "confirmed":
-        return ["confirmed", "shipping", "completed", "delivered", "cancelled"];
-      case "shipping":
-        return ["shipping", "completed", "delivered"];
-      case "completed":
-        return ["completed", "delivered"];
-      case "delivered":
-        return ["delivered"];
-      case "cancelled":
-        return ["cancelled"];
-      default:
-        return ["pending", "confirmed", "shipping", "completed", "delivered", "cancelled"];
+      return ["pending", "confirmed", "shipping", "completed", "delivered", "cancelled"];
+    case "confirmed":
+      return ["confirmed", "shipping", "completed", "delivered", "cancelled"];
+    case "shipping":
+      return ["shipping", "completed", "delivered"];
+    case "completed":
+      return ["completed", "delivered"];
+    case "delivered":
+      return ["delivered"];
+    case "cancelled":
+      return ["cancelled"];
+    default:
+      return ["pending", "confirmed", "shipping", "completed", "delivered", "cancelled"];
   }
 };
 
@@ -289,64 +289,45 @@ const Order = () => {
   return (
     <div>
       <HeaderAdmin />
-      <div className="main-container mb-4">
+      <div className="main-container">
         <h2 className="text-2xl font-semibold">Danh Sách Đơn Hàng</h2>
         <div className="order-container custom-column-layout">
           <div className="p-4 bg-white rounded shadow-md flex flex-col space-y-6 w-full">
-            <div className="w-full">
-              <p className="font-semibold mb-2 text-sm">Chọn khoảng thời gian để xuất Excel:</p>
-              <div className="flex flex-nowrap max-w-[700px]">
-                <label className="mb-1">Từ ngày:</label>
+            <div className="w-full space-y-4">
+              <p className="font-semibold mb-2 text-sm">Chọn khoảng thời gian:</p>
+              <div className="flex flex-wrap items-center gap-2 max-w-[700px] text-sm">
+                <label>Từ ngày:</label>
                 <DatePicker
                   selected={startDate}
                   onChange={(date) => setStartDate(date)}
                   dateFormat="yyyy-MM-dd"
-                  className="border px-2 py-1 rounded ms-1"
+                  className="border px-2 py-1 rounded"
                   placeholderText="Chọn ngày bắt đầu"
                 />
-
-                <label className="mb-1 ms-2">Đến ngày:</label>
+                <label className="ms-2">Đến ngày:</label>
                 <DatePicker
                   selected={endDate}
                   onChange={(date) => setEndDate(date)}
                   dateFormat="yyyy-MM-dd"
-                  className="border px-2 py-1 rounded ms-1"
+                  className="border px-2 py-1 rounded"
                   placeholderText="Chọn ngày kết thúc"
                 />
                 <button
                   onClick={handleExcelExport}
-                  className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 ms-4 min-w-[70px] text-xs">
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded ms-4 min-w-[90px] text-xs"
+                >
                   Xuất Excel
                 </button>
-              </div>
-            </div>
-            <div className="w-full">
-              <p className="font-semibold mb-2 text-sm">Lọc đơn hàng theo ngày:</p>
-              <div className="flex flex-wrap gap-4 items-center max-w-[700px]">
-                <label className="mb-1">Từ ngày:</label>
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  className="border px-2 py-1 rounded ms-1"
-                  placeholderText="Chọn ngày bắt đầu"
-                />
-                <label className="mb-1 ms-2">Đến ngày:</label>
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  className="border px-2 py-1 rounded ms-1"
-                  placeholderText="Chọn ngày kết thúc"
-                />
                 <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded self-end ms-4 min-w-[70px] text-xs"
                   onClick={handleFilterByDate}
+                  className="bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded min-w-[90px] text-xs ms-2"
                 >
                   Lọc theo ngày
                 </button>
               </div>
             </div>
+
+
           </div>
         </div>
 
@@ -435,15 +416,15 @@ const Order = () => {
                         </select>
                       </td>
                       <td className="p-2 border border-gray-300 flex gap-2 flex-wrap">
-                        <Link to={`/admin/orders/detail/${order.id}`} className="detail bg-blue-500 text-white py-1 px-3 rounded">Xem</Link>
-                        <button onClick={() => handleTrackOrder(order.order_code)} className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded">
+                        <Link to={`/admin/orders/detail/${order.id}`} className="detail bg-blue-500 text-white py-1 px-3 rounded"><FaEye /></Link>
+                        {/* <button onClick={() => handleTrackOrder(order.order_code)} className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded">
                           Vị trí
-                        </button>
-                        {["pending"].includes(order.status) && (
+                        </button> */}
+                        {/* {["pending"].includes(order.status) && (
                           <button onClick={() => setSelectedOrder(order)} className="bg-red-500 text-white px-3 py-1 rounded ms-2">
                             Hủy
                           </button>
-                        )}
+                        )} */}
                       </td>
                     </tr>
                     {trackingInfoMap[order.order_code] && (
@@ -496,8 +477,8 @@ const Order = () => {
           />
         )}
 
-        <div className="d-flex justify-content-center mt-3 mb-4">
-          <div className="d-flex align-items-center flex-wrap">
+        <div className="d-flex justify-content-center mt-3">
+          <div className="d-flex align-items-center flex-wrap mb-3">
             <button disabled={currentPage === 1} onClick={() => handlePageChange(1)} className="px-3 py-1 border rounded disabled:opacity-50"><FaAngleDoubleLeft /></button>
             <button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)} className="px-3 py-1 border rounded disabled:opacity-50"><FaChevronLeft /></button>
 

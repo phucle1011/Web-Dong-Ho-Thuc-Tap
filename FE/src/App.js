@@ -9,6 +9,8 @@ import ProfilePage from "./pages/Client/Profile/Profile";
 import Login from "./pages/Client/Login/login";
 import Register from "./pages/Client/Register/register";
 import Cart from "./pages/Client/Cart/cart";
+import OrderTab from './pages/Client/Order/order';
+import CheakoutPage from "./pages/Client/CheakoutPage";
 import ClientProductDetail from "./pages/Client/ProductDetail/ProductDetail";
 import { Outlet } from "react-router";
 import Payment from "./pages/Client/Payment/Payment"
@@ -53,6 +55,8 @@ function App() {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="product/:id" element={<ClientProductDetail />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<CheakoutPage />} />
+          <Route path="orders" element={<OrderTab />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="payment" element={<Payment />} />

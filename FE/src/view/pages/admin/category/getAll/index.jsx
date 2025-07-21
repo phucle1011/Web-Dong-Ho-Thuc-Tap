@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Constants from "../../../../../Constants.jsx";
 import { toast } from "react-toastify";
-import FormDelete from "../../../../components/formDelete";
 import HeaderAdmin from "../../layout/header";
 import "./category.css";
 
@@ -12,6 +11,8 @@ import {
     FaChevronRight,
     FaAngleDoubleLeft,
     FaAngleDoubleRight,
+    FaEdit,
+    FaTrashAlt
 } from "react-icons/fa";
 
 function CategoryGetAll() {
@@ -84,7 +85,7 @@ function CategoryGetAll() {
 
     const renderPagination = () => {
         return (
-            <div className="d-flex justify-content-center mt-3 mb-4">
+            <div className="d-flex justify-content-center mt-3">
                 <div className="d-flex align-items-center flex-wrap">
                     <button
                         disabled={currentPage === 1}
@@ -168,10 +169,10 @@ function CategoryGetAll() {
     return (
         <>
             <HeaderAdmin />
-            <div style={{ marginLeft: "16rem" }} className="min-h-screen bg-gray-100 p-4">
+            <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
                 <div className="container mx-auto bg-white shadow rounded">
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold">Danh sách danh mục</h2>
+                        <h2 className="text-xl font-semibold mt-3">Danh sách danh mục</h2>
                         <Link
                             to="/admin/categories/create"
                             className="category-button"
@@ -233,19 +234,24 @@ function CategoryGetAll() {
                                     <td className="border p-2 text-center">
                                         {new Date(cat.created_at).toLocaleDateString()}
                                     </td>
-                                    <td className="border p-2 text-center space-x-2">
-                                        <Link
-                                            to={`/admin/categories/edit/${cat.id}`}
-                                            className="detail bg-yellow-500 text-white py-1 px-3 rounded"
-                                        >
-                                            Sửa
-                                        </Link>
-                                        <button
-                                            onClick={() => setSelectedCategory(cat)}
-                                            className="bg-red-500 text-white py-1 px-3 rounded"
-                                        >
-                                            Xóa
-                                        </button>
+                                    <td className="border p-2">
+                                        <div className="d-flex justify-content-center align-items-center gap-2">
+                                            <Link
+                                                to={`/admin/categories/edit/${cat.id}`}
+                                                className="btn btn-warning d-flex align-items-center justify-content-center p-0 mt-2"
+                                                style={{ width: '36px', height: '36px' }}
+                                            >
+                                                <FaEdit style={{ color: 'white', width: '20px', height: '20px' }} />
+                                            </Link>
+
+                                            <button
+                                                onClick={() => setSelectedCategory(cat)}
+                                                className="btn btn-danger d-flex align-items-center justify-content-center p-0"
+                                                style={{ width: '36px', height: '36px' }}
+                                            >
+                                                <FaTrashAlt style={{ color: 'white', width: '18px', height: '18px' }} />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -253,17 +259,35 @@ function CategoryGetAll() {
                     </table>
 
                     {renderPagination()}
-
-                    {selectedCategory && (
-                        <FormDelete
-                            isOpen={true}
-                            onClose={() => setSelectedCategory(null)}
-                            onConfirm={deleteCategory}
-                            message={`Bạn có chắc chắn muốn xóa danh mục "${selectedCategory.name}" không?`}
-                        />
-                    )}
                 </div>
             </div>
+            {selectedCategory && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center h-screen">
+                    <div className="bg-white p-6 rounded shadow-lg text-center max-w-sm w-full">
+                        <div className="text-red-600 text-4xl mb-3">
+                            <FaTrashAlt className="mx-auto" />
+                        </div>
+                        <h3 className="text-lg font-semibold mb-2">Xác nhận xóa</h3>
+                        <p className="text-gray-600 mb-6">
+                            Bạn có chắc chắn muốn xóa danh mục <strong>"{selectedCategory.name}"</strong> không?
+                        </p>
+                        <div className="flex justify-center gap-4">
+                            <button
+                                onClick={deleteCategory}
+                                className="bg-red-600 hover:bg-red-800 text-white px-4 py-2 rounded"
+                            >
+                                Xóa
+                            </button>
+                            <button
+                                onClick={() => setSelectedCategory(null)}
+                                className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
+                            >
+                                Hủy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

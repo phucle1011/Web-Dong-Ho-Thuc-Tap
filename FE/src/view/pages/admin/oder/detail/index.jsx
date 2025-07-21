@@ -62,93 +62,58 @@ function OrderDetail() {
   return (
     <div className="flex min-h-screen bg-gray-100 mb-4">
       <HeaderAdmin />
-      <div className="flex-1 p-6" style={{ marginLeft: "16rem" }}>
+      <div className="flex-1 p-6" style={{ marginLeft: "14rem" }}>
         <div className="max-w-6xl mx-auto bg-white p-6 rounded shadow">
-          <div className="mt-5 mb-2">
-            <h2 className="text-2xl font-bold text-red-500 mb-2">Chi tiết đơn hàng</h2>
-          </div>
-          <div className="bg-white shadow rounded p-4 mb-4">
+          <div className="bg-white rounded p-4 mb-4">
+            <h2 className="text-2xl font-bold text-red-500 mt-5">Chi tiết đơn hàng</h2>
             <div className="d-flex justify-content-between align-items-center mb-4">
-              <h1 className="h5 m-0">Thông tin khách hàng</h1>
+              <h1 className="h5 m-0 fw-bold">Thông tin khách hàng</h1>
               <button onClick={() => window.print()} className="btn btn-primary">
                 In hóa đơn
               </button>
             </div>
 
-            <div className="row g-3">
-              <div className="col-md-6">
-                <label className="form-label">Mã đơn</label>
-                <input
-                  type="text"
-                  value={order.order_code || ""}
-                  readOnly
-                  className="form-control bg-light"
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Họ tên</label>
-                <input
-                  type="text"
-                  value={user.name || ""}
-                  readOnly
-                  className="form-control bg-light"
-                />
+            <div className="row gy-2 text-sm">
+              <div className="col-md-6 d-flex gap-2">
+                <label className="fw-bold m-0">Mã đơn:</label>
+                <div>{order.order_code || "—"}</div>
               </div>
 
-              <div className="col-md-6">
-                <label className="form-label">Số điện thoại</label>
-                <input
-                  type="text"
-                  value={user.phone || ""}
-                  readOnly
-                  className="form-control bg-light"
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Email</label>
-                <input
-                  type="text"
-                  value={user.email || ""}
-                  readOnly
-                  className="form-control bg-light"
-                />
+              <div className="col-md-6 d-flex gap-2">
+                <label className="fw-bold m-0">Họ tên:</label>
+                <div>{user.name || "—"}</div>
               </div>
 
-              <div className="col-md-6">
-                <label className="form-label">Địa chỉ</label>
-                <input
-                  type="text"
-                  value={order.shipping_address || ""}
-                  readOnly
-                  className="form-control bg-light"
-                />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Phương thức thanh toán</label>
-                <input
-                  type="text"
-                  value={order.payment_method || ""}
-                  readOnly
-                  className="form-control bg-light"
-                />
+              <div className="col-md-6 d-flex gap-2">
+                <label className="fw-bold m-0">Số điện thoại:</label>
+                <div>{user.phone || "—"}</div>
               </div>
 
-              <div className="col-md-6">
-                <label className="form-label">Ngày đặt hàng</label>
-                <input
-                  type="text"
-                  value={
-                    order.created_at
-                      ? new Date(order.created_at).toLocaleDateString()
-                      : ""
-                  }
-                  readOnly
-                  className="form-control bg-light"
-                />
+              <div className="col-md-6 d-flex gap-2">
+                <label className="fw-bold m-0">Email:</label>
+                <div>{user.email || "—"}</div>
+              </div>
+
+              <div className="col-md-6 d-flex gap-2">
+                <label className="fw-bold m-0">Địa chỉ:</label>
+                <div>{order.shipping_address || "—"}</div>
+              </div>
+
+              <div className="col-md-6 d-flex gap-2">
+                <label className="fw-bold m-0">Phương thức thanh toán:</label>
+                <div>{order.payment_method || "—"}</div>
+              </div>
+
+              <div className="col-md-6 d-flex gap-2">
+                <label className="fw-bold m-0">Ngày đặt hàng:</label>
+                <div>
+                  {order.created_at
+                    ? new Date(order.created_at).toLocaleDateString("vi-VN")
+                    : "—"}
+                </div>
               </div>
             </div>
           </div>
-
 
           <div className="bg-white shadow-md rounded-md p-4">
             <h3 className="font-semibold mb-3">Sản phẩm</h3>
@@ -207,15 +172,14 @@ function OrderDetail() {
                 </tr>
               </tfoot>
             </table>
-          </div>
-
-          <div className="mt-6 flex justify-end gap-4 no-print mb-4">
-            <button
-              onClick={() => navigate("/admin/orders/getAll")}
-              className="btn btn-primary ms-2"
-            >
-              Quay lại
-            </button>
+            <div className="mt-3 flex justify-end gap-4 no-printms-3">
+              <button
+                onClick={() => navigate("/admin/orders/getAll")}
+                className="btn btn-primary"
+              >
+                Quay lại
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -40,9 +40,6 @@
   justify-content: center;
 }
 
-.search-button:hover {
-  background-color: #1e40af;
-}
 .category-button {
   background-color: #1e40af;
   color: white;
@@ -54,6 +51,21 @@
   display: inline-block;
 }
 
-.category-button:hover {
-  background-color: #1e40af;
+.btn.btn-warning:hover {
+    background-color: #ffc107 !important; 
+    color: white !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+.btn.btn-danger:hover {
+    background-color: #dc3545 !important;
+    color: white !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+.btn.btn-danger:hover {
+  background-color: inherit !important;
 }

@@ -4,7 +4,7 @@ const OrderController = require('../controllers/Admin/ordersController');
 const CategoryController = require('../controllers/Admin/categoriesController');
 const ProductController = require('../controllers/Admin/productsController');
 const ProductAttributeController = require('../controllers/Admin/product_attributesController');
-
+const AddressController = require('../controllers/Admin/addressController');
 const DashboardController = require('../controllers/Admin/dashboardController');
 const CommentController = require('../controllers/Admin/commentController');
 //------------------[ ADMIN ROUTES ]------------------
@@ -62,5 +62,12 @@ router.delete('/attribute/:id', ProductAttributeController.delete);
 //------------------[ COMMENTS ]------------------\
 router.get('/comment/list', CommentController.getAllComments);
 router.get('/comment/detail/:id', CommentController.getCommentById);
+
+//------------------[ ADDRESS ]------------------\
+router.get('/address/list', AddressController.getAllAddress);
+router.get('/address/user/:id', AddressController.getAddressesByUser);
+router.delete('/user/:userId/addresses/:id', AddressController.deleteAddress);
+router.put('/user/:userId/addresses/:id', AddressController.updateAddress);
+router.post('/user/:userId/addresses', AddressController.addAddress);
 
 module.exports = router;

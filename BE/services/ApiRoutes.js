@@ -10,7 +10,6 @@ exports.getProvinces = async (req, res) => {
     const data = response.data; 
 
     if (data.code === 200) {
-      console.log("Tỉnh thành phố được lấy:", data.data);
       res.json(data.data);  
     } else {
       res.status(data.code).json({
@@ -43,7 +42,6 @@ exports.getDistricts = async (req, res) => {
     const data = response.data;
 
     if (data.code === 200) {
-      console.log("Quận huyện được lấy cho tỉnh", provinceID, ":", data.data);
       res.json(data.data);  
     } else {
       res.status(data.code).json({
@@ -74,7 +72,6 @@ exports.getWards = async (req, res) => {
     const data = response.data;
 
     if (data.code === 200) {
-      console.log("Phường xã được lấy cho quận huyện", districtID, ":", data.data);
       res.json(data.data);  
     } else {
       res.status(data.code).json({

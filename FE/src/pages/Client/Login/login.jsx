@@ -28,11 +28,9 @@ const Login = () => {
             const expiresDate = new Date();
             expiresDate.setHours(expiresDate.getHours() + 10);
 
-            // Lưu cookies
             setCookie("token", token, { expires: expiresDate });
             setCookie("role", `${user.role}`, { expires: expiresDate });
 
-            // ✅ Lưu user vào localStorage để Header đọc được
             localStorage.setItem("user", JSON.stringify(user));
 
             navigate("/");

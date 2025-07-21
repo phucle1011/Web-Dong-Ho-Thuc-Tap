@@ -74,7 +74,7 @@ function CategoryCreate() {
             <HeaderAdmin />
             <div style={{ marginLeft: "16rem" }} className="min-h-screen bg-gray-100 p-4">
                 <div className="container mx-auto bg-white shadow rounded p-6 max-w-lg">
-                    <h2 className="text-xl font-semibold mb-6">Thêm danh mục mới</h2>
+                    <h2 className="text-xl font-semibold mb-6 mt-3">Thêm danh mục mới</h2>
 
                     <form onSubmit={handleSubmit(onSubmit)} noValidate>
                         <div className="form-group">
