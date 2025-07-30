@@ -1,0 +1,244 @@
+/* ===== Container chính ===== */
+.comment-container {
+  margin-left: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: calc(100% - 250px);
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.comment-wrapper {
+  width: 100%;
+  max-width: 1600px;
+  background-color: #fff;
+}
+
+.comment-box {
+  background: #e0e0ff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(128, 0, 255, 0.6);
+  text-align: center;
+}
+
+.comment-title {
+  color: #800080;
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* ===== Bảng ===== */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.comment-table {
+  width: 100%;
+  max-width: 1500px;
+  border-collapse: collapse;
+  text-align: center;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.comment-table th {
+  background-color: #800080;
+  color: white;
+  padding: 14px;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.comment-table td {
+  background-color: #fff;
+  color: #800080;
+  padding: 14px;
+  font-size: 15px;
+  border: 1px solid rgba(128, 0, 255, 0.5);
+}
+
+.comment-table tr:hover {
+  background-color: rgba(128, 0, 255, 0.2);
+  transition: 0.3s;
+}
+
+/* ===== Thanh filter ===== */
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.filter-input,
+.filter-select {
+  padding: 8px 10px;
+  border: 1px solid rgba(128, 0, 255, 0.5);
+  border-radius: 6px;
+  outline: none;
+  color: #800080;
+  background: #fff;
+}
+
+.filter-input::placeholder {
+  color: #a55aa5;
+}
+
+.page-info {
+  font-weight: bold;
+  color: #800080;
+}
+
+/* ===== Nút ===== */
+.add-btn,
+.reset-btn,
+.sort-btn,
+.page-btn,
+.edit-btn,
+.delete-btn,
+.cancel-btn,
+.save-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  margin: 0 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-btn {
+  background: #6a0dad;
+  color: #fff;
+}
+
+.reset-btn {
+  background: #d100ff;
+  color: #fff;
+}
+
+.sort-btn {
+  background: #8a2be2;
+  color: #fff;
+}
+
+.page-btn {
+  background: #8a2be2;
+  color: #fff;
+}
+
+.edit-btn {
+  background: #8a2be2;
+  color: white;
+}
+
+.delete-btn {
+  background: #d100ff;
+  color: white;
+}
+
+.cancel-btn {
+  background: #ccc;
+  color: #000;
+}
+
+.save-btn {
+  background: #6a0dad;
+  color: #fff;
+}
+
+.edit-btn:hover {
+  background: #7a1bbf;
+}
+
+.delete-btn:hover {
+  background: #c100cc;
+}
+
+/* ===== Modal ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(39, 0, 61, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.modal-box {
+  width: 95%;
+  max-width: 780px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(128, 0, 255, 0.4);
+  padding: 20px;
+  text-align: left;
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #800080;
+  margin-bottom: 12px;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-form input,
+.modal-form select {
+  padding: 10px 12px;
+  border: 1px solid rgba(128, 0, 255, 0.5);
+  border-radius: 6px;
+  outline: none;
+  color: #800080;
+  background: #fff;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ===== Badge trạng thái ===== */
+.status-badge {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.status-active {
+  background: #28a745;
+}
+
+.status-inactive {
+  background: #6c757d;
+}
+
+.status-pending {
+  background: #ffc107;
+}
+
+.status-locked {
+  background: #dc3545;
+}
+
+/* ===== Ảnh Avatar ===== */
+.avatar-img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+}
