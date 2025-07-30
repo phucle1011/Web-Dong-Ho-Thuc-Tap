@@ -33,11 +33,12 @@ import HeaderAdmin from "./view/pages/admin/layout/header";
 import Attribute from "./view/pages/admin/product/attribute/getAll";
 import AttributeEdit from "./view/pages/admin/product/attribute/detail";
 import AttributeCreate from "./view/pages/admin/product/attribute/create";
+import UserManage from "./view/pages/admin/user/index";
 
 function AdminLayout() {
   return (
     <div>
-  <HeaderAdmin />
+      <HeaderAdmin />
 
       <Outlet />
     </div>
@@ -69,28 +70,32 @@ function App() {
             <Route path="getAll" element={<OrderGetAll />} />
             <Route path="detail/:id" element={<OrderDetail />} />
           </Route>
-            <Route path="comments">
+          <Route path="comments">
             <Route path="getAll" element={<Comment />} />
             {/* <Route path="detail/:id" element={<OrderDetail />} /> */}
+          </Route>
+          <Route path="users">
+            <Route path="getAll" element={<UserManage />} />
+            
           </Route>
           <Route path="categories">
             <Route path="getAll" element={<CategoryGetAll />} />
             <Route path="create" element={<CategoryCreate />} />
             <Route path="edit/:id" element={<CategoryEdit />} />
           </Route>
-            <Route path="products">
-          <Route path="getAll" element={<ProductList />} />
-          <Route path="create" element={<ProductAdd />} />
-          <Route path="addVariant/:productId" element={<AddVariant />} />
-          <Route path="detail/:id" element={<ProductDetail />} />
-          <Route path="editVariant/:id" element={<EditVariant />} />
-        </Route>
-        <Route path="attribute">
-          <Route path="getAll" element={<Attribute />} />
-          <Route path="edit/:id" element={<AttributeEdit />} />
-          <Route path="create" element={<AttributeCreate />} />
+          <Route path="products">
+            <Route path="getAll" element={<ProductList />} />
+            <Route path="create" element={<ProductAdd />} />
+            <Route path="addVariant/:productId" element={<AddVariant />} />
+            <Route path="detail/:id" element={<ProductDetail />} />
+            <Route path="editVariant/:id" element={<EditVariant />} />
+          </Route>
+          <Route path="attribute">
+            <Route path="getAll" element={<Attribute />} />
+            <Route path="edit/:id" element={<AttributeEdit />} />
+            <Route path="create" element={<AttributeCreate />} />
 
-        </Route>
+          </Route>
         </Route>
 
         <Route path="*" element={<h2>Trang không tồn tại</h2>} />
