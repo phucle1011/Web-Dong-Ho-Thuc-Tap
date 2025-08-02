@@ -77,7 +77,7 @@ const AddProduct = () => {
 
   return (
     
-    <div className="container bg-white p-4 p-md-5 rounded shadow mt-2 mb-2">
+            <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
   <h2 className="h5 mb-4 fw-semibold">Thêm sản phẩm mới</h2>
 
   {message && <p className="mb-3 text-primary small">{message}</p>}

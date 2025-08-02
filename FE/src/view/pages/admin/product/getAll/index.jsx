@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Constants from "../../../../../Constants.jsx";
-import FormDelete from "../../../../components/formDelete";
+import FormDelete from "../../../../components/formDelete/index.jsx";
 import {
   FaAngleDoubleLeft,
   FaAngleDoubleRight,
@@ -12,208 +12,154 @@ import {
   FaEye,
   FaPlus,
   FaTrash,
+  FaEdit,
 } from "react-icons/fa";
-import HeaderAdmin from "../../layout/header";
 
 const AdminProductList = () => {
   const [products, setProducts] = useState([]);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-const [selectedBrand, setSelectedBrand] = useState("");
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchInput, setSearchInput] = useState(""); // dùng để lưu input tạm thời
-  const recordsPerPage = 10;
   const [categories, setCategories] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [searchInput, setSearchInput] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 10;
+  const [totalPages, setTotalPages] = useState(1);
 
-
-
-  // Gọi API lấy danh mục
+  // fetch categories
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await axios.get(
-          `${Constants.DOMAIN_API}/category/list`
-        );
-        setCategories(res.data.data || []);
-        
-      } catch (error) {
-        console.error("Lỗi khi lấy danh mục:", error);
-      }
-    };
-    fetchCategories();
+    axios
+      .get(`${Constants.DOMAIN_API}/category/list`)
+      .then((res) => setCategories(res.data.data || []))
+      .catch(console.error);
   }, []);
 
+  // fetch or search products
   useEffect(() => {
-  if (!searchTerm && !selectedCategory && !selectedBrand) {
-    fetchProducts(currentPage);
-  } else {
-    searchProducts(currentPage, searchTerm, selectedCategory, selectedBrand);
-  }
-}, [currentPage, searchTerm, selectedCategory, selectedBrand]);
+    const params = { page: currentPage, limit: recordsPerPage };
+    if (searchInput) params.searchTerm = searchInput;
+    if (selectedCategory) params.categoryId = selectedCategory;
 
+    const url =
+      searchInput || selectedCategory
+        ? `${Constants.DOMAIN_API}/admin/products/productList/search`
+        : `${Constants.DOMAIN_API}/admin/products`;
 
-  // Tách hàm search riêng
-  const searchProducts = async (page, search, categoryId = "", brandId = "") => {
-  try {
-    const res = await axios.get(
-      `${Constants.DOMAIN_API}/admin/products/productList/search`,
-      {
-        params: {
-          searchTerm: search,
-          categoryId: categoryId || undefined,
-          page,
-          limit: recordsPerPage,
-        },
-      }
-    );
-    setProducts(res.data.data);
-    setTotalPages(res.data.totalPages || 1);
-  } catch (error) {
-    console.error("Lỗi khi tìm kiếm sản phẩm:", error);
-    setProducts([]);
-    setTotalPages(1);
-  }
-};
+    axios
+      .get(url, { params })
+      .then((res) => {
+        setProducts(res.data.data);
+        setTotalPages(
+          res.data.totalPages || res.data.pagination?.totalPages || 1
+        );
+      })
+      .catch(console.error);
+  }, [currentPage, searchInput, selectedCategory]);
 
+  const handleSearch = () => setCurrentPage(1);
+  const clearFilter = () => {
+    setSearchInput("");
+    setSelectedCategory("");
+    setCurrentPage(1);
+  };
 
   const deleteProduct = async () => {
     if (!selectedProduct) return;
-
-    // Kiểm tra có biến thể không
-    if (
-      (selectedProduct.variantCount ?? selectedProduct.variants?.length ?? 0) >
-      0
-    ) {
-      toast.error("Không thể xóa sản phẩm có biến thể.");
-      setSelectedProduct(null);
-      return;
-    }
-
+    // optional: check variantCount here...
     try {
       await axios.delete(
         `${Constants.DOMAIN_API}/admin/products/${selectedProduct.id}`
       );
       toast.success("Xóa sản phẩm thành công");
-      if (products.length === 1 && currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      } else {
-        fetchProducts(currentPage, searchTerm);
-      }
-    } catch (error) {
-      console.error("Lỗi khi xóa sản phẩm:", error);
-      if (
-        error.response?.data?.error?.includes("foreign key constraint fails")
-      ) {
-        toast.error("Không thể xóa vì có sản phẩm đang sử dụng sản phẩm này.");
-      } else {
-        toast.error("Xóa thất bại. Vui lòng thử lại.");
-      }
+      setProducts((prev) => prev.filter((p) => p.id !== selectedProduct.id));
+    } catch {
+      toast.error("Xóa thất bại");
     } finally {
       setSelectedProduct(null);
     }
   };
 
-  const fetchProducts = async (page, search = "") => {
-    try {
-      const params = { page, limit: recordsPerPage };
-      if (search) params.searchTerm = search;
-
-      const res = await axios.get(`${Constants.DOMAIN_API}/admin/products`, {
-        params,
-      });
-      console.log(res.data);
-
-      setProducts(res.data.data);
-      setTotalPages(res.data.pagination.totalPages);
-    } catch (error) {
-      console.error("Lỗi khi lấy sản phẩm:", error);
-    }
-  };
-
-  const handleSearchInputChange = (e) => {
-    setSearchInput(e.target.value);
-  };
-
-  const handleSearchSubmit = async () => {
-    const trimmedSearch = searchInput.trim();
-    setCurrentPage(1); // reset page
-
-    // Nếu không có từ khóa và danh mục trống, load lại danh sách gốc
-    if (!trimmedSearch && !selectedCategory) {
-      setSearchTerm("");
-      fetchProducts(1);
-      return;
-    }
-
-    try {
-      const res = await axios.get(
-  `${Constants.DOMAIN_API}/admin/products/productList/search`,
-  {
-    params: {
-      searchTerm: trimmedSearch,
-      categoryId: selectedCategory || undefined,
-      brandId: selectedBrand || undefined,
-      page: 1,
-      limit: recordsPerPage,
-    },
-  }
-);
-
-      setProducts(res.data.data);
-      setTotalPages(res.data.totalPages || 1);
-      setSearchTerm(trimmedSearch);
-    } catch (error) {
-      console.error("Lỗi khi tìm kiếm sản phẩm:", error);
-      setProducts([]);
-      setTotalPages(1);
-    }
-  };
-
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  const renderPagination = () => (
+    <div className="flex justify-center mt-6 space-x-1">
+      <button
+        onClick={() => setCurrentPage(1)}
+        disabled={currentPage === 1}
+        className="px-2 py-1 border rounded disabled:opacity-50"
+      >
+        <FaAngleDoubleLeft />
+      </button>
+      <button
+        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+        disabled={currentPage === 1}
+        className="px-2 py-1 border rounded disabled:opacity-50"
+      >
+        <FaChevronLeft />
+      </button>
+      {Array.from({ length: totalPages }).map((_, i) => {
+        const page = i + 1;
+        if (Math.abs(page - currentPage) <= 1) {
+          return (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-1 border rounded ${
+                page === currentPage
+                  ? "bg-blue-600 text-white"
+                  : "hover:bg-gray-100"
+              }`}
+            >
+              {page}
+            </button>
+          );
+        }
+        return null;
+      })}
+      <button
+        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+        disabled={currentPage === totalPages}
+        className="px-2 py-1 border rounded disabled:opacity-50"
+      >
+        <FaChevronRight />
+      </button>
+      <button
+        onClick={() => setCurrentPage(totalPages)}
+        disabled={currentPage === totalPages}
+        className="px-2 py-1 border rounded disabled:opacity-50"
+      >
+        <FaAngleDoubleRight />
+      </button>
+    </div>
+  );
 
   return (
-
-   <>
-  <div className="container py-4">
-    <div className="card shadow-sm">
-      <div className="card-body">
-        {/* Tiêu đề */}
-        <h2 className="h5 mb-4 fw-bold">Danh sách sản phẩm</h2>
-
-        {/* Thanh công cụ (thêm + tìm kiếm + thuộc tính) */}
-        <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-          <div className="d-flex flex-wrap gap-2">
-            <Link to="/admin/products/create" className="btn btn-primary">
-              + Thêm sản phẩm
-            </Link>
-
+    <>
+      <div
+        style={{ marginLeft: "14rem" }}
+        className="min-h-screen bg-gray-100 p-6"
+      >
+        <div className="container mx-auto bg-white shadow rounded-lg p-6">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold">Danh sách sản phẩm</h2>
             <Link
-              to="/admin/attribute/getall"
-              className="btn btn-info text-white"
-              title="Danh sách thuộc tính"
+              to="/admin/products/create"
+              className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded no-underline hover:no-underline"
             >
-              <i className="fa-solid fa-list me-1"></i>Danh sách thuộc tính
+              <FaPlus className="mr-2" /> Thêm sản phẩm
             </Link>
           </div>
 
-          <div className="d-flex flex-wrap gap-2">
+          {/* Search & Filter */}
+          <div className="flex flex-wrap gap-3 mb-6">
             <input
               type="text"
               value={searchInput}
-              onChange={handleSearchInputChange}
-              onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
-              className="form-control"
+              onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              className="flex-1 border rounded px-3 py-2"
               placeholder="Tìm kiếm theo tên sản phẩm..."
             />
             <select
-              className="form-select"
+              className="border rounded px-3 py-2"
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
@@ -224,204 +170,116 @@ const [selectedBrand, setSelectedBrand] = useState("");
                 </option>
               ))}
             </select>
-            <button className="btn btn-dark" onClick={handleSearchSubmit}>
+            <button
+              onClick={handleSearch}
+              className="px-4 py-2 bg-gray-800 text-white rounded"
+            >
               Tìm kiếm
             </button>
+            {(searchInput || selectedCategory) && (
+              <button
+                onClick={clearFilter}
+                className="px-4 py-2 bg-gray-500 text-white rounded"
+              >
+                Xem tất cả
+              </button>
+            )}
           </div>
-        </div>
 
-        {/* Bảng sản phẩm */}
-        <div className="table-responsive">
-          <table className="table table-bordered table-hover mt-3">
-            <thead className="table-light">
-              <tr>
-                <th>#</th>
-                <th>Tên</th>
-                <th>Ảnh</th>
-                <th>Trạng thái</th>
-                <th>Danh mục</th>
-                <th>Thương hiệu</th>
-                <th>Biến thể</th>
-                <th>Kho</th>
-                <th>Hành động</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.length === 0 ? (
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto border border-gray-300">
+              <thead className="bg-gray-100">
                 <tr>
-                  <td colSpan="9" className="text-center py-3">
-                    Không có sản phẩm nào.
-                  </td>
+                  <th className="border p-2">#</th>
+                  <th className="border p-2">Tên</th>
+                  <th className="border p-2">Ảnh</th>
+                  <th className="border p-2">Trạng thái</th>
+                  <th className="border p-2">Danh mục</th>
+                  <th className="border p-2">Hành động</th>
                 </tr>
-              ) : (
-                products.map((product, index) => (
-                  <tr key={product.id}>
-                    <td>{(currentPage - 1) * recordsPerPage + index + 1}</td>
-                    <td>{product.name}</td>
-                    <td>
-                      <img
-                        src={product.thumbnail || "https://via.placeholder.com/60"}
-                        alt={product.name}
-                        className="img-thumbnail"
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    </td>
-                    <td>
-                      <span
-                        className={`badge ${
-                          product.status === 1 ? "bg-success" : "bg-danger"
-                        }`}
-                      >
-                        {product.status === 1 ? "Hiển thị" : "Ẩn"}
-                      </span>
-                    </td>
-                    <td>{product.category?.name || "Không có"}</td>
-                    <td>{product.brand?.name || "Không có"}</td>
-                    <td className="text-center">
-                      {product.variantCount ?? product.variants?.length ?? 0}
-                    </td>
-                    <td className="text-center">
-                      {product.variants
-                        ? product.variants.reduce(
-                            (sum, v) => sum + (v.stock || 0),
-                            0
-                          )
-                        : 0}
-                    </td>
-                    <td>
-                      <div className="d-flex justify-content-center gap-2">
-                        <Link
-                          to={`/admin/products/detail/${product.id}`}
-                          className="btn btn-success btn-sm"
-                          title="Xem chi tiết"
-                        >
-                          <i className="fa-solid fa-eye"></i>
-                        </Link>
-                        <Link
-                          to={`/admin/products/addVariant/${product.id}`}
-                          className="btn btn-warning btn-sm text-white"
-                          title="Thêm biến thể"
-                        >
-                          <i className="fa-solid fa-pen-to-square"></i>
-                        </Link>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => setSelectedProduct(product)}
-                          title="Xoá sản phẩm"
-                        >
-                          <i className="fa-solid fa-trash"></i>
-                        </button>
-                      </div>
+              </thead>
+              <tbody>
+                {products.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="border p-4 text-center">
+                      Không có sản phẩm nào.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Phân trang */}
-        <div className="d-flex justify-content-center mt-4">
-          <div className="btn-group">
-            <button
-              className="btn btn-outline-secondary"
-              disabled={currentPage === 1}
-              onClick={() => handlePageChange(1)}
-            >
-              <FaAngleDoubleLeft />
-            </button>
-            <button
-              className="btn btn-outline-secondary"
-              disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
-            >
-              <FaChevronLeft />
-            </button>
-
-            {currentPage > 2 && (
-              <>
-                <button
-                  className="btn btn-outline-secondary"
-                  onClick={() => handlePageChange(1)}
-                >
-                  1
-                </button>
-                {currentPage > 3 && <span className="btn disabled">...</span>}
-              </>
-            )}
-
-            {[...Array(totalPages)].map((_, i) => {
-              const page = i + 1;
-              if (page >= currentPage - 1 && page <= currentPage + 1) {
-                return (
-                  <button
-                    key={page}
-                    className={`btn ${
-                      currentPage === page
-                        ? "btn-primary"
-                        : "btn-outline-primary"
-                    }`}
-                    onClick={() => handlePageChange(page)}
-                  >
-                    {page}
-                  </button>
-                );
-              }
-              return null;
-            })}
-
-            {currentPage < totalPages - 1 && (
-              <>
-                {currentPage < totalPages - 2 && (
-                  <span className="btn disabled">...</span>
+                ) : (
+                  products.map((prod, idx) => (
+                    <tr key={prod.id} className="hover:bg-gray-50">
+                      <td className="border p-2 text-center">
+                        {(currentPage - 1) * recordsPerPage + idx + 1}
+                      </td>
+                      <td className="border p-2">{prod.name}</td>
+                      <td className="border p-2 text-center">
+                        <img
+                          src={
+                            prod.thumbnail || "https://via.placeholder.com/60"
+                          }
+                          alt={prod.name}
+                          className="w-12 h-12 object-cover mx-auto rounded"
+                        />
+                      </td>
+                      <td className="border p-2 text-center">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            prod.status === 1
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {prod.status === 1 ? "Hiển thị" : "Ẩn"}
+                        </span>
+                      </td>
+                      <td className="border p-2">
+                        {prod.category?.name || "-"}
+                      </td>
+                      <td className="border p-2 text-center space-x-2">
+                        <Link
+                          to={`/admin/products/detail/${prod.id}`}
+                          className="inline-block px-3 py-1 bg-blue-600 text-white rounded"
+                          title="Xem chi tiết"
+                        >
+                          <FaEye />
+                        </Link>
+                        <Link
+                          to={`/admin/products/addVariant/${prod.id}`}
+                          className="inline-block px-3 py-1 bg-yellow-500 text-white rounded"
+                          title="Thêm biến thể"
+                        >
+                          <FaEdit />
+                        </Link>
+                        <button
+                          onClick={() => setSelectedProduct(prod)}
+                          className="inline-block px-3 py-1 bg-red-600 text-white rounded"
+                          title="Xóa"
+                        >
+                          <FaTrash />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
                 )}
-                <button
-                  className="btn btn-outline-secondary"
-                  onClick={() => handlePageChange(totalPages)}
-                >
-                  {totalPages}
-                </button>
-              </>
-            )}
-
-            <button
-              className="btn btn-outline-secondary"
-              disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
-            >
-              <FaChevronRight />
-            </button>
-            <button
-              className="btn btn-outline-secondary"
-              disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(totalPages)}
-            >
-              <FaAngleDoubleRight />
-            </button>
+              </tbody>
+            </table>
           </div>
+
+          {renderPagination()}
         </div>
       </div>
-    </div>
 
-    {/* Modal xác nhận xoá */}
-    {selectedProduct && (
-      <FormDelete
-        isOpen={true}
-        onClose={() => setSelectedProduct(null)}
-        onConfirm={deleteProduct}
-        message={`Bạn có chắc chắn muốn xóa sản phẩm "${selectedProduct.name}" không?`}
-      />
-    )}
-  </div>
-</>
-
-
-
-
+      {/* Modal Xóa */}
+      {selectedProduct && (
+        <FormDelete
+          isOpen
+          onClose={() => setSelectedProduct(null)}
+          onConfirm={deleteProduct}
+          message={`Bạn có chắc chắn muốn xóa sản phẩm "${selectedProduct.name}"?`}
+        />
+      )}
+    </>
   );
 };
 

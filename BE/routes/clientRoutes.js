@@ -6,6 +6,7 @@ const ProductController = require('../controllers/Client/productController');
 const CategoryController = require('../controllers/Client/categoryController');
 const ShippingController = require('../controllers/Client/shippingController');
 const OrderController = require('../controllers/Client/ordersController');
+const CommentController  = require('../controllers/Client/commentController'); 
 const AddressController = require('../controllers/Client/addressController');
 const UserController = require('../controllers/Client/userControllers');
 const ContactController = require('../controllers/Client/contactController');
@@ -55,5 +56,10 @@ router.put('/users/:id', UserController.updateUserInfo);
 
 //------------------[ ADDRESS ]------------------\
 router.post("/sendEmail", ContactController.sendEmail);
+
+//------------------[ COMMENTS ]------------------  
+router.post('/comments',CommentController.create);
+
+
 
 module.exports = router;

@@ -169,6 +169,8 @@ const EditVariantForm = () => {
 
   return (
     <>
+                <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
+
   <form
     onSubmit={handleSubmit}
     className="container my-5 p-4 bg-white shadow rounded"
@@ -357,6 +359,7 @@ const EditVariantForm = () => {
       </Link>
     </div>
   </form>
+  </div>
 </>
 
   );

@@ -20,14 +20,14 @@ AddressesModel.belongsTo(UserModel, { foreignKey: 'user_id', as: 'user' });
 
 
 // Product - Comment
-ProductModel.hasMany(CommentModel, { foreignKey: 'product_id', as: 'comments' });
-CommentModel.belongsTo(ProductModel, { foreignKey: 'product_id', as: 'commentedProduct' });
+
 
 // User - Comment
+UserModel.hasMany(CommentModel, { foreignKey: 'user_id', as: 'comments' }); // ✅ thêm dòng này
 CommentModel.belongsTo(UserModel, { foreignKey: 'user_id', as: 'user' });
 
+
 // Order - Comment
-CommentModel.belongsTo(OrderModel, { foreignKey: 'order_id', as: 'order' });
 
 // User - Order
 UserModel.hasMany(OrderModel, { foreignKey: 'user_id', as: 'orders' });

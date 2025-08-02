@@ -44,7 +44,7 @@ function AttributeCreate() {
     };
 
     return (
-      <div className="container mt-5">
+            <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
   <div className="card shadow">
     <div className="card-body">
       <h2 className="card-title h4 mb-4">Thêm thuộc tính mới</h2>

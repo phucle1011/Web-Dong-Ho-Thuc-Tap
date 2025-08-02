@@ -218,6 +218,8 @@ export default function OrderTab() {
       } else {
         items = [...orderDetailsMap[orderId.id]];
       }
+      console.log(setOrderDetailsMap());
+      
 
       if (items.length === 0) {
         toast.warning("Không có sản phẩm nào trong đơn hàng.");

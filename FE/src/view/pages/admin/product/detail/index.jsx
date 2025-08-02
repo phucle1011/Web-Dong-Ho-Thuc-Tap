@@ -87,7 +87,7 @@ const AdminProductDetail = () => {
   if (!formData) return <div>Đang tải...</div>;
 
   return (
-   <div className="container mt-4">
+            <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
   <div className="bg-white shadow-sm rounded p-4 border">
     <h2 className="h4 fw-semibold mb-4">Chỉnh sửa sản phẩm</h2>
 

@@ -107,7 +107,7 @@ class OrderController {
                     {
                         model: OrderDetailsModel,
                         as: 'orderDetails',
-                        attributes: ['quantity', 'price'],
+                        attributes: ['id','quantity', 'price'],
                         include: [
                             {
                                 model: ProductVariantsModel,
@@ -117,7 +117,7 @@ class OrderController {
                                     {
                                         model: ProductModel,
                                         as: 'product',
-                                        attributes: ['name']
+                                        attributes: ['id','name']
                                     }
                                 ]
                             }

@@ -101,7 +101,7 @@ const handleCancel = async () => {
 
 
   return (
-    <div className="container bg-white p-4 p-md-5 mt-3 mb-3 shadow rounded">
+            <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
   <h2 className="h4 fw-bold mb-4">Thêm biến thể sản phẩm</h2>
 
   <form onSubmit={handleSubmit}>

@@ -131,7 +131,7 @@ function AttributeGetAll() {
   };
 
   return (
-   <div className="container p-4 bg-white shadow rounded">
+            <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
   <div className="d-flex justify-content-between align-items-center mb-4">
     <h2 className="h5 fw-semibold">Danh sách thuộc tính</h2>
     <Link to="/admin/attribute/create" className="btn btn-primary">

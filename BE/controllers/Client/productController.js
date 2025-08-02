@@ -8,43 +8,72 @@ const { Op } = require('sequelize');
 
 class ProductController {
     // [GET] /products
-    static async getAllProducts(req, res) {
-        try {
-            const { category, search } = req.query;
+   static async getAllProducts(req, res) {
+  try {
+    // 1. Lấy params từ query
+    const {
+      category,
+      search,
+      page = 1,
+      limit = 10
+    } = req.query;
 
-            const where = {};
-            if (category) {
-                where.category_id = category;
-            }
-            if (search) {
-                where[Op.or] = [
-                    { name: { [Op.like]: `%${search}%` } },
-                    { slug: { [Op.like]: `%${search}%` } }
-                ];
-            }
+    // ép kiểu số
+    const pageNum  = parseInt(page,  10) || 1;
+    const limitNum = parseInt(limit, 10) || 10;
+    const offset   = (pageNum - 1) * limitNum;
 
-            const products = await ProductModel.findAll({
-                where,
-                include: [
-                    {
-                        model: CategoryModel,
-                        as: 'category',
-                        attributes: ['id', 'name']
-                    }
-                ],
-                order: [['created_at', 'DESC']]
-            });
-
-            res.status(200).json({
-                status: 200,
-                message: 'Lấy danh sách sản phẩm thành công',
-                data: products
-            });
-        } catch (error) {
-            console.error("Lỗi khi lấy danh sách sản phẩm:", error);
-            res.status(500).json({ status: 500, message: "Lỗi máy chủ", error: error.message });
-        }
+    // 2. Xây dựng điều kiện where
+    const where = {};
+    if (category) {
+      where.category_id = category;
     }
+    if (search) {
+      where[Op.or] = [
+        { name: { [Op.like]: `%${search}%` } },
+        { slug: { [Op.like]: `%${search}%` } }
+      ];
+    }
+
+    // 3. Query với phân trang và đếm tổng
+    const { count, rows } = await ProductModel.findAndCountAll({
+      where,
+      include: [
+        {
+          model: CategoryModel,
+          as: 'category',
+          attributes: ['id', 'name']
+        }
+      ],
+      order: [['created_at', 'DESC']],
+      limit: limitNum,
+      offset
+    });
+
+    // 4. Tính toán tổng số trang
+    const totalPages = Math.ceil(count / limitNum);
+
+    // 5. Trả về dữ liệu kèm pagination
+    res.status(200).json({
+      status: 200,
+      message: 'Lấy danh sách sản phẩm thành công',
+      data: rows,
+      pagination: {
+        totalItems: count,
+        totalPages,
+        currentPage: pageNum,
+        perPage: limitNum
+      }
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách sản phẩm:", error);
+    res.status(500).json({
+      status: 500,
+      message: "Lỗi máy chủ",
+      error: error.message
+    });
+  }
+}
 
     // [GET] /products/:productIdOrSlug
     static async getProductDetail(req, res) {

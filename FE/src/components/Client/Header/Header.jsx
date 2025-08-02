@@ -1,6 +1,6 @@
 // src/components/Header.jsx
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaSearch, FaShoppingCart, FaUser } from "react-icons/fa";
+import { FaSearch, FaShoppingCart } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import axios from "axios";
@@ -15,11 +15,9 @@ const Header = () => {
   const [cookies, , removeCookie] = useCookies(["token", "role"]);
   const [user, setUser] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // State mới: số mục trong giỏ
-  const [cartCount, setCartCount] = useState(0);
-
-  // Thiết lập auth + user
+  // Cập nhật khi location hoặc cookie thay đổi
   useEffect(() => {
     const token = cookies.token;
     const storedUser = localStorage.getItem("user");
@@ -75,6 +73,14 @@ const Header = () => {
     navigate("/login");
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    // Nếu muốn truyền param trong URL: /shop?search=...
+    navigate(`/shop?search=${encodeURIComponent(searchTerm)}`);
+    // Hoặc nếu trang /shop xử lý state:
+    // navigate("/shop", { state: { search: searchTerm } });
+  };
+
   return (
     <header className="header">
       <div className="container-header">
@@ -84,14 +90,19 @@ const Header = () => {
         </Link>
 
         {/* Thanh tìm kiếm */}
-        <div className="search-bar">
-          <input type="text" placeholder="Tìm kiếm sản phẩm..." />
+        <form className="search-bar" onSubmit={handleSearchSubmit}>
+          <input
+            type="text"
+            placeholder="Tìm kiếm sản phẩm..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
           <button type="submit">
             <FaSearch />
           </button>
-        </div>
+        </form>
 
-        {/* Điều hướng */}
+        {/* Điều hướng chính */}
         <nav className="nav">
           <ul className="nav-links">
             <li><Link to="/">Trang chủ</Link></li>
@@ -109,7 +120,10 @@ const Header = () => {
               if (!isAuth) {
                 e.preventDefault();
                 navigate("/login", {
-                  state: { from: "/cart", message: "Vui lòng đăng nhập để xem giỏ hàng" },
+                  state: {
+                    from: "/cart",
+                    message: "Vui lòng đăng nhập để xem giỏ hàng",
+                  },
                 });
               }
             }}
