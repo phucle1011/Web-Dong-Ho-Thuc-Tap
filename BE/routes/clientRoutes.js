@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const AuthController = require('../controllers/Client/authController');
 const CartController = require('../controllers/Client/cartsController');
+const ProductController = require('../controllers/Client/productController');
+const CategoryController = require('../controllers/Client/categoryController');
 const ShippingController = require('../controllers/Client/shippingController');
 const OrderController = require('../controllers/Client/ordersController');
 
@@ -13,6 +15,13 @@ router.post('/login', AuthController.login);
 router.post("/forgot-password", AuthController.forgotPassword);
 router.post("/otp", AuthController.OTP);
 router.post("/reset-password", AuthController.resetPassword);
+//-----------------[Product]------------------
+router.get('/products', ProductController.getAllProducts);
+router.get('/products/:productIdOrSlug', ProductController.getProductDetail);
+router.get('/products/:productIdOrSlug/variants', ProductController.getProductVariants);
+router.get('/products/:productIdOrSlug/variants/:variantId', ProductController.getProductVariantDetail);
+//------------------[ CATEGORY ROUTES ]------------------
+router.get('/category/list', CategoryController.getCategories);
 
 //------------------[ CARTS ]------------------
 router.get("/carts", CartController.getCartByUser);

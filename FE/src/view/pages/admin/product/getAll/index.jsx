@@ -35,9 +35,10 @@ const [selectedBrand, setSelectedBrand] = useState("");
     const fetchCategories = async () => {
       try {
         const res = await axios.get(
-          `${Constants.DOMAIN_API}/admin/category/list`
+          `${Constants.DOMAIN_API}/category/list`
         );
         setCategories(res.data.data || []);
+        
       } catch (error) {
         console.error("Lỗi khi lấy danh mục:", error);
       }

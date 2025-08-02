@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ClientLayout from "./layouts/Client/ClientLayout";
 import Home from "./pages/Client/Home/Home";
-import "./assets/styles/global.css"
+// import "./assets/styles/global.css"
 import Shop from "./pages/Client/Shop/Shop";
 import ContactPage from "./pages/Client/Contact/Contact";
 import ProfilePage from "./pages/Client/Profile/Profile";
@@ -37,11 +37,18 @@ import UserManage from "./view/pages/admin/user/index";
 import AddressManage from "./view/pages/admin/address/index";
 function AdminLayout() {
   return (
-    <div>
-      <HeaderAdmin />
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+  {/* Sidebar HeaderAdmin chiếm 25% */}
+  <div style={{ width: "25%", backgroundColor: "#f5f5f5" }}>
+    <HeaderAdmin />
+  </div>
 
-      <Outlet />
-    </div>
+  {/* Nội dung chính chiếm 75% */}
+  <div style={{ width: "75%", padding: "20px" }}>
+    <Outlet />
+  </div>
+</div>
+
   );
 }
 

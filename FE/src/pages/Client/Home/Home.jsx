@@ -5,7 +5,7 @@ import DealsSlider from "./DealsSlider/DealsSlider";
 import Trends from "./Trends/Trends";
 import CustomerReviews from "./CustomerReviews/CustomerReviews";
 import BlogList from "./BlogList/BlogList";
-import "../../../assets/styles/home.css";
+// import "../../../assets/styles/home.css";
 import BrandLogos from "./BrandLogos/BrandLogos";
 
 const Home = () => {

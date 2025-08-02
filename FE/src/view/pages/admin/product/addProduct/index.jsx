@@ -26,8 +26,7 @@ const AddProduct = () => {
   const fetchData = async () => {
     try {
       const [catRes, brandRes] = await Promise.all([
-        axios.get(`${Constants.DOMAIN_API}/admin/category/list`),
-        axios.get(`${Constants.DOMAIN_API}/admin/brand/list`),
+        axios.get(`${Constants.DOMAIN_API}/category/list`),
       ]);
 
       // Chỉ lấy các category và brand có status = 1
@@ -56,7 +55,7 @@ const AddProduct = () => {
 
       const productData = {
         ...formData,
-        thumbnail: thumbnailUrl,
+        thumbnail: thumbnailUrl.url,
       };
 
       await axios.post(`${Constants.DOMAIN_API}/admin/products`, productData);

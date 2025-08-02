@@ -64,7 +64,9 @@ function AddVariantForm() {
     }
 
     try {
-      const data = { sku, price, stock, attributes, images };
+const imageUrls = images.map(img => img.url);
+const data = { sku, price, stock, attributes, images: imageUrls };
+
       await axios.post(
         `http://localhost:5000/admin/products/${productId}/variants`,
         data
