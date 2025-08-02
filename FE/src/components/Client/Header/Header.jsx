@@ -1,7 +1,10 @@
+// src/components/Header.jsx
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaUser } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
+import axios from "axios";
+import Constants from "../../../Constants";
 import logo from "../../../assets/img/logo.webp";
 import "./header.css";
 
@@ -9,36 +12,64 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
+  const [cookies, , removeCookie] = useCookies(["token", "role"]);
   const [user, setUser] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
 
-  // Cập nhật khi location thay đổi (VD sau login)
+  // State mới: số mục trong giỏ
+  const [cartCount, setCartCount] = useState(0);
+
+  // Thiết lập auth + user
   useEffect(() => {
     const token = cookies.token;
     const storedUser = localStorage.getItem("user");
-
     if (token && storedUser) {
       try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
+        setUser(JSON.parse(storedUser));
         setIsAuth(true);
-      } catch (error) {
-        console.error("Lỗi parse user:", error);
-        setIsAuth(false);
+      } catch {
         setUser(null);
+        setIsAuth(false);
       }
     } else {
-      setIsAuth(false);
       setUser(null);
+      setIsAuth(false);
     }
   }, [location, cookies.token]);
+
+  // Fetch giỏ hàng để lấy count
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      if (!cookies.token) {
+        setCartCount(0);
+        return;
+      }
+      try {
+        const token = cookies.token;
+        const user = JSON.parse(localStorage.getItem("user"));
+        const res = await axios.get(`${Constants.DOMAIN_API}/carts`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            user: user.id,
+          },
+        });
+        // Nếu muốn show số mục: res.data.data.length
+        // Nếu muốn tổng số lượng: sum over .quantity
+        const items = res.data.data || [];
+        const count = items.length;
+        setCartCount(count);
+      } catch (err) {
+        console.error("Lỗi fetchCart trong Header:", err);
+        setCartCount(0);
+      }
+    };
+    fetchCartCount();
+  }, [cookies.token, location.pathname]); // reload khi đổi page hoặc token
 
   const handleLogout = () => {
     removeCookie("token");
     removeCookie("role");
     localStorage.removeItem("user");
-
     setUser(null);
     setIsAuth(false);
     navigate("/login");
@@ -84,18 +115,20 @@ const Header = () => {
             }}
           >
             <FaShoppingCart />
-            <span className="cart-count">3</span>
+            {cartCount > 0 && (
+              <span className="cart-count">{cartCount}</span>
+            )}
           </Link>
 
           {isAuth && user ? (
             <div className="user-menu">
               <button className="user-btn">
                 <img
-                  src={user?.avatar ||  require("../../../assets/img/user-4.jpg")}
+                  src={user.avatar || require("../../../assets/img/user-4.jpg")}
                   alt="avatar"
                   className="user-avatar"
                 />
-                {user?.name || "Tài khoản"}
+                {user.name || "Tài khoản"}
               </button>
               <ul className="dropdown-menu">
                 <li><Link to="/profile">Thông tin</Link></li>

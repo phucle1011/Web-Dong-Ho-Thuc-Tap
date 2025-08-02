@@ -144,43 +144,43 @@ const Cart = ({ cart = true }) => {
     };
 
     const QuantityInput = ({ quantity, onChange, stock }) => {
-  const handleDecrease = () => {
-    if (quantity > 1) onChange(quantity - 1);
-  };
-  const handleIncrease = () => {
-    if (quantity < stock) onChange(quantity + 1);
-    else toast.info("Không thể tăng thêm vì đã đạt số lượng tối đa trong kho");
-  };
+        const handleDecrease = () => {
+            if (quantity > 1) onChange(quantity - 1);
+        };
+        const handleIncrease = () => {
+            if (quantity < stock) onChange(quantity + 1);
+            else toast.info("Không thể tăng thêm vì đã đạt số lượng tối đa trong kho");
+        };
 
-  return (
-    <div className="flex items-center w-[120px] h-[30px] border rounded overflow-hidden">
-      <button
-        type="button"
-        onClick={handleDecrease}
-        className="items-center justify-center border-r border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 mb-2"
-      >
-        –
-      </button>
+        return (
+            <div className="flex items-center w-[120px] h-[30px] border rounded overflow-hidden">
+                <button
+                    type="button"
+                    onClick={handleDecrease}
+                    className="items-center justify-center border-r border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 mb-2"
+                >
+                    –
+                </button>
 
-      <input
-        type="number"
-        min="1"
-        max={stock}
-        value={quantity}
-        readOnly
-        className="flex-1 text-center h-full"
-      />
+                <input
+                    type="number"
+                    min="1"
+                    max={stock}
+                    value={quantity}
+                    readOnly
+                    className="flex-1 text-center h-full"
+                />
 
-      <button
-        type="button"
-        onClick={handleIncrease}
-        className="items-center justify-center border-l border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 mb-2"
-      >
-        +
-      </button>
-    </div>
-  );
-};
+                <button
+                    type="button"
+                    onClick={handleIncrease}
+                    className="items-center justify-center border-l border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 mb-2"
+                >
+                    +
+                </button>
+            </div>
+        );
+    };
 
     const renderCartContent = () => (
         <div className="w-full">
@@ -400,14 +400,29 @@ const Cart = ({ cart = true }) => {
                     <Link
                         to={{
                             pathname: "/checkout",
-                            state: { /* ... */ },
+                            state: {
+                                selectedItems,
+                                cartItems: cartItems.filter(item =>
+                                    selectedItems.includes(item.product_variant_id)
+                                ),
+                                totalPrice,
+                                originalTotalPrice,
+                            },
                         }}
-                        className="no-underline"  // <-- thêm ở đây
+                        className="no-underline"
                         onClick={() => {
-                            /* ... */
+                            const checkoutData = {
+                                selectedItems,
+                                cartItems: cartItems.filter(item =>
+                                    selectedItems.includes(item.product_variant_id)
+                                ),
+                                totalPrice,
+                                originalTotalPrice,
+                            };
+                            localStorage.setItem("checkoutData", JSON.stringify(checkoutData));
                         }}
                     >
-                        <div className="w-100 h-[50px] bg-secondary bg-opacity-25 d-flex justify-content-center align-items-center cursor-not-allowed">
+                        <div className="w-100 h-[50px] bg-secondary bg-opacity-25 d-flex justify-content-center align-items-center">
                             <span className="text-xl fw-semibold">
                                 Tiến hành thanh toán
                             </span>
@@ -415,7 +430,9 @@ const Cart = ({ cart = true }) => {
                     </Link>
                 ) : (
                     <div className="w-100 h-[50px] bg-secondary bg-opacity-25 d-flex justify-content-center align-items-center cursor-not-allowed">
-                        {/* <span className="text-sm fw-semibold text-muted">Tiến hành thanh toán</span> */}
+                        <span className="text-xl fw-semibold">
+                            Tiến hành thanh toán
+                        </span>
                     </div>
                 )}
                 {selectedItems.length === 0 && (

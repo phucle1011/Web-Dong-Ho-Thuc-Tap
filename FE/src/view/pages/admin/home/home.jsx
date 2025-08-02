@@ -123,7 +123,7 @@ function Dashboard() {
   }, [customRange]);
 
   const pieData = {
-    labels: ['Người dùng', 'Loại sản phẩm', 'Sản phẩm', 'Bình luận', 'Đơn hàng', 'Khuyến mãi'],
+    labels: ['Người dùng', 'Loại sản phẩm', 'Sản phẩm', 'Bình luận', 'Đơn hàng'],
     datasets: [{
       label: 'Số lượng',
       data: [
@@ -141,7 +141,7 @@ function Dashboard() {
   };
 
   const totalStats = {
-    labels: ['Người dùng', 'Loại sản phẩm', 'Sản phẩm', 'Bình luận', 'Đơn hàng', 'Khuyến mãi'],
+    labels: ['Người dùng', 'Loại sản phẩm', 'Sản phẩm', 'Bình luận', 'Đơn hàng'],
     datasets: [{
       label: 'Số lượng',
       data: [
@@ -256,36 +256,45 @@ function Dashboard() {
           </div>
 
           <div className="row">
-            <div className="col-lg-8 d-flex align-items-stretch">
-              <div className="card w-100">
-                <div className="card-body">
-                  <div className="d-sm-flex d-block align-items-center justify-content-between mb-9">
-                    <div className="mb-3 mb-sm-0">
-                      {customRange.from ? (
-                        <h5 className="card-title fw-semibold">
-                          Tổng Quan Doanh Thu: {formatVND(totalRevenueSelectedMonth)}
-                        </h5>
-                      ) : (
-                        <h5 className="card-title fw-semibold text-danger">
-                          Vui lòng chọn tháng năm bạn muốn xem doanh thu
-                        </h5>
-                      )}
-                    </div>
-                    <div>
+           <div className="col-lg-8 d-flex align-items-stretch">
+            <div className="card w-100">
+              <div className="card-body">
+                <div className="d-sm-flex d-block align-items-center justify-content-between mb-9">
+                  <div className="mb-3 mb-sm-0">
+                    {customRange.from ? (
+                      <h5 className="card-title fw-semibold">
+                        Tổng Quan Doanh Thu: {formatVND(totalRevenueSelectedMonth)}
+                      </h5>
+                    ) : (
+                      <h5 className="card-title fw-semibold text-danger">
+                        Vui lòng chọn ngày bạn muốn xem doanh thu
+                      </h5>
+                    )}
+                  </div>
+                  <div>
+                    <div className="d-flex gap-2 align-items-center">
                       <input
-                        type="month"
-                        className="form-select"
-                        onChange={handleMonthChange}
-                        value={customRange.from ? customRange.from.slice(0, 7) : ''}
+                        type="date"
+                        className="form-control"
+                        value={customRange.from}
+                        onChange={(e) => setCustomRange({ ...customRange, from: e.target.value })}
+                      />
+                      <span>đến</span>
+                      <input
+                        type="date"
+                        className="form-control"
+                        value={customRange.to}
+                        onChange={(e) => setCustomRange({ ...customRange, to: e.target.value })}
                       />
                     </div>
                   </div>
-                  {customRange.from && (
-                    <Bar data={revenueData} options={barOptionsWithCurrency} />
-                  )}
                 </div>
+                {customRange.from && (
+                  <Bar data={revenueData} options={barOptionsWithCurrency} />
+                )}
               </div>
             </div>
+          </div>
 
             <div className="col-lg-4">
               <div className="row">

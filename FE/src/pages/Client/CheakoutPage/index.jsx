@@ -32,16 +32,15 @@ export default function CheckoutPage() {
     shippingService: "Đang tính...",
     formattedAmount: "0",
   });
-    const [discountInfo, setDiscountInfo] = useState(null);
-  const [finalTotal, setFinalTotal] = useState(0);
-  const [selectedVoucher, setSelectedVoucher] = useState(null);
+  const [discountInfo, setDiscountInfo] = useState(null);
 
-  // Shipping state
   const [shippingData, setShippingData] = useState({
     fee: 0,
     service: "Đang tính...",
     total: 0
   });
+
+  const [originalUser, setOriginalUser] = useState(null);
 
   useEffect(() => {
     if (!location.state && !localStorage.getItem("checkoutData")) {
@@ -588,16 +587,13 @@ export default function CheckoutPage() {
     setIsCalculatingShipping(true);
 
     try {
-
       if (!defaultAddress) {
-        setFinalData(prev => {
-          const amount = Math.max(0, prev.total - prev.voucherDiscount - prev.promoDiscount);
-          return {
-            ...prev,
-            shippingFee: 0,
-            shippingService: "Chưa có địa chỉ",
-            formattedAmount: amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })
-          };
+        setShippingData({
+          fee: 0,
+          service: "Chưa có địa chỉ",
+          total: totalPrice
+            - (discountInfo?.voucherDiscount || 0)
+            - (discountInfo?.promoDiscount || 0)
         });
         return;
       }
@@ -605,10 +601,16 @@ export default function CheckoutPage() {
       const toProvinceId = await getProvinceIdByName(defaultAddress.city);
       if (!toProvinceId) throw new Error("Không tìm thấy mã tỉnh");
 
-      const toDistrictId = await getDistrictIdByProvinceAndName(toProvinceId, defaultAddress.district);
+      const toDistrictId = await getDistrictIdByProvinceAndName(
+        toProvinceId,
+        defaultAddress.district
+      );
       if (!toDistrictId) throw new Error("Không tìm thấy mã quận");
 
-      const toWardCode = await getWardCodeByDistrictAndName(toDistrictId, defaultAddress.ward);
+      const toWardCode = await getWardCodeByDistrictAndName(
+        toDistrictId,
+        defaultAddress.ward
+      );
       if (!toWardCode) throw new Error("Không tìm thấy mã phường");
 
       const warehouse = {
@@ -618,64 +620,70 @@ export default function CheckoutPage() {
       };
 
       const servicePriority = [
-        { "id": 53320, "name": "Giao hàng tiêu chuẩn" },
-        { "id": 53322, "name": "Giao hàng hỏa tốc" },
-        { "id": 53321, "name": "Giao hàng nhanh" },
-        { "id": 53323, "name": "Giao hàng siêu tốc" },
-        { "id": 53324, "name": "Giao hàng tiết kiệm" }
+        { id: 53320, name: "Giao hàng tiêu chuẩn" },
+        { id: 53322, name: "Giao hàng hỏa tốc" },
+        { id: 53321, name: "Giao hàng nhanh" },
+        { id: 53323, name: "Giao hàng siêu tốc" },
+        { id: 53324, name: "Giao hàng tiết kiệm" }
       ];
 
       for (const service of servicePriority) {
         try {
-          const response = await axios.post(`${Constants.DOMAIN_API}/shipping/shipping-fee`, {
-            from_district_id: warehouse.from_district_id,
-            from_ward_code: warehouse.from_ward_code,
-            to_district_id: Number(toDistrictId),
-            to_ward_code: toWardCode,
-            service_id: service.id,
-            weight: 500,
-            length: 20,
-            width: 20,
-            height: 15
-          });
+          const res = await axios.post(
+            `${Constants.DOMAIN_API}/shipping/shipping-fee`,
+            {
+              from_district_id: warehouse.from_district_id,
+              from_ward_code: warehouse.from_ward_code,
+              to_district_id: Number(toDistrictId),
+              to_ward_code: toWardCode,
+              service_id: service.id,
+              weight: 500,
+              length: 20,
+              width: 20,
+              height: 15
+            }
+          );
 
-          if (response.data.success) {
-            const shippingFee = response.data.data.total;
-            const total = totalPrice - (discountInfo?.voucherDiscount || 0) - (discountInfo?.promoDiscount || 0) + shippingFee;
+          if (res.data.success) {
+            const fee = res.data.data.total;
+            const net = totalPrice
+              - (discountInfo?.voucherDiscount || 0)
+              - (discountInfo?.promoDiscount || 0);
+            const orderTotal = net + fee;
 
-            setFinalData({
-              total: totalPrice,
-              shippingFee: shippingFee,
-              shippingService: service.name,
-              promoDiscount: discountInfo?.promoDiscount || 0,
-              voucherDiscount: discountInfo?.voucherDiscount || 0,
-              formattedAmount: Number(total).toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+            setShippingData({
+              fee,
+              service: service.name,
+              total: orderTotal
             });
             return;
           }
-        } catch (error) {
-          console.warn(`Dịch vụ ${service.name} không khả dụng:`, error.message);
+        } catch (err) {
+          console.warn(`Dịch vụ ${service.name} không khả dụng`, err.message);
         }
       }
 
-      setFinalData(prev => {
-        const amount = Math.max(0, prev.total - prev.voucherDiscount - prev.promoDiscount);
-        return {
-          ...prev,
-          shippingFee: 0,
-          shippingService: "Không hỗ trợ giao hàng tới khu vực này",
-          formattedAmount: amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })
-        };
+      const net = totalPrice
+        - (discountInfo?.voucherDiscount || 0)
+        - (discountInfo?.promoDiscount || 0);
+
+      setShippingData({
+        fee: 0,
+        service: "Không hỗ trợ giao hàng tới khu vực này",
+        total: net
       });
 
     } catch (error) {
       console.error("Lỗi tính phí vận chuyển:", error);
-      setFinalData(prev => ({
-        ...prev,
-        shippingFee: 0,
-        shippingService: "Lỗi tính phí",
-        formattedAmount: Number(prev.total - prev.voucherDiscount - prev.promoDiscount).toLocaleString("vi-VN", { style: "currency", currency: "VND" })
-      }));
+      const net = totalPrice
+        - (discountInfo?.voucherDiscount || 0)
+        - (discountInfo?.promoDiscount || 0);
+
+      setShippingData({
+        fee: 0,
+        service: "Lỗi tính phí",
+        total: net
+      });
     } finally {
       setIsCalculatingShipping(false);
     }
@@ -687,175 +695,142 @@ export default function CheckoutPage() {
     }
   }, [defaultAddress, totalPrice]);
 
-  const updateUserInfo = async (userId, updatedData) => {
-    try {
-      const token = localStorage.getItem("token");
-      const user = JSON.parse(localStorage.getItem("user"));
-      const response = await axios.put(
-        `${Constants.DOMAIN_API}/users/${userId}`,
-        updatedData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "user": user.id,
-          },
-        }
-      );
-      return response.data.data;
-    } catch (error) {
-      console.error("Lỗi khi cập nhật thông tin:", error);
-      toast.error("Cập nhật thông tin người dùng thất bại");
-      return null;
-    }
+  const handleUserInfoChange = (field, value) => {
+    setUser((u) => ({ ...u, [field]: value }));
   };
 
-  const handleUserInfoChange = async (field, value) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || !user.id) return;
-
-    const updatedUser = { ...user, [field]: value };
-    setUser(updatedUser);
-
-    const payload = {
-      [field]: value
-    };
-
-    const updatedUserData = await updateUserInfo(user.id, payload);
-    if (updatedUserData) {
-      setUser(updatedUserData);
-    }
-  };
-
-const handleCheckout = async () => {
-    console.log("🚀 handleCheckout được gọi");
-
+  const handleCheckout = async () => {
     if (isSubmitting || isCalculatingShipping) {
-      toast.warning("Vui lòng chờ hệ thống tính toán phí vận chuyển...");
+      toast.warning("Vui lòng chờ hệ thống hoàn tất...");
       return;
     }
 
     if (
-      finalData.shippingService === "Đang tính..." ||
-      finalData.shippingService === "Chưa có địa chỉ"
+      shippingData.service === "Đang tính..." ||
+      shippingData.service === "Chưa có địa chỉ"
     ) {
-      toast.error("Vui lòng chờ hệ thống tính toán phí vận chuyển hoàn tất hoặc thêm địa chỉ giao hàng");
+      toast.error("Vui lòng chờ tính phí vận chuyển hoặc thêm địa chỉ.");
       return;
     }
-
-    if (finalData.shippingService === "Không hỗ trợ giao hàng tới khu vực này") {
-      toast.error("Rất tiếc, chúng tôi chưa hỗ trợ giao hàng tới địa chỉ của bạn");
+    if (shippingData.service === "Không hỗ trợ giao hàng tới khu vực này") {
+      toast.error("Chúng tôi chưa hỗ trợ khu vực này.");
       return;
     }
 
     try {
       setIsSubmitting(true);
-      
-      const selectedPaymentMethod = (document.querySelector('input[name="payment_method"]:checked')?.value || "").trim();
-      console.log("💳 Selected payment method:", selectedPaymentMethod);
 
-      if (!selectedPaymentMethod) {
-        toast.error("Vui lòng chọn phương thức thanh toán");
+      const paymentMethod = document.querySelector(
+        'input[name="payment_method"]:checked'
+      )?.value;
+      if (!paymentMethod) {
+        toast.error("Vui lòng chọn phương thức thanh toán.");
         return;
       }
 
-      // Validate thông tin người dùng
-      const name = user?.name?.trim();
+      const name = user.name?.trim();
+      const phone = user.phone?.trim();
+      const email = user.email?.trim();
       if (!name) {
-        toast.error("Vui lòng nhập họ và tên");
+        toast.error("Vui lòng nhập họ và tên.");
         return;
       }
-
-      const email = user?.email?.trim();
+      const phoneRegex = /^(0[3|5|7|8|9])[0-9]{8}$/;
+      if (!phone || !phoneRegex.test(phone)) {
+        toast.error("Số điện thoại không hợp lệ.");
+        return;
+      }
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!email) {
-        toast.error("Vui lòng nhập email");
+      if (!email || !emailRegex.test(email)) {
+        toast.error("Email không đúng định dạng.");
         return;
-      } else if (!emailRegex.test(email)) {
-        toast.error("Email không đúng định dạng");
+      }
+      if (!defaultAddress?.address_line) {
+        toast.error("Vui lòng chọn hoặc thêm địa chỉ giao hàng.");
         return;
       }
 
-      const phone = user?.phone?.trim();
-      const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
-      if (!phone) {
-        toast.error("Vui lòng nhập số điện thoại");
-        return;
-      } else if (!phoneRegex.test(phone)) {
-        toast.error("Số điện thoại không hợp lệ");
-        return;
+      const updates = {};
+      if (user.name !== originalUser?.name) updates.name = user.name;
+      if (user.phone !== originalUser?.phone) updates.phone = user.phone;
+      if (Object.keys(updates).length > 0) {
+        await axios.put(
+          `${Constants.DOMAIN_API}/users/${user.id}`,
+          updates,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const newUser = { ...user };
+        localStorage.setItem("user", JSON.stringify(newUser));
+        setOriginalUser(newUser);
       }
 
-      if (!defaultAddress || !defaultAddress.address_line) {
-        toast.error("Vui lòng chọn hoặc thêm địa chỉ giao hàng");
-        return;
-      }
-
-      // Chuẩn bị payload
       const payload = {
+        user_id: user.id,
         products: checkoutItems.map(item => ({
-          product_variant_id: item.product_variant_id,
+          variant: {
+            id: item.variant.id,
+            sku: item.variant.sku,
+            price: parseFloat(item.variant.price),
+          },
           quantity: item.quantity,
-          price: parseFloat(item.variant.promotion?.discounted_price || item.variant.price || 0)
         })),
-        customer_name: name,
-        customer_phone: phone,
-        customer_email: email,
-        shipping_address: `${defaultAddress.address_line}, ${defaultAddress.ward}, ${defaultAddress.district}, ${defaultAddress.city}`,
+        customer_name: user.name,
+        customer_phone: user.phone,
+        customer_email: user.email,
+        shipping_address: [defaultAddress.address_line].join(", "),
         note: noteValue,
-        payment_method: selectedPaymentMethod,
-        shipping_fee: finalData.shippingFee,
-        total_amount: finalData.total + finalData.shippingFee,
-        status: selectedPaymentMethod === "COD" ? "pending" : "paid"
+        payment_method: paymentMethod,
+        shipping_fee: shippingData.fee,
+        total_amount: shippingData.total,
+        status: paymentMethod === "COD" ? "pending" : "paid",
       };
 
-      console.log("📤 Gửi đơn hàng với payload:", payload);
 
-      const token = localStorage.getItem("token");
-      const config = {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      if (paymentMethod === "VNPAY") {
+
+        const { data: vnpData } = await axios.post(
+          `${Constants.DOMAIN_API}/orders-vnpay`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (vnpData.success && vnpData.paymentUrl) {
+
+          window.location.href = vnpData.paymentUrl;
+          return;
+        } else {
+          throw new Error(vnpData.message || "Khởi tạo VNPAY thất bại");
         }
-      };
-      let response;
-        response = await axios.post(`${Constants.DOMAIN_API}/orders`, payload, config);
-
-      console.log("📩 Response từ server:", response.data);
-
-      if (response.data.success) {
-        // Xóa sản phẩm đã đặt hàng khỏi giỏ hàng
-        const orderedIds = checkoutItems.map(item => item.product_variant_id);
-        for (const variantId of orderedIds) {
-          await deleteCartItem(variantId);
-        }
-
-        toast.success("Đặt hàng thành công! Mã đơn hàng: " + response.data.order_code);
-        navigate("/order-success", { 
-          state: { 
-            orderId: response.data.order_id,
-            orderCode: response.data.order_code 
-          } 
-        });
-      } else {
-        throw new Error(response.data.message || "Đặt hàng không thành công");
       }
-    } catch (error) {
-      console.error("Lỗi đặt hàng:", error);
-      const errorMsg = error.response?.data?.message || error.message;
-      toast.error(`Lỗi khi đặt hàng: ${errorMsg}`);
-      
-      // Hiển thị chi tiết lỗi trong console để debug
-      if (error.response) {
-        console.error("Chi tiết lỗi từ server:", {
-          status: error.response.status,
-          data: error.response.data,
-          headers: error.response.headers
-        });
+
+      const resp = await axios.post(
+        `${Constants.DOMAIN_API}/orders`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (!resp.data.success) {
+        throw new Error(resp.data.message || "Đặt hàng không thành công");
       }
+
+      for (const vid of checkoutItems.map(i => i.product_variant_id)) {
+        await deleteCartItem(vid);
+      }
+
+      toast.success("Đặt hàng thành công. Cảm ơn bạn đã ủng hộ chúng tôi!");
+      navigate("/cart");
+    } catch (err) {
+      console.error("Lỗi khi đặt hàng:", err);
+      toast.error(err.response?.data?.message || err.message);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (location.pathname !== "/checkout") {
+      localStorage.removeItem("checkoutData");
+    }
+  }, [location.pathname]);
+  
   return (
     <div childrenClasses="pt-0 pb-0">
       <div className="checkout-page-wrapper w-full bg-white pb-[60px]">
@@ -880,10 +855,8 @@ const handleCheckout = async () => {
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="Nguyễn Văn A"
                         value={user?.name || ""}
                         onChange={(e) => handleUserInfoChange("name", e.target.value)}
-                        required
                       />
                     </div>
 
@@ -904,10 +877,8 @@ const handleCheckout = async () => {
                         <input
                           type="tel"
                           className="form-control"
-                          placeholder="0909xxxxxx"
                           value={user?.phone || ""}
                           onChange={(e) => handleUserInfoChange("phone", e.target.value)}
-                          required
                         />
                       </div>
                     </div>
@@ -1155,9 +1126,22 @@ const handleCheckout = async () => {
                           name="payment_method"
                           value="COD"
                           id="cod"
+                          defaultChecked
                         />
                         <label className="form-check-label" htmlFor="cod">
                           Thanh toán khi nhận hàng
+                        </label>
+                      </div>
+                      <div className="form-check mb-3">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name="payment_method"
+                          value="VNPAY"
+                          id="vnpay"
+                        />
+                        <label className="form-check-label" htmlFor="vnpay">
+                          Thanh toán qua VNPAY
                         </label>
                       </div>
                     </div>
@@ -1166,7 +1150,7 @@ const handleCheckout = async () => {
                       type="button"
                       onClick={handleCheckout}
                       disabled={isSubmitting || isCalculatingShipping}
-                      className={`btn btn-dark w-100 mt-3 ${isSubmitting || isCalculatingShipping ? "disabled" : ""}`}
+                      className={` ${isSubmitting || isCalculatingShipping ? "disabled" : ""}`}
                     >
                       {isSubmitting ? (
                         <>
