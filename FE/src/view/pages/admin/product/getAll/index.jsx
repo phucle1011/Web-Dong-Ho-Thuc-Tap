@@ -140,12 +140,22 @@ const AdminProductList = () => {
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">Danh sách sản phẩm</h2>
-            <Link
-              to="/admin/products/create"
-              className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded no-underline hover:no-underline"
-            >
-              <FaPlus className="mr-2" /> Thêm sản phẩm
-            </Link>
+            <div className="flex gap-3">
+  <Link
+    to="/admin/attribute/getall"
+    className="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded no-underline hover:no-underline"
+  >
+    <FaEye className="mr-2" /> Quản lý thuộc tính
+  </Link>
+
+  <Link
+    to="/admin/products/create"
+    className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded no-underline hover:no-underline"
+  >
+    <FaPlus className="mr-2" /> Thêm sản phẩm
+  </Link>
+</div>
+
           </div>
 
           {/* Search & Filter */}

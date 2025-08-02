@@ -111,11 +111,10 @@ const AddProduct = () => {
 
       {/* Mô tả */}
       <div className="col-12">
-        <label className="form-label small fw-medium">Mô tả *</label>
+        <label className="form-label small fw-medium">Mô tả </label>
         <textarea
           rows={4}
           className="form-control form-control-sm"
-          {...register("description", { required: "Mô tả không được để trống" })}
         ></textarea>
         {errors.description && <div className="text-danger small mt-1">{errors.description.message}</div>}
       </div>

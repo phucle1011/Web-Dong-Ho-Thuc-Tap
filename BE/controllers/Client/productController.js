@@ -8,7 +8,7 @@ const { Op } = require('sequelize');
 
 class ProductController {
     // [GET] /products
-   static async getAllProducts(req, res) {
+  static async getAllProducts(req, res) {
   try {
     // 1. Lấy params từ query
     const {
@@ -18,13 +18,14 @@ class ProductController {
       limit = 10
     } = req.query;
 
-    // ép kiểu số
     const pageNum  = parseInt(page,  10) || 1;
     const limitNum = parseInt(limit, 10) || 10;
     const offset   = (pageNum - 1) * limitNum;
 
     // 2. Xây dựng điều kiện where
-    const where = {};
+    const where = {
+      status: 1 // ✅ Chỉ lấy sản phẩm có status = 1
+    };
     if (category) {
       where.category_id = category;
     }
@@ -35,7 +36,7 @@ class ProductController {
       ];
     }
 
-    // 3. Query với phân trang và đếm tổng
+    // 3. Query
     const { count, rows } = await ProductModel.findAndCountAll({
       where,
       include: [
@@ -50,10 +51,8 @@ class ProductController {
       offset
     });
 
-    // 4. Tính toán tổng số trang
     const totalPages = Math.ceil(count / limitNum);
 
-    // 5. Trả về dữ liệu kèm pagination
     res.status(200).json({
       status: 200,
       message: 'Lấy danh sách sản phẩm thành công',
@@ -74,6 +73,7 @@ class ProductController {
     });
   }
 }
+
 
     // [GET] /products/:productIdOrSlug
     static async getProductDetail(req, res) {
