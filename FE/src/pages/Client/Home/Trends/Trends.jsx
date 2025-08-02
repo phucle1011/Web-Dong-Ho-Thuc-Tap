@@ -5,42 +5,42 @@ import "slick-carousel/slick/slick-theme.css";
 import "./Trends.css";
 
 const trends = [
-    {
-        id: 1,
-        title: "Minimalist Chic",
-        desc: "Phong cách tối giản với gam màu trung tính, thiết kế sang trọng.",
-        img: require('../../../../assets/img/MinimalistChic.webp'),
-    },
-    {
-        id: 2,
-        title: "Y2K Revival",
-        desc: "Quay lại thập niên 2000 với croptop, quần cạp trễ và kính bản to.",
-        img: require('../../../../assets/img/Y2KRevival.webp'),
-    },
-    {
-        id: 3,
-        title: "Athleisure",
-        desc: "Phong cách thể thao pha chút thời thượng, thoải mái và sành điệu.",
-        img: require('../../../../assets/img/Athleisure.webp'),
-    },
-    {
-        id: 4,
-        title: "Bohemian Spirit",
-        desc: "Họa tiết hoa văn, váy maxi bay bổng, tua rua, phong cách tự do.",
-        img: require('../../../../assets/img/BohemianSpirit.webp'),
-    },
-    {
-        id: 5,
-        title: "Futuristic Techwear",
-        desc: "Công nghệ kết hợp thời trang, chất liệu phản quang và độc đáo.",
-        img: require('../../../../assets/img/FuturisticTechwear.webp'),
-    },
-    {
-        id: 6,
-        title: "Streetwear Oversized",
-        desc: "Quần áo rộng rãi, hoodie, quần cargo, phong cách cực cool.",
-        img: require('../../../../assets/img/StreetwearOversized.webp'),
-    }
+  {
+    id: 1,
+    title: "Đồng Hồ Tối Giản",
+    desc: "Thiết kế tinh tế, màu sắc trung tính – lựa chọn hoàn hảo cho sự thanh lịch.",
+    img: require('../../../../assets/img/x1.jpeg'),
+  },
+  {
+    id: 2,
+    title: "Phong Cách Retro",
+    desc: "Mang hơi thở cổ điển với thiết kế lấy cảm hứng từ thập niên 2000.",
+    img: require('../../../../assets/img/x2.jpg'),
+  },
+  {
+    id: 3,
+    title: "Đồng Hồ Thể Thao",
+    desc: "Đậm chất năng động, bền bỉ – lý tưởng cho người yêu vận động.",
+    img: require('../../../../assets/img/x3.jpg'),
+  },
+  {
+    id: 4,
+    title: "Phong Cách Boho",
+    desc: "Tự do, phóng khoáng với đồng hồ họa tiết độc đáo và dây đeo nổi bật.",
+    img: require('../../../../assets/img/x4.jpg'),
+  },
+  {
+    id: 5,
+    title: "Công Nghệ Thời Thượng",
+    desc: "Smartwatch hiện đại tích hợp tính năng vượt trội cho cuộc sống thông minh.",
+    img: require('../../../../assets/img/x5.webp'),
+  },
+  {
+    id: 6,
+    title: "Phong Cách Đường Phố",
+    desc: "Đồng hồ kiểu dáng phá cách, mạnh mẽ – khẳng định cá tính riêng.",
+    img: require('../../../../assets/img/x6.png'),
+  }
 ];
 
 const Trends = () => {

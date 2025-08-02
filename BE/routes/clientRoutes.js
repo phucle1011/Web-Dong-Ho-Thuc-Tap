@@ -7,7 +7,7 @@ const CategoryController = require('../controllers/Client/categoryController');
 const ShippingController = require('../controllers/Client/shippingController');
 const OrderController = require('../controllers/Client/ordersController');
 const AddressController = require('../controllers/Client/addressController');
-
+const ContactController = require('../controllers/Client/contactController');
 //------------------[ CLIENT ROUTES ]------------------
 
 router.post('/register', AuthController.register);
@@ -45,5 +45,9 @@ router.get('/address/user/:id', AddressController.getAddressesByUser);
 router.delete('/user/:userId/addresses/:id', AddressController.deleteAddress);
 router.put('/user/:userId/addresses/:id', AddressController.updateAddress);
 router.post('/user/:userId/addresses', AddressController.addAddress);
+
+
+//------------------[ ADDRESS ]------------------\
+router.post("/sendEmail", ContactController.sendEmail);
 
 module.exports = router;

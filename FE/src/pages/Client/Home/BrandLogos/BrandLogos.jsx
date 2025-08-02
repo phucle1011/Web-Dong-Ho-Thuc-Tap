@@ -4,12 +4,12 @@ import "slick-carousel/slick/slick-theme.css";
 import "./brandLogos.css"; 
 
 const brandLogos = [
-    { id: 1, img: require('../../../../assets/img/nike.png'), alt: "Nike" },
-    { id: 2, img: require('../../../../assets/img/logo-adidas.jpg'), alt: "Adidas" },
-    { id: 3, img: require('../../../../assets/img/gucci-logo.jpg'), alt: "Gucci" },
-    { id: 4, img: require('../../../../assets/img/Louis-Vuitton-logo.png'), alt: "Louis Vuitton" },
-    { id: 5, img: require('../../../../assets/img/chanel-logo.png'), alt: "Chanel" },
-    { id: 6, img: require('../../../../assets/img/zara-logo.png'), alt: "Zara" },
+    { id: 1, img: require('../../../../assets/img/g2.webp'), alt: "Nike" },
+    { id: 2, img: require('../../../../assets/img/g3.webp'), alt: "Adidas" },
+    { id: 3, img: require('../../../../assets/img/g4.jpg'), alt: "Gucci" },
+    { id: 4, img: require('../../../../assets/img/g5.png'), alt: "Louis Vuitton" },
+    { id: 5, img: require('../../../../assets/img/g6.webp'), alt: "Chanel" },
+    { id: 6, img: require('../../../../assets/img/g7.png'), alt: "Zara" },
 ];
 
 const BrandLogos = () => {

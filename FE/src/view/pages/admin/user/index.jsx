@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import HeaderAdmin from "../layout/header";
-import "./style.css"; // Giữ đúng tên file CSS bạn đang dùng
 import constant from "../../../../Constants";
+import { FaEdit, FaTrashAlt, FaChevronRight, FaAngleDoubleRight } from "react-icons/fa";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./UserManage.css";
 
 const DEFAULT_LIMIT = 10;
-
-// Bộ lọc mặc định
 const initialFilter = {
   search: "",
   role: "",
@@ -17,18 +18,6 @@ const initialFilter = {
   sortOrder: "DESC",
 };
 
-// Mẫu form rỗng
-const emptyUserForm = {
-  name: "",
-  email: "",
-  password: "",
-  phone: "",
-  avatar: "",
-  role: "user",
-  status: "active",
-};
-
-// Bản đồ hiển thị tiếng Việt cho role/status (giữ nguyên value để gửi lên BE)
 const ROLE_LABEL = {
   user: "Người dùng",
   admin: "Quản trị",
@@ -43,26 +32,15 @@ const STATUS_LABEL = {
 
 const UserManage = () => {
   const [users, setUsers] = useState([]);
-  const [pagination, setPagination] = useState({
-    total: 0,
-    page: 1,
-    limit: DEFAULT_LIMIT,
-    totalPages: 0,
-  });
+  const [pagination, setPagination] = useState({ total: 0, page: 1, limit: DEFAULT_LIMIT, totalPages: 0 });
   const [filter, setFilter] = useState(initialFilter);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-
-  // Trạng thái modal
-  const [openCreate, setOpenCreate] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [createForm, setCreateForm] = useState({ ...emptyUserForm });
-  const [editForm, setEditForm] = useState({ ...emptyUserForm, id: null });
-  const [saving, setSaving] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editForm, setEditForm] = useState({ name: "", email: "", phone: "", status: "active" });
 
   const baseURL = constant.DOMAIN_API;
 
-  // Tạo params gọi API từ bộ lọc
   const params = useMemo(() => {
     const p = {
       page: filter.page,
@@ -76,575 +54,256 @@ const UserManage = () => {
     return p;
   }, [filter]);
 
-  // Lấy danh sách người dùng
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      setErrorMsg("");
       const res = await axios.get(`${baseURL}/admin/users`, { params });
       const { data, pagination } = res.data || {};
       setUsers(Array.isArray(data) ? data : []);
-      if (pagination) {
-        setPagination({
-          total: pagination.total || 0,
-          page: pagination.page || 1,
-          limit: pagination.limit || DEFAULT_LIMIT,
-          totalPages: pagination.totalPages || 0,
-        });
-      } else {
-        // Fallback nếu BE chưa trả pagination
-        setPagination((prev) => ({
-          ...prev,
-          page: params.page || 1,
-          limit: params.limit || DEFAULT_LIMIT,
-        }));
-      }
+      setPagination(pagination || { total: 0, page: 1, totalPages: 0 });
     } catch (err) {
-      console.error("Lỗi khi lấy danh sách người dùng:", err);
-      setErrorMsg(
-        err?.response?.data?.message || "Đã xảy ra lỗi khi lấy danh sách người dùng."
-      );
+      const msg = err?.response?.data?.message || "Lỗi khi lấy danh sách người dùng.";
+      setErrorMsg(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
   };
 
-  // Gọi API khi params thay đổi
   useEffect(() => {
     fetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    params.page,
-    params.limit,
-    params.sortBy,
-    params.sortOrder,
-    params.role,
-    params.status,
-    params.search,
-  ]);
-
-  // ===== Xử lý bộ lọc / sắp xếp / phân trang =====
-  const handleSearchChange = (e) => {
-    setFilter((f) => ({ ...f, search: e.target.value, page: 1 }));
-  };
-
-  const handleRoleChange = (e) => {
-    setFilter((f) => ({ ...f, role: e.target.value, page: 1 }));
-  };
-
-  const handleStatusChange = (e) => {
-    setFilter((f) => ({ ...f, status: e.target.value, page: 1 }));
-  };
-
-  const handleSortByChange = (e) => {
-    setFilter((f) => ({ ...f, sortBy: e.target.value, page: 1 }));
-  };
-
-  const handleSortOrderToggle = () => {
-    setFilter((f) => ({
-      ...f,
-      sortOrder: f.sortOrder === "ASC" ? "DESC" : "ASC",
-      page: 1,
-    }));
-  };
-
-  const goToPage = (newPage) => {
-    if (newPage < 1 || (pagination.totalPages && newPage > pagination.totalPages)) return;
-    setFilter((f) => ({ ...f, page: newPage }));
-  };
-
-  const resetFilter = () => setFilter(initialFilter);
-
-  // ===== Xử lý Tạo / Sửa / Xóa =====
-  const openCreateModal = () => {
-    setCreateForm({ ...emptyUserForm });
-    setOpenCreate(true);
-  };
-
-  const openEditModal = async (id) => {
-    try {
-      setSaving(true);
-      const res = await axios.get(`${baseURL}/admin/users/${id}`);
-      const user = res.data;
-      setEditForm({
-        id: user.id,
-        name: user.name || "",
-        email: user.email || "",
-        password: "", // Để trống, nếu nhập sẽ đổi mật khẩu
-        phone: user.phone || "",
-        avatar: user.avatar || "",
-        role: user.role || "user",
-        status: user.status || "active",
-      });
-      setOpenEdit(true);
-    } catch (err) {
-      console.error("Lỗi lấy chi tiết người dùng:", err);
-      alert(err?.response?.data?.message || "Không lấy được chi tiết người dùng.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleCreateSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setSaving(true);
-      const payload = { ...createForm };
-      if (!payload.name || !payload.email || !payload.password) {
-        alert("Vui lòng nhập đủ Họ tên / Email / Mật khẩu!");
-        return;
-      }
-      await axios.post(`${baseURL}/admin/users`, payload);
-      setOpenCreate(false);
-      await fetchUsers();
-    } catch (err) {
-      console.error("Lỗi tạo người dùng:", err);
-      alert(err?.response?.data?.message || "Đã xảy ra lỗi khi tạo người dùng.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      setSaving(true);
-      const { id, ...data } = editForm;
-      // Nếu mật khẩu để trống => không gửi field password
-      if (!data.password) delete data.password;
-      await axios.put(`${baseURL}/admin/users/${id}`, data);
-      setOpenEdit(false);
-      await fetchUsers();
-    } catch (err) {
-      console.error("Lỗi cập nhật người dùng:", err);
-      alert(err?.response?.data?.message || "Đã xảy ra lỗi khi cập nhật người dùng.");
-    } finally {
-      setSaving(false);
-    }
-  };
+  }, [params]);
 
   const handleDelete = async (id) => {
     const ok = window.confirm("Bạn có chắc chắn muốn xóa người dùng này?");
     if (!ok) return;
     try {
       await axios.delete(`${baseURL}/admin/users/${id}`);
-      // Nếu trang hiện tại chỉ còn 1 bản ghi sau khi xóa -> lùi về trang trước cho mượt
-      if (users.length === 1 && filter.page > 1) {
-        setFilter((f) => ({ ...f, page: f.page - 1 }));
-      } else {
-        await fetchUsers();
-      }
+      toast.success(" Xóa người dùng thành công.");
+      fetchUsers();
     } catch (err) {
-      console.error("Lỗi xóa người dùng:", err);
-      alert(err?.response?.data?.message || "Đã xảy ra lỗi khi xóa người dùng.");
+      toast.error(err?.response?.data?.message || " Lỗi khi xóa người dùng.");
     }
   };
 
-  // Định dạng thời gian hiển thị theo vi-VN
-  const formatDateTime = (dt) => {
-    if (!dt) return "";
+  const handleEditClick = (user) => {
+    setEditingUser(user);
+    setEditForm({
+      name: user.name,
+      email: user.email,
+      phone: user.phone || "",
+      status: user.status,
+    });
+  };
+
+  const handleEditSubmit = async () => {
     try {
-      return new Date(dt).toLocaleString("vi-VN");
-    } catch {
-      return dt;
+      await axios.put(`${baseURL}/admin/users/${editingUser.id}`, editForm);
+      toast.success(" Cập nhật người dùng thành công.");
+      setEditingUser(null);
+      fetchUsers();
+    } catch (err) {
+      toast.error(" Lỗi khi cập nhật người dùng.");
     }
+  };
+
+  const formatDateTime = (dt) => dt ? new Date(dt).toLocaleString("vi-VN") : "";
+
+  const handleSearchChange = (e) => {
+    setFilter({ ...filter, search: e.target.value });
+  };
+
+  const handleSearchSubmit = () => {
+    if (filter.search.trim() === '') {
+      toast.warning("Vui lòng nhập mã đơn hàng hoặc tên người dùng cần tìm.");
+      return;
+    }
+    setFilter({ ...filter, page: 1 });
+  };
+
+  const handlePageChange = (page) => {
+    if (page !== filter.page) setFilter({ ...filter, page });
   };
 
   return (
     <>
       <HeaderAdmin />
-      <div className="comment-container">{/* Tái sử dụng layout giống trang Comment */ }
-        <div className="comment-wrapper">
-          <div className="comment-box">
-            <h2 className="comment-title">DANH SÁCH NGƯỜI DÙNG</h2>
+      <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
+        <div className="container mx-auto bg-white shadow rounded">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-gray-800 mt-3">Danh sách người dùng</h2>
+          </div>
 
-            {/* Hàng bộ lọc */}
-            <div className="filter-row">
-              <input
-                className="filter-input"
-                type="text"
-                placeholder="Tìm theo họ tên, email, số điện thoại…"
-                value={filter.search}
-                onChange={handleSearchChange}
-              />
+          <div className="search-container mb-4 flex gap-2">
+            <input
+              type="text"
+              value={filter.search}
+              onChange={handleSearchChange}
+              placeholder="Vui lòng nhập mã đơn hàng hoặc tên khách hàng..."
+              className="search-input flex-grow border px-4 py-2 rounded"
+            />
+            <button onClick={handleSearchSubmit} className="search-button bg-blue-800 text-white px-4 py-2 rounded">
+              Tìm kiếm
+            </button>
+          </div>
 
-              <select
-                className="filter-select"
-                value={filter.role}
-                onChange={handleRoleChange}
-                title="Quyền hạn"
-              >
-                <option value="">-- Quyền hạn --</option>
-                <option value="user">{ROLE_LABEL.user}</option>
-                <option value="admin">{ROLE_LABEL.admin}</option>
-              </select>
-
-              <select
-                className="filter-select"
-                value={filter.status}
-                onChange={handleStatusChange}
-                title="Trạng thái"
-              >
-                <option value="">-- Trạng thái --</option>
-                <option value="active">{STATUS_LABEL.active}</option>
-                <option value="inactive">{STATUS_LABEL.inactive}</option>
-                <option value="pending">{STATUS_LABEL.pending}</option>
-                <option value="locked">{STATUS_LABEL.locked}</option>
-              </select>
-
-              <select
-                className="filter-select"
-                value={filter.sortBy}
-                onChange={handleSortByChange}
-                title="Sắp xếp theo"
-              >
-                <option value="created_at">Sắp xếp: Ngày tạo</option>
-                <option value="name">Sắp xếp: Họ tên</option>
-                <option value="email">Sắp xếp: Email</option>
-                <option value="role">Sắp xếp: Quyền hạn</option>
-                <option value="status">Sắp xếp: Trạng thái</option>
-              </select>
-
-              <button className="sort-btn" onClick={handleSortOrderToggle} title="Đổi thứ tự sắp xếp">
-                {filter.sortOrder === "ASC" ? "Tăng dần ▲" : "Giảm dần ▼"}
-              </button>
-
-              <button className="add-btn" onClick={openCreateModal}>
-                + Thêm người dùng
-              </button>
-              <button className="reset-btn" onClick={resetFilter}>
-                Đặt lại
-              </button>
-            </div>
-
-            {/* Bảng danh sách */}
-            <div className="table-responsive">
-              <table className="comment-table">
-                <thead>
+          <div className="user-table-container">
+            <table className="user-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Ảnh</th>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th>SĐT</th>
+                  <th>Quyền</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày tạo</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
                   <tr>
-                    <th>ID</th>
-                    <th>Ảnh đại diện</th>
-                    <th>Họ tên</th>
-                    <th>Email</th>
-                    <th>Số điện thoại</th>
-                    <th>Quyền hạn</th>
-                    <th>Trạng thái</th>
-                    <th>Ngày tạo</th>
-                    <th>Hành động</th>
+                    <td colSpan="9" className="text-center py-4">Đang tải dữ liệu...</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {!loading && users.length === 0 && (
-                    <tr>
-                      <td colSpan={9}>Không có dữ liệu.</td>
-                    </tr>
-                  )}
-                  {loading && (
-                    <tr>
-                      <td colSpan={9}>Đang tải…</td>
-                    </tr>
-                  )}
-                  {!loading &&
-                    users.map((u) => (
-                      <tr key={u.id}>
-                        <td>{u.id}</td>
-                        <td>
-                          <img
-                            src={
-                              u.avatar ||
-                              "https://ui-avatars.com/api/?name=" +
-                                encodeURIComponent(u.name || "User")
-                            }
-                            alt={u.name}
-                            className="avatar-img"
-                          />
-                        </td>
-                        <td>{u.name}</td>
-                        <td>{u.email}</td>
-                        <td>{u.phone || "-"}</td>
-                        <td>{ROLE_LABEL[u.role] || u.role}</td>
-                        <td className={`status-badge status-${u.status}`}>
+                ) : users.length === 0 ? (
+                  <tr>
+                    <td colSpan="9" className="text-center py-4">Không có dữ liệu.</td>
+                  </tr>
+                ) : (
+                  users.map((u, idx) => (
+                    <tr key={u.id} className="hover:bg-gray-50">
+                      <td>{(pagination.page - 1) * pagination.limit + idx + 1}</td>
+                      <td>
+                        <img
+                          src={u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || "User")}`}
+                          alt="avatar"
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      </td>
+                      <td>{u.name}</td>
+                      <td>{u.email}</td>
+                      <td>{u.phone || "-"}</td>
+                      <td>{ROLE_LABEL[u.role] || "-"}</td>
+                      <td>
+                        <span className={`status-label status-${u.status}`}>
                           {STATUS_LABEL[u.status] || u.status}
-                        </td>
-                        <td>{formatDateTime(u.created_at)}</td>
-                        <td>
+                        </span>
+                      </td>
+                      <td>{formatDateTime(u.created_at)}</td>
+                      <td>
+                        <div className="flex justify-center items-center gap-2">
                           <button
-                            className="edit-btn"
-                            onClick={() => openEditModal(u.id)}
+                            className="w-9 h-9 bg-yellow-500 text-white flex items-center justify-center rounded"
+                            onClick={() => handleEditClick(u)}
                           >
-                            Sửa
+                            <FaEdit size={18} />
                           </button>
                           <button
-                            className="delete-btn"
+                            className="w-9 h-9 bg-red-600 text-white flex items-center justify-center rounded"
                             onClick={() => handleDelete(u.id)}
                           >
-                            Xóa
+                            <FaTrashAlt size={18} />
                           </button>
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-            {/* Phân trang */}
-            <div className="pagination-row">
-              <button
-                className="page-btn"
-                disabled={filter.page <= 1}
-                onClick={() => goToPage(filter.page - 1)}
-              >
-                « Trước
+          <div className="flex justify-center items-center gap-2 py-4">
+            {pagination.page > 1 && (
+              <button onClick={() => handlePageChange(pagination.page - 1)} className="px-3 py-1 border rounded bg-[#1e40af] text-white">
+                <FaChevronRight className="rotate-180" />
               </button>
-              <span className="page-info">
-                Trang {pagination.page} / {pagination.totalPages || 1}
-              </span>
-              <button
-                className="page-btn"
-                disabled={
-                  pagination.totalPages
-                    ? filter.page >= pagination.totalPages
-                    : users.length < filter.limit
-                }
-                onClick={() => goToPage(filter.page + 1)}
-              >
-                Sau »
+            )}
+            {[...Array(pagination.totalPages)].map((_, i) => {
+              const page = i + 1;
+              if (page >= pagination.page - 1 && page <= pagination.page + 1) {
+                return (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`px-3 py-1 border rounded ${pagination.page === page
+                      ? "bg-[#1e40af] text-white"
+                      : "bg-[#1e40af] text-white hover:bg-[#1e40af]/90"}`}
+                  >
+                    {page}
+                  </button>
+                );
+              }
+              return null;
+            })}
+            {pagination.page < pagination.totalPages && (
+              <button onClick={() => handlePageChange(pagination.page + 1)} className="px-3 py-1 border rounded bg-[#1e40af] text-white">
+                <FaChevronRight />
               </button>
-
-              <select
-                className="filter-select"
-                value={filter.limit}
-                onChange={(e) =>
-                  setFilter((f) => ({
-                    ...f,
-                    limit: Number(e.target.value),
-                    page: 1,
-                  }))
-                }
-                title="Số dòng mỗi trang"
-              >
-                <option value={5}>5 / trang</option>
-                <option value={10}>10 / trang</option>
-                <option value={20}>20 / trang</option>
-                <option value={50}>50 / trang</option>
-              </select>
-            </div>
+            )}
+            {pagination.page < pagination.totalPages && (
+              <button onClick={() => handlePageChange(pagination.totalPages)} className="px-3 py-1 border rounded bg-[#1e40af] text-white">
+                <FaAngleDoubleRight />
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Modal Thêm */}
-      {openCreate && (
-        <div className="modal-overlay" onClick={() => setOpenCreate(false)}>
-          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-            <h3 className="modal-title">Thêm người dùng</h3>
-            <form onSubmit={handleCreateSubmit} className="modal-form">
-              <div className="form-grid">
-                <div className="form-field">
-                  <label>Họ tên</label>
-                  <input
-                    type="text"
-                    value={createForm.name}
-                    onChange={(e) =>
-                      setCreateForm((s) => ({ ...s, name: e.target.value }))
-                    }
-                    required
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    value={createForm.email}
-                    onChange={(e) =>
-                      setCreateForm((s) => ({ ...s, email: e.target.value }))
-                    }
-                    required
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Mật khẩu</label>
-                  <input
-                    type="password"
-                    value={createForm.password}
-                    onChange={(e) =>
-                      setCreateForm((s) => ({ ...s, password: e.target.value }))
-                    }
-                    required
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Số điện thoại</label>
-                  <input
-                    type="text"
-                    value={createForm.phone}
-                    onChange={(e) =>
-                      setCreateForm((s) => ({ ...s, phone: e.target.value }))
-                    }
-                    placeholder="VD: 0912345678"
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Ảnh đại diện (URL)</label>
-                  <input
-                    type="text"
-                    value={createForm.avatar}
-                    onChange={(e) =>
-                      setCreateForm((s) => ({ ...s, avatar: e.target.value }))
-                    }
-                    placeholder="https://..."
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Quyền hạn</label>
-                  <select
-                    value={createForm.role}
-                    onChange={(e) =>
-                      setCreateForm((s) => ({ ...s, role: e.target.value }))
-                    }
-                  >
-                    <option value="user">{ROLE_LABEL.user}</option>
-                    <option value="admin">{ROLE_LABEL.admin}</option>
-                  </select>
-                </div>
-                <div className="form-field">
-                  <label>Trạng thái</label>
-                  <select
-                    value={createForm.status}
-                    onChange={(e) =>
-                      setCreateForm((s) => ({ ...s, status: e.target.value }))
-                    }
-                  >
-                    <option value="active">{STATUS_LABEL.active}</option>
-                    <option value="inactive">{STATUS_LABEL.inactive}</option>
-                    <option value="pending">{STATUS_LABEL.pending}</option>
-                    <option value="locked">{STATUS_LABEL.locked}</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="modal-actions">
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setOpenCreate(false)}
-                >
-                  Hủy
-                </button>
-                <button type="submit" className="save-btn" disabled={saving}>
-                  {saving ? "Đang lưu…" : "Lưu"}
-                </button>
-              </div>
-              {!!errorMsg && <p className="error-text">{errorMsg}</p>}
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Sửa */}
-      {openEdit && (
-        <div className="modal-overlay" onClick={() => setOpenEdit(false)}>
-          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-            <h3 className="modal-title">Cập nhật người dùng</h3>
-            <form onSubmit={handleEditSubmit} className="modal-form">
-              <div className="form-grid">
-                <div className="form-field">
-                  <label>Họ tên</label>
-                  <input
-                    type="text"
-                    value={editForm.name}
-                    onChange={(e) =>
-                      setEditForm((s) => ({ ...s, name: e.target.value }))
-                    }
-                    required
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    value={editForm.email}
-                    onChange={(e) =>
-                      setEditForm((s) => ({ ...s, email: e.target.value }))
-                    }
-                    required
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Mật khẩu (để trống nếu không đổi)</label>
-                  <input
-                    type="password"
-                    value={editForm.password}
-                    onChange={(e) =>
-                      setEditForm((s) => ({ ...s, password: e.target.value }))
-                    }
-                    placeholder="••••••••"
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Số điện thoại</label>
-                  <input
-                    type="text"
-                    value={editForm.phone}
-                    onChange={(e) =>
-                      setEditForm((s) => ({ ...s, phone: e.target.value }))
-                    }
-                    placeholder="VD: 0912345678"
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Ảnh đại diện (URL)</label>
-                  <input
-                    type="text"
-                    value={editForm.avatar}
-                    onChange={(e) =>
-                      setEditForm((s) => ({ ...s, avatar: e.target.value }))
-                    }
-                    placeholder="https://..."
-                  />
-                </div>
-                <div className="form-field">
-                  <label>Quyền hạn</label>
-                  <select
-                    value={editForm.role}
-                    onChange={(e) =>
-                      setEditForm((s) => ({ ...s, role: e.target.value }))
-                    }
-                  >
-                    <option value="user">{ROLE_LABEL.user}</option>
-                    <option value="admin">{ROLE_LABEL.admin}</option>
-                  </select>
-                </div>
-                <div className="form-field">
-                  <label>Trạng thái</label>
-                  <select
-                    value={editForm.status}
-                    onChange={(e) =>
-                      setEditForm((s) => ({ ...s, status: e.target.value }))
-                    }
-                  >
-                    <option value="active">{STATUS_LABEL.active}</option>
-                    <option value="inactive">{STATUS_LABEL.inactive}</option>
-                    <option value="pending">{STATUS_LABEL.pending}</option>
-                    <option value="locked">{STATUS_LABEL.locked}</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="modal-actions">
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setOpenEdit(false)}
-                >
-                  Hủy
-                </button>
-                <button type="submit" className="save-btn" disabled={saving}>
-                  {saving ? "Đang lưu…" : "Cập nhật"}
-                </button>
-              </div>
-              {!!errorMsg && <p className="error-text">{errorMsg}</p>}
-            </form>
+      {/* Modal chỉnh sửa */}
+      {editingUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-md w-full max-w-md">
+            <h3 className="text-lg font-bold mb-4">Chỉnh sửa người dùng</h3>
+            <div className="space-y-4">
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                placeholder="Họ tên"
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+              />
+              <input
+                type="email"
+                className="w-full p-2 border rounded"
+                placeholder="Email"
+                value={editForm.email}
+                onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+              />
+              <input
+                type="text"
+                className="w-full p-2 border rounded"
+                placeholder="SĐT"
+                value={editForm.phone}
+                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+              />
+              <select
+                className="w-full p-2 border rounded"
+                value={editForm.status}
+                onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
+              >
+                <option value="active">Đang hoạt động</option>
+                <option value="inactive">Ngưng hoạt động</option>
+                <option value="pending">Chờ duyệt</option>
+                <option value="locked">Bị khóa</option>
+              </select>
+            </div>
+            <div className="flex justify-end gap-2 mt-6">
+              <button
+                onClick={() => setEditingUser(null)}
+                className="px-4 py-2 bg-gray-300 rounded"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleEditSubmit}
+                className="px-4 py-2 bg-blue-600 text-white rounded"
+              >
+                Lưu
+              </button>
+            </div>
           </div>
         </div>
       )}

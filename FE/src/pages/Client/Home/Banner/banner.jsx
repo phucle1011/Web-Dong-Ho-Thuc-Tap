@@ -5,11 +5,11 @@ import "slick-carousel/slick/slick-theme.css";
 import "./banner.css";
 
 const banners = [
-    { id: 1, title: "Thời Trang Xu Hướng 2025", desc: "Khám phá bộ sưu tập mới nhất tại Poly Fashion Shop", img: require('../../../../assets/img/xuhuong.webp') },
-    { id: 2, title: "Bộ Sưu Tập Hè", desc: "Phong cách năng động cho mùa hè rực rỡ", img: require('../../../../assets/img/muahe.webp') },
-    { id: 3, title: "Thời Trang Công Sở", desc: "Lịch lãm, chuyên nghiệp, phù hợp môi trường làm việc", img: require('../../../../assets/img/congso.webp') },
-    { id: 4, title: "Streetwear Cá Tính", desc: "Khám phá phong cách đường phố cực chất", img: require('../../../../assets/img/catinh.webp') },
-    { id: 5, title: "Sale Cuối Năm", desc: "Giảm giá cực sốc lên đến 50%", img: require('../../../../assets/img/sale.webp') },
+    { id: 1, title: "Thời Trang Xu Hướng 2025", desc: "Khám phá bộ sưu tập mới nhất tại Poly Fashion Shop", img: require('../../../../assets/img/b6.jpg') },
+    { id: 2, title: "Bộ Sưu Tập Hè", desc: "Phong cách năng động cho mùa hè rực rỡ", img: require('../../../../assets/img/b2.jpg') },
+    { id: 3, title: " Công Sở", desc: "Lịch lãm, chuyên nghiệp, phù hợp môi trường làm việc", img: require('../../../../assets/img/b4.webp') },
+    { id: 4, title: "Lịch Lãm", desc: "Đậm chất quý ông", img: require('../../../../assets/img/b5.jpg') },
+    { id: 5, title: "Sale Cuối Năm", desc: "Giảm giá cực sốc lên đến 50%", img: require('../../../../assets/img/b7.jpg') },
 ];
 
 const BannerSlider = () => {

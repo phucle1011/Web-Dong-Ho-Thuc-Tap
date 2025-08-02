@@ -35,7 +35,8 @@ import Attribute from "./view/pages/admin/product/attribute/getAll";
 import AttributeEdit from "./view/pages/admin/product/attribute/detail";
 import AttributeCreate from "./view/pages/admin/product/attribute/create";
 import UserManage from "./view/pages/admin/user/index";
-import AddressManage from "./view/pages/admin/address/index";
+import AddressManage from "./view/pages/admin/address/getall/index";
+import AddressManagedetail from "./view/pages/admin/address/detail/index";
 function AdminLayout() {
   return (
     <div>
@@ -80,6 +81,7 @@ function App() {
           </Route>
           <Route path="address">
             <Route path="getAll" element={<AddressManage />} />
+            <Route path="detail/:id" element={<AddressManagedetail />} />
           </Route>
           <Route path="categories">
             <Route path="getAll" element={<CategoryGetAll />} />
