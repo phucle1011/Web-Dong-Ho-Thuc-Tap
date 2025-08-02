@@ -4,6 +4,7 @@ import axios from "axios";
 import Constants from "../../../../../Constants.jsx";
 import { toast } from "react-toastify";
 import HeaderAdmin from "../../layout/header";
+import FormDelete from "../../../../components/formDelete/index.jsx";
 import "./category.css";
 
 import {
@@ -43,28 +44,24 @@ function CategoryGetAll() {
         }
     };
 
-    const deleteCategory = async () => {
-        if (!selectedCategory) return;
-
-        try {
-            await axios.delete(`${Constants.DOMAIN_API}/admin/categories/delete/${selectedCategory.id}`);
-            toast.success("Xóa danh mục thành công");
-            if (categories.length === 1 && currentPage > 1) {
-                setCurrentPage(currentPage - 1);
-            } else {
-                getCategories(currentPage, searchTerm);
-            }
-        } catch (error) {
-            console.error("Lỗi khi xóa danh mục:", error);
-            if (error.response?.data?.error?.includes("foreign key constraint fails")) {
-                toast.error("Không thể xóa vì có sản phẩm đang sử dụng danh mục này.");
-            } else {
-                toast.error("Xóa thất bại. Vui lòng thử lại.");
-            }
-        } finally {
-            setSelectedCategory(null);
-        }
-    };
+  // thay vì setSelectedCategory -> show modal, mình sẽ dùng confirm:
+const handleDeleteClick = (cat) => {
+  const ok = window.confirm(`Xóa danh mục "${cat.name}"?`);
+  if (!ok) return;
+  axios.delete(`${Constants.DOMAIN_API}/admin/categories/delete/${cat.id}`)
+    .then(() => {
+      toast.success("Xóa thành công!");
+      // reload data
+      const isLast = categories.length === 1 && currentPage > 1;
+      setCurrentPage(isLast ? currentPage - 1 : currentPage);
+    })
+    .catch(err => {
+      const msg = err.response?.data?.error?.includes("foreign key")
+        ? "Không thể xóa do ràng buộc sản phẩm."
+        : "Xóa thất bại.";
+      toast.error(msg);
+    });
+};
 
     const handleSearch = () => {
         setCurrentPage(1);
@@ -85,7 +82,7 @@ function CategoryGetAll() {
 
     const renderPagination = () => {
         return (
-            <div className="d-flex justify-content-center mt-3">
+            <div className="d-flex justify-content-center mt-3 mb-4">
                 <div className="d-flex align-items-center flex-wrap">
                     <button
                         disabled={currentPage === 1}
@@ -245,8 +242,8 @@ function CategoryGetAll() {
                                             </Link>
 
                                             <button
-                                                onClick={() => setSelectedCategory(cat)}
-                                                className="btn btn-danger d-flex align-items-center justify-content-center p-0"
+                                                onClick={() => handleDeleteClick(cat)}
+    className="w-9 h-9 bg-red-600 text-white flex items-center justify-center rounded"
                                                 style={{ width: '36px', height: '36px' }}
                                             >
                                                 <FaTrashAlt style={{ color: 'white', width: '18px', height: '18px' }} />
@@ -261,33 +258,13 @@ function CategoryGetAll() {
                     {renderPagination()}
                 </div>
             </div>
-            {selectedCategory && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center h-screen">
-                    <div className="bg-white p-6 rounded shadow-lg text-center max-w-sm w-full">
-                        <div className="text-red-600 text-4xl mb-3">
-                            <FaTrashAlt className="mx-auto" />
-                        </div>
-                        <h3 className="text-lg font-semibold mb-2">Xác nhận xóa</h3>
-                        <p className="text-gray-600 mb-6">
-                            Bạn có chắc chắn muốn xóa danh mục <strong>"{selectedCategory.name}"</strong> không?
-                        </p>
-                        <div className="flex justify-center gap-4">
-                            <button
-                                onClick={deleteCategory}
-                                className="bg-red-600 hover:bg-red-800 text-white px-4 py-2 rounded"
-                            >
-                                Xóa
-                            </button>
-                            <button
-                                onClick={() => setSelectedCategory(null)}
-                                className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
-                            >
-                                Hủy
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {/* <FormDelete
+        isOpen={!!selectedCategory}
+        onClose={() => setSelectedCategory(null)}
+        onConfirm={deleteCategory}
+        message={`Xóa danh mục "${selectedCategory?.name}"?`}
+        Id={selectedCategory?.id}
+      /> */}
         </>
     );
 }

@@ -68,9 +68,9 @@ function OrderDetail() {
             <h2 className="text-2xl font-bold text-red-500 mt-5">Chi tiết đơn hàng</h2>
             <div className="d-flex justify-content-between align-items-center mb-4">
               <h1 className="h5 m-0 fw-bold">Thông tin khách hàng</h1>
-              <button onClick={() => window.print()} className="btn btn-primary">
+              {/* <button onClick={() => window.print()} className="btn btn-primary">
                 In hóa đơn
-              </button>
+              </button> */}
             </div>
 
             <div className="row gy-2 text-sm">

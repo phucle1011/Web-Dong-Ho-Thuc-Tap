@@ -1,34 +1,66 @@
-import { FaExclamationTriangle } from "react-icons/fa";
+// src/components/FormDelete/index.jsx
 
-export default function FormDelete({ isOpen, onClose, onConfirm, message, Id }) {
-    if (!isOpen) return null;
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { FaExclamationTriangle } from 'react-icons/fa';
 
-    const handleConfirm = () => {
-        onConfirm({ id: Id });
-    };
+export default function FormDelete({ isOpen, onClose, onConfirm, message, idToDelete }) {
+  if (!isOpen) return null;
+  const modalRoot = document.getElementById('modal-root');
+  if (!modalRoot) return null;
 
-    return (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-sm w-full">
-                <FaExclamationTriangle className="text-red-600 text-4xl mx-auto mb-3" />
-                <h3 className="text-lg font-semibold mb-2">Xác nhận xóa</h3>
-                <p className="text-gray-600 mb-6">{message || "Bạn có chắc chắn muốn xóa không?"}</p>
+  const overlayStyle = {
+    position: 'fixed',
+    top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999,
+  };
+  const boxStyle = {
+    backgroundColor: 'white',
+    padding: '1.5rem',
+    borderRadius: '0.5rem',
+    boxShadow: '0 10px 15px rgba(0,0,0,0.1)',
+    maxWidth: '28rem',
+    width: '90%',
+    textAlign: 'center',
+  };
+  const btnBase = {
+    padding: '0.5rem 1rem',
+    border: 'none',
+    borderRadius: '0.375rem',
+    cursor: 'pointer',
+    color: 'white',
+  };
 
-                <div className="flex justify-center gap-4">
-                    <button
-                        onClick={handleConfirm}
-                        className="bg-red-600 hover:bg-red-800 text-white px-4 py-2 rounded-md"
-                    >
-                        Xóa
-                    </button>
-                    <button
-                        onClick={onClose}
-                        className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md"
-                    >
-                        Hủy
-                    </button>
-                </div>
-            </div>
+  return ReactDOM.createPortal(
+    <div style={overlayStyle}>
+      <div style={boxStyle}>
+        <FaExclamationTriangle style={{ fontSize: '2.5rem', color: '#dc2626', marginBottom: '0.5rem' }} />
+        <h3 style={{ marginBottom: '0.75rem', fontSize: '1.125rem', fontWeight: 600 }}>
+          Xác nhận xóa
+        </h3>
+        <p style={{ color: '#4b5563', marginBottom: '1rem' }}>
+          {message || 'Bạn có chắc chắn muốn xóa mục này?'}
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem' }}>
+          <button
+            onClick={() => onConfirm(idToDelete)}
+            style={{ ...btnBase, backgroundColor: '#dc2626' }}
+          >
+            Xóa
+          </button>
+          <button
+            onClick={onClose}
+            style={{ ...btnBase, backgroundColor: '#6b7280' }}
+          >
+            Hủy
+          </button>
         </div>
-    );
+      </div>
+    </div>,
+    modalRoot
+  );
 }
