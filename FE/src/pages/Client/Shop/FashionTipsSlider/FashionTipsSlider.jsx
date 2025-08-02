@@ -9,38 +9,45 @@ class FashionTipsSlider extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      articles: [
-        {
-          id: 1,
-          title: "5 Cách Phối Đồ Với Áo Blazer Để Trông Sành Điệu Hơn",
-          image: require("../../../../assets/img/5cachphoido.webp"),
-          link: "#",
-        },
-        {
-          id: 2,
-          title: "Mặc Gì Cho Ngày Hẹn Hò? Gợi Ý Outfit Đẹp Mê",
-          image: require("../../../../assets/img/macgichongayhenho.webp"),
-          link: "#",
-        },
-        {
-          id: 3,
-          title: "Mix & Match: Cách Phối Đồ Với Giày Sneaker",
-          image: require("../../../../assets/img/cachphoidovoisneaker.webp"),
-          link: "#",
-        },
-        {
-          id: 4,
-          title: "Bí Quyết Chọn Màu Sắc Trang Phục Hợp Tone Da",
-          image: require("../../../../assets/img/mausactrangphucphuhopvoimauda.webp"),
-          link: "#",
-        },
-        {
-          id: 5,
-          title: "Xu Hướng Thời Trang 2025 – Những Items Không Thể Bỏ Lỡ",
-          image: require("../../../../assets/img/xuhuong2025.webp"),
-          link: "#",
-        },
-      ],
+articles: [
+  {
+    id: 1,
+    title: "Khám Phá Bộ Sưu Tập Đồng Hồ Thụy Sĩ Cao Cấp",
+    image: require("../../../../assets/img/r1.jpg"),
+    link: "#",
+  },
+  {
+    id: 2,
+    title: "Top 5 Mẫu Đồng Hồ Nam Bán Chạy Nhất 2025",
+    image: require("../../../../assets/img/r2.jpg"),
+    link: "#",
+  },
+  {
+    id: 3,
+    title: "Đồng Hồ Nữ Thanh Lịch Cho Mọi Phong Cách",
+    image: require("../../../../assets/img/r3.jpg"),
+    link: "#",
+  },
+  {
+    id: 4,
+    title: "Bí Quyết Chọn Đồng Hồ Hợp Với Cổ Tay",
+    image: require("../../../../assets/img/r4.jpg"),
+    link: "#",
+  },
+  {
+    id: 5,
+    title: "Đồng Hồ Thông Minh – Xu Hướng Mới Của Giới Trẻ",
+    image: require("../../../../assets/img/r5.jpg"),
+    link: "#",
+  },
+  {
+    id: 6,
+    title: "Ưu Đãi Cực Sốc Khi Mua Đồng Hồ Chính Hãng",
+    image: require("../../../../assets/img/r6.jpg"),
+    link: "#",
+  },
+]
+
     };
   }
 
@@ -61,7 +68,7 @@ class FashionTipsSlider extends Component {
 
     return (
       <div className="fashion-slider-container">
-        <h2 className="fashion-slider-title">Mẹo Phối Đồ & Xu Hướng Thời Trang</h2>
+        <h2 className="fashion-slider-title">Mẹo Chọn Đồng Hồ </h2>
         <Slider {...settings}>
           {this.state.articles.map(function (article) {
             return (
