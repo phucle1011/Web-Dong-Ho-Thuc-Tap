@@ -58,30 +58,26 @@ class AddressController {
     }
   }
 
-static async getAddressesByUser(req, res) {
-  const { id: userId } = req.params; // ✅ lấy từ URL param
+  static async getAddressesByUser(req, res) {
+    const userId = req.headers["user"];
+    try {
+      const addresses = await AddressModel.findAll({
+        where: { user_id: userId },
+        include: [
+          {
+            model: UserModel,
+            as: 'user',
+            attributes: ['id', 'name', 'email']
+          }
+        ]
+      });
 
-  try {
-    const user = await UserModel.findByPk(userId, {
-      attributes: ['id', 'name', 'email', 'status'],
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: 'Không tìm thấy người dùng' });
+      return res.status(200).json({ success: true, data: addresses });
+    } catch (error) {
+      console.error('Error in AddressController.getAddressesByUser:', error);
+      return res.status(500).json({ success: false, message: 'Lỗi server khi lấy địa chỉ theo user' });
     }
-
-    const addresses = await AddressModel.findAll({
-      where: { user_id: userId },
-      order: [['is_default', 'DESC'], ['created_at', 'DESC']],
-    });
-
-    return res.status(200).json({ user, addresses });
-  } catch (error) {
-    console.error('Error in AddressController.getAddressesByUser:', error);
-    return res.status(500).json({ success: false, message: 'Lỗi server khi lấy địa chỉ theo user' });
   }
-}
-
 
   static async addAddress(req, res) {
     const {
