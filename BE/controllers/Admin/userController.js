@@ -1,7 +1,7 @@
 // controllers/Admin/userController.js
 const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
-const User = require('../../models/userModel'); // giữ nguyên theo cấu trúc của bạn
+const User = require('../../models/usersModel'); // giữ nguyên theo cấu trúc của bạn
 
 // ✅ Nhúng trực tiếp hàm phân trang, không cần utils/pagination
 function buildPagination({ page = 1, limit = 10 }) {
