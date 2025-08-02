@@ -1,10 +1,7 @@
-// src/components/Header.jsx
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart } from "react-icons/fa";
 import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
-import axios from "axios";
-import Constants from "../../../Constants";
 import logo from "../../../assets/img/logo.webp";
 import "./header.css";
 
@@ -16,11 +13,13 @@ const Header = () => {
   const [user, setUser] = useState(null);
   const [isAuth, setIsAuth] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+const [cartCount, setCartCount] = useState(0);
 
   // Cập nhật khi location hoặc cookie thay đổi
   useEffect(() => {
     const token = cookies.token;
     const storedUser = localStorage.getItem("user");
+
     if (token && storedUser) {
       try {
         setUser(JSON.parse(storedUser));
@@ -34,35 +33,6 @@ const Header = () => {
       setIsAuth(false);
     }
   }, [location, cookies.token]);
-
-  // Fetch giỏ hàng để lấy count
-  useEffect(() => {
-    const fetchCartCount = async () => {
-      if (!cookies.token) {
-        setCartCount(0);
-        return;
-      }
-      try {
-        const token = cookies.token;
-        const user = JSON.parse(localStorage.getItem("user"));
-        const res = await axios.get(`${Constants.DOMAIN_API}/carts`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            user: user.id,
-          },
-        });
-        // Nếu muốn show số mục: res.data.data.length
-        // Nếu muốn tổng số lượng: sum over .quantity
-        const items = res.data.data || [];
-        const count = items.length;
-        setCartCount(count);
-      } catch (err) {
-        console.error("Lỗi fetchCart trong Header:", err);
-        setCartCount(0);
-      }
-    };
-    fetchCartCount();
-  }, [cookies.token, location.pathname]); // reload khi đổi page hoặc token
 
   const handleLogout = () => {
     removeCookie("token");
@@ -129,9 +99,7 @@ const Header = () => {
             }}
           >
             <FaShoppingCart />
-            {cartCount > 0 && (
-              <span className="cart-count">{cartCount}</span>
-            )}
+            <span className="cart-count">3</span>
           </Link>
 
           {isAuth && user ? (
