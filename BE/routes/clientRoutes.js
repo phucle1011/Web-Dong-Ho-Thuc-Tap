@@ -6,6 +6,7 @@ const ProductController = require('../controllers/Client/productController');
 const CategoryController = require('../controllers/Client/categoryController');
 const ShippingController = require('../controllers/Client/shippingController');
 const OrderController = require('../controllers/Client/ordersController');
+const AddressController = require('../controllers/Client/addressController');
 
 //------------------[ CLIENT ROUTES ]------------------
 
@@ -38,5 +39,11 @@ router.get("/orders", OrderController.get);
 router.post("/orders", OrderController.create);
 router.put("/orders/cancel/:id", OrderController.cancelOrder);
 router.put("/orders/confirm-delivered/:id", OrderController.confirmDelivered);
+
+//------------------[ ADDRESS ]------------------\
+router.get('/address/user/:id', AddressController.getAddressesByUser);
+router.delete('/user/:userId/addresses/:id', AddressController.deleteAddress);
+router.put('/user/:userId/addresses/:id', AddressController.updateAddress);
+router.post('/user/:userId/addresses', AddressController.addAddress);
 
 module.exports = router;

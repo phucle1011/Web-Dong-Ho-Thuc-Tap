@@ -1,17 +1,17 @@
-// controllers/Admin/addressController.js
 const AddressModel = require('../../models/addressesModel');
 const UserModel = require('../../models/usersModel');
 const { Op } = require('sequelize');
 
 class AddressController {
-  // GET /admin/address/list?search=...
   static async getAllAddress(req, res) {
     try {
       const { search } = req.query;
       let whereUser = {};
       if (search) {
         whereUser = {
-          name: { [Op.like]: `%${search}%` }
+          name: {
+            [Op.like]: `%${search}%`
+          }
         };
       }
 
@@ -22,10 +22,8 @@ class AddressController {
             as: 'user',
             attributes: ['id', 'name', 'email'],
             where: search ? whereUser : undefined,
-            required: !!search // nếu có search thì inner join để lọc theo user.name
           }
-        ],
-        order: [['created_at', 'DESC']]
+        ]
       });
 
       return res.status(200).json({ success: true, data: addresses });
@@ -35,7 +33,6 @@ class AddressController {
     }
   }
 
-  // GET /admin/address/:id
   static async getAddressDetail(req, res) {
     const { id } = req.params;
     try {
@@ -61,10 +58,8 @@ class AddressController {
     }
   }
 
-  // GET /admin/address/user/:id
   static async getAddressesByUser(req, res) {
-    // ✅ dùng params.id đúng với route bạn đã khai báo
-    const userId = req.params.id;
+    const userId = req.headers["user"];
     try {
       const addresses = await AddressModel.findAll({
         where: { user_id: userId },
@@ -74,8 +69,7 @@ class AddressController {
             as: 'user',
             attributes: ['id', 'name', 'email']
           }
-        ],
-        order: [['created_at', 'DESC']]
+        ]
       });
 
       return res.status(200).json({ success: true, data: addresses });
@@ -85,13 +79,12 @@ class AddressController {
     }
   }
 
-  // POST /admin/user/:userId/addresses
   static async addAddress(req, res) {
     const {
       address_line,
       city,
       district,
-      province, // ✅ đổi từ ward -> province
+      ward,
       is_default
     } = req.body;
 
@@ -101,21 +94,17 @@ class AddressController {
       if (!user_id) {
         return res.status(400).json({ success: false, message: 'user_id là bắt buộc' });
       }
-      if (!address_line || !city || !district || !province) {
-        return res.status(400).json({ success: false, message: 'Thiếu thông tin địa chỉ (address_line/city/district/province)' });
-      }
 
-      // Nếu set mặc định, bỏ mặc định các địa chỉ khác của user
       if (is_default) {
-        await AddressModel.update({ is_default: 0 }, { where: { user_id } });
+        await AddressModel.update({ is_default: false }, { where: { user_id } });
       }
 
       const newAddress = await AddressModel.create({
         address_line,
         city,
         district,
-        province,
-        is_default: is_default ? 1 : 0,
+        ward,
+        is_default: !!is_default, 
         user_id
       });
 
@@ -126,14 +115,13 @@ class AddressController {
     }
   }
 
-  // PUT /admin/user/:userId/addresses/:id
   static async updateAddress(req, res) {
     const { id } = req.params;
     const {
       address_line,
       city,
       district,
-      province, // ✅ đổi từ ward -> province
+      ward,
       is_default
     } = req.body;
 
@@ -143,14 +131,14 @@ class AddressController {
         return res.status(404).json({ success: false, message: 'Không tìm thấy địa chỉ' });
       }
 
-      // Nếu set mặc định -> bỏ mặc định các địa chỉ khác của cùng user
+      // Nếu đang set địa chỉ này thành mặc định thì set các địa chỉ khác của user về false
       if (is_default) {
         await AddressModel.update(
-          { is_default: 0 },
+          { is_default: false },
           {
             where: {
               user_id: address.user_id,
-              id: { [Op.ne]: id }
+              id: { [Op.ne]: id } 
             }
           }
         );
@@ -161,8 +149,8 @@ class AddressController {
           address_line,
           city,
           district,
-          province,
-          is_default: is_default ? 1 : 0
+          ward,
+          is_default: !!is_default
         },
         { where: { id } }
       );
@@ -173,7 +161,6 @@ class AddressController {
       return res.status(500).json({ success: false, message: 'Lỗi server khi cập nhật địa chỉ' });
     }
   }
-
 
   static async deleteAddress(req, res) {
     const { id } = req.params;

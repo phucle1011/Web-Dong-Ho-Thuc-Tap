@@ -290,65 +290,68 @@ const Order = () => {
     <div>
       <HeaderAdmin />
       <div className="main-container">
-        <h2 className="text-2xl font-semibold">Danh Sách Đơn Hàng</h2>
+        <h2 className="text-xl font-semibold">Danh Sách Đơn Hàng</h2>
         <div className="order-container custom-column-layout">
-          <div className="p-4 bg-white rounded shadow-md flex flex-col space-y-6 w-full">
-            <div className="w-full space-y-4">
-              <p className="font-semibold mb-2 text-sm">Chọn khoảng thời gian:</p>
-              <div className="flex flex-wrap items-center gap-2 max-w-[700px] text-sm">
-                <label>Từ ngày:</label>
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  className="border px-2 py-1 rounded"
-                  placeholderText="Chọn ngày bắt đầu"
-                />
-                <label className="ms-2">Đến ngày:</label>
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  className="border px-2 py-1 rounded"
-                  placeholderText="Chọn ngày kết thúc"
-                />
-                <button
-                  onClick={handleExcelExport}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded ms-4 min-w-[90px] text-xs"
-                >
-                  Xuất Excel
-                </button>
-                <button
-                  onClick={handleFilterByDate}
-                  className="bg-blue-500 hover:bg-blue-700 text-white px-2 py-1 rounded min-w-[90px] text-xs ms-2"
-                >
-                  Lọc theo ngày
-                </button>
-              </div>
-            </div>
+          <div className="flex items-center gap-4 text-sm">
 
+            <label className="whitespace-nowrap">Từ ngày:</label>
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              dateFormat="yyyy-MM-dd"
+              className="border px-2 py-1 rounded"
+              placeholderText="Chọn ngày bắt đầu"
+            />
 
+            <label className="whitespace-nowrap">Đến ngày:</label>
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              dateFormat="yyyy-MM-dd"
+              className="border px-2 py-1 rounded"
+              placeholderText="Chọn ngày kết thúc"
+            />
+
+            <button
+              onClick={handleExcelExport}
+              className="bg-[#1e40af] hover:bg-[#1e40af]/90 text-white px-2 py-1.5 rounded min-w-[90px] text-xs mb-2"
+            >
+              Xuất Excel
+            </button>
+            <button
+              onClick={handleFilterByDate}
+              className="bg-blue-500 hover:bg-blue-700 text-white px-2 py-1.5 rounded min-w-[90px] text-xs mb-2"
+            >
+              Lọc theo ngày
+            </button>
           </div>
+
         </div>
 
         <div className="flex flex-wrap gap-2 mb-4">
           {[
-            { key: "", label: "Tất cả", color: "bg-gray-800", textColor: "text-white", count: statusCounts.all },
-            { key: "pending", label: "Chờ xác nhận", color: "bg-amber-300", textColor: "text-amber-800", count: statusCounts.pending },
-            { key: "confirmed", label: "Đã xác nhận", color: "bg-yellow-300", textColor: "text-yellow-900", count: statusCounts.confirmed },
-            { key: "shipping", label: "Đang giao", color: "bg-blue-300", textColor: "text-blue-900", count: statusCounts.shipping },
-            { key: "completed", label: "Hoàn thành", color: "bg-emerald-300", textColor: "text-emerald-800", count: statusCounts.completed },
-            { key: "delivered", label: "Đã giao", color: "bg-green-300", textColor: "text-green-800", count: statusCounts.delivered },
-            { key: "cancelled", label: "Đã hủy", color: "bg-rose-300", textColor: "text-rose-800", count: statusCounts.cancelled },
-          ].map(({ key, label, color, textColor, count }) => (
+            { key: "", label: "Tất cả", bg: "bg-gray-200", text: "text-gray-800", count: statusCounts.all },
+            { key: "pending", label: "Chờ xác nhận", bg: "bg-amber-100", text: "text-amber-800", count: statusCounts.pending },
+            { key: "confirmed", label: "Đã xác nhận", bg: "bg-yellow-100", text: "text-yellow-800", count: statusCounts.confirmed },
+            { key: "shipping", label: "Đang giao", bg: "bg-blue-100", text: "text-blue-800", count: statusCounts.shipping },
+            { key: "completed", label: "Hoàn thành", bg: "bg-teal-100", text: "text-teal-800", count: statusCounts.completed },
+            { key: "delivered", label: "Đã giao", bg: "bg-green-100", text: "text-green-800", count: statusCounts.delivered },
+            { key: "cancelled", label: "Đã hủy", bg: "bg-red-100", text: "text-red-800", count: statusCounts.cancelled },
+          ].map(({ key, label, bg, text, count }) => (
             <button
               key={key || "all"}
               onClick={() => handleFilterClick(key)}
-              className={`m-2 flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-semibold ${statusFilter === key ? "bg-blue-900 text-white" : `${color} ${textColor}`
+              className={`
+        m-2 flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-semibold
+        ${statusFilter === key
+                  ? "bg-blue-900 text-white"
+                  : `${bg} ${text}`
                 }`}
             >
               <span>{label}</span>
-              <span className="rounded-md px-2 py-0.5 text-xs font-semibold leading-none">{count}</span>
+              <span className={`rounded-md px-2 py-0.5 text-xs font-semibold leading-none ${statusFilter === key ? "bg-white text-blue-900" : `${bg} ${text}`}`}>
+                {count}
+              </span>
             </button>
           ))}
         </div>
@@ -377,17 +380,17 @@ const Order = () => {
             </button>
           )}
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse border border-gray-300 text-left text-sm mb-3">
+        <div className="overflow-x-auto mr-5">
+          <table className="w-full border-collapse border border-gray-300 text-left text-sm mb-3 mr-2">
             <thead className="bg-gray-100 text-gray-600">
               <tr>
-                <th className="w-12 px-4 py-3 border border-gray-300">ID</th>
+                <th className="px-3 py-3 border border-gray-300">#</th>
                 <th className="px-6 py-3 border border-gray-300 font-semibold">Mã đơn</th>
                 <th className="px-6 py-3 border border-gray-300 font-semibold">Tên khách hàng</th>
                 <th className="px-6 py-3 border border-gray-300 font-semibold">Ngày đặt</th>
                 <th className="px-6 py-3 border border-gray-300 font-semibold">Ghi chú</th>
                 <th className="px-6 py-3 border border-gray-300 font-semibold">Trạng thái</th>
-                <th className="px-6 py-3 border border-gray-300 font-semibold">Hành động</th>
+                <th className="px-2 py-3 border border-gray-300 font-semibold"></th>
               </tr>
             </thead>
             <tbody>
@@ -396,10 +399,10 @@ const Order = () => {
                   <td colSpan="10" className="text-center py-6 text-gray-600">Đang tải dữ liệu...</td>
                 </tr>
               ) : orders.length > 0 ? (
-                orders.map(order => (
+                orders.map((order, idex) => (
                   <React.Fragment key={order.id}>
                     <tr>
-                      <td className="p-2 border border-gray-300">{order.id}</td>
+                      <td className="p-2 border border-gray-300">{idex+1}</td>
                       <td className="p-2 border border-gray-300">{order.order_code || "(không có mã)"}</td>
                       <td className="p-2 border border-gray-300">{order.userOrder?.name || order.user?.name || "Không rõ"}</td>
                       <td className="p-2 border border-gray-300">{order.order_date ? new Date(order.order_date).toLocaleString("vi-VN", { hour12: false }) : (order.created_at ? new Date(order.created_at).toLocaleString("vi-VN", { hour12: false }) : "Không rõ")}</td>
@@ -416,7 +419,7 @@ const Order = () => {
                         </select>
                       </td>
                       <td className="p-2 border border-gray-300 flex gap-2 flex-wrap">
-                        <Link to={`/admin/orders/detail/${order.id}`} className="detail bg-blue-500 text-white py-1 px-3 rounded"><FaEye /></Link>
+                        <Link to={`/admin/orders/detail/${order.id}`} className="detail bg-blue-500 text-white py-1 px-2 rounded"><FaEye /></Link>
                         {/* <button onClick={() => handleTrackOrder(order.order_code)} className="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded">
                           Vị trí
                         </button> */}
@@ -479,12 +482,29 @@ const Order = () => {
 
         <div className="d-flex justify-content-center mt-3">
           <div className="d-flex align-items-center flex-wrap mb-3">
-            <button disabled={currentPage === 1} onClick={() => handlePageChange(1)} className="px-3 py-1 border rounded disabled:opacity-50"><FaAngleDoubleLeft /></button>
-            <button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)} className="px-3 py-1 border rounded disabled:opacity-50"><FaChevronLeft /></button>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(1)}
+              className="px-3 py-1 border rounded bg-[#1e40af] text-white disabled:opacity-50 disabled:bg-gray-300"
+            >
+              <FaAngleDoubleLeft />
+            </button>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-3 py-1 border rounded bg-[#1e40af] text-white disabled:opacity-50 disabled:bg-gray-300"
+            >
+              <FaChevronLeft />
+            </button>
 
             {currentPage > 2 && (
               <>
-                <button onClick={() => handlePageChange(1)} className="px-3 py-1 border rounded">1</button>
+                <button
+                  onClick={() => handlePageChange(1)}
+                  className="px-3 py-1 border rounded bg-[#1e40af] text-white hover:bg-[#1e40af]/90"
+                >
+                  1
+                </button>
                 {currentPage > 3 && <span className="px-2">...</span>}
               </>
             )}
@@ -496,7 +516,10 @@ const Order = () => {
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`px-3 py-1 border rounded ${currentPage === page ? "bg-blue-600 text-white" : "bg-gray-100 text-black hover:bg-gray-200"}`}
+                    className={`px-3 py-1 border rounded ${currentPage === page
+                      ? "bg-[#1e40af] text-white"
+                      : "bg-[#1e40af] text-white hover:bg-[#1e40af]/90"
+                      }`}
                   >
                     {page}
                   </button>
@@ -508,14 +531,32 @@ const Order = () => {
             {currentPage < totalPages - 1 && (
               <>
                 {currentPage < totalPages - 2 && <span className="px-2">...</span>}
-                <button onClick={() => handlePageChange(totalPages)} className="px-3 py-1 border rounded">{totalPages}</button>
+                <button
+                  onClick={() => handlePageChange(totalPages)}
+                  className="px-3 py-1 border rounded bg-[#1e40af] text-white hover:bg-[#1e40af]/90"
+                >
+                  {totalPages}
+                </button>
               </>
             )}
 
-            <button disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)} className="px-3 py-1 border rounded disabled:opacity-50"><FaChevronRight /></button>
-            <button disabled={currentPage === totalPages} onClick={() => handlePageChange(totalPages)} className="px-3 py-1 border rounded disabled:opacity-50"><FaAngleDoubleRight /></button>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-3 py-1 border rounded bg-[#1e40af] text-white disabled:opacity-50 disabled:bg-gray-300"
+            >
+              <FaChevronRight />
+            </button>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(totalPages)}
+              className="px-3 py-1 border rounded bg-[#1e40af] text-white disabled:opacity-50 disabled:bg-gray-300"
+            >
+              <FaAngleDoubleRight />
+            </button>
           </div>
         </div>
+
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import Constants from "../../../../../Constants.jsx";
 import { toast } from "react-toastify";
 import HeaderAdmin from "../../layout/header";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 const generateSlug = (text) =>
     text
@@ -37,8 +38,9 @@ export default function CategoryEdit() {
     });
 
     useEffect(() => {
-        axios.get(`${Constants.DOMAIN_API}/admin/categories/detail/${id}`)
-            .then(res => {
+        axios
+            .get(`${Constants.DOMAIN_API}/admin/categories/detail/${id}`)
+            .then((res) => {
                 const cat = res.data.data;
                 setValue("name", cat.name);
                 setValue("slug", cat.slug);
@@ -54,8 +56,10 @@ export default function CategoryEdit() {
     const nameValue = watch("name");
     const slugValue = watch("slug");
     useEffect(() => {
-
-        if (nameValue && (!slugValue || slugValue === generateSlug(nameValue))) {
+        if (
+            nameValue &&
+            (!slugValue || slugValue === generateSlug(nameValue))
+        ) {
             setValue("slug", generateSlug(nameValue));
         }
     }, [nameValue, slugValue, setValue]);
@@ -90,70 +94,59 @@ export default function CategoryEdit() {
     return (
         <>
             <HeaderAdmin />
-            <div style={{ marginLeft: "16rem" }} className="min-h-screen bg-gray-100 p-4">
-                <div className="container mx-auto bg-white shadow rounded p-6 max-w-lg">
-                    <h2 className="text-xl font-semibold mb-6 mt-3">Cập nhật danh mục</h2>
+            <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
+                <div className="container mx-auto bg-white shadow rounded p-6">
+                    <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-xl font-semibold mt-3">Cập nhật danh mục</h2>
+                    </div>
                     <form onSubmit={handleSubmit(onSubmit)} noValidate>
                         {/* Name */}
-                        <div className="form-group mb-4">
-                            <label htmlFor="name" className="form-label">
+                        <div className="mb-4">
+                            <label htmlFor="name" className="block font-medium mb-1">
                                 Tên danh mục <span className="text-red-500">*</span>
                             </label>
                             <input
                                 id="name"
                                 type="text"
                                 placeholder="VD: Đồng hồ thời trang"
-                                className="form-input"
+                                className="w-full border p-2 rounded"
                                 {...register("name", {
                                     required: "Tên danh mục không được để trống",
                                     minLength: { value: 4, message: "Phải ít nhất 4 ký tự" }
                                 })}
                             />
-                            {errors.name && <p className="text-red-500 mt-1">{errors.name.message}</p>}
-                        </div>
-
-                        {/* Slug */}
-                        <div className="form-group mb-4">
-                            <label htmlFor="slug" className="form-label">
-                                Slug
-                            </label>
-                            <input
-                                id="slug"
-                                type="text"
-                                placeholder="auto-generated slug"
-                                className="form-input"
-                                {...register("slug", {
-                                    required: "Slug không được để trống",
-                                })}
-                            />
-                            {errors.slug && <p className="text-red-500 mt-1">{errors.slug.message}</p>}
+                            {errors.name && (
+                                <p className="text-red-500 mt-1">{errors.name.message}</p>
+                            )}
                         </div>
 
                         {/* Description */}
-                        <div className="form-group mb-4">
-                            <label htmlFor="description" className="form-label">
+                        <div className="mb-4">
+                            <label htmlFor="description" className="block font-medium mb-1">
                                 Mô tả <span className="text-red-500">*</span>
                             </label>
                             <textarea
                                 id="description"
                                 rows={4}
                                 placeholder="Thông tin chi tiết về danh mục"
-                                className="form-textarea"
+                                className="w-full border p-2 rounded"
                                 {...register("description", {
                                     required: "Mô tả không được để trống"
                                 })}
                             />
-                            {errors.description && <p className="text-red-500 mt-1">{errors.description.message}</p>}
+                            {errors.description && (
+                                <p className="text-red-500 mt-1">{errors.description.message}</p>
+                            )}
                         </div>
 
                         {/* Status */}
-                        <div className="form-group mb-6">
-                            <label htmlFor="status" className="form-label">
+                        <div className="mb-6">
+                            <label htmlFor="status" className="block font-medium mb-1">
                                 Trạng thái <span className="text-red-500">*</span>
                             </label>
                             <select
                                 id="status"
-                                className="form-select"
+                                className="w-full border p-2 rounded"
                                 {...register("status", {
                                     required: "Trạng thái là bắt buộc"
                                 })}
@@ -161,13 +154,21 @@ export default function CategoryEdit() {
                                 <option value="active">Hiển thị</option>
                                 <option value="inactive">Ẩn</option>
                             </select>
-                            {errors.status && <p className="text-red-500 mt-1">{errors.status.message}</p>}
+                            {errors.status && (
+                                <p className="text-red-500 mt-1">{errors.status.message}</p>
+                            )}
                         </div>
 
+                        <Link
+                            to={`/admin/categories/getAll/`}
+                            className="category-button bg-gray-500 mr-3"
+                        >
+                            &larr; Quay lại
+                        </Link>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="btn-submit w-full py-2 text-white bg-blue-600 hover:bg-blue-700 rounded"
+                            className="px-4 py-2 bg-[#1e40af] text-white rounded hover:[#1e40af]-700"
                         >
                             {loading ? "Đang cập nhật..." : "Cập nhật danh mục"}
                         </button>

@@ -225,7 +225,7 @@ export default function CheckoutPage() {
         <form>
           <div class="mb-4">
             <label for="swal-address_line" class="form-label">Địa chỉ:</label>
-            <input type="text" id="swal-address_line" class="form-control" value="${address?.address_line || ''}">
+            <input type="text" id="swal-address_line" class="form-control" value="${address?.address_line || ''}" disabled>
           </div>
           <div class="mb-4">
             <label for="swal-province" class="form-label">Tỉnh/Thành phố:</label>
@@ -817,17 +817,8 @@ const handleCheckout = async () => {
           'Content-Type': 'application/json'
         }
       };
-
-      // Xử lý từng phương thức thanh toán
       let response;
-      if (selectedPaymentMethod === "VNPay") {
-        response = await axios.post(`${Constants.DOMAIN_API}/orders/vnpay`, payload, config);
-      } else if (selectedPaymentMethod === "momo") {
-        response = await axios.post(`${Constants.DOMAIN_API}/orders/momo`, payload, config);
-      } else {
-        // COD và các phương thức khác
         response = await axios.post(`${Constants.DOMAIN_API}/orders`, payload, config);
-      }
 
       console.log("📩 Response từ server:", response.data);
 
@@ -838,18 +829,6 @@ const handleCheckout = async () => {
           await deleteCartItem(variantId);
         }
 
-        // Xử lý chuyển hướng cho các phương thức thanh toán online
-        if (selectedPaymentMethod === "VNPay" && response.data.paymentUrl) {
-          window.location.href = response.data.paymentUrl;
-          return;
-        }
-
-        if (selectedPaymentMethod === "momo" && response.data.payUrl) {
-          window.open(response.data.payUrl, "_self");
-          return;
-        }
-
-        // Thông báo thành công và chuyển hướng
         toast.success("Đặt hàng thành công! Mã đơn hàng: " + response.data.order_code);
         navigate("/order-success", { 
           state: { 
@@ -861,7 +840,7 @@ const handleCheckout = async () => {
         throw new Error(response.data.message || "Đặt hàng không thành công");
       }
     } catch (error) {
-      console.error("❌ Lỗi đặt hàng:", error);
+      console.error("Lỗi đặt hàng:", error);
       const errorMsg = error.response?.data?.message || error.message;
       toast.error(`Lỗi khi đặt hàng: ${errorMsg}`);
       
@@ -1169,31 +1148,6 @@ const handleCheckout = async () => {
 
                     <div className="mt-4">
                       <h3 className="h6 mb-3">Phương thức thanh toán</h3>
-                      <div className="form-check mb-3">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="payment_method"
-                          value="momo"
-                          id="momo"
-                          defaultChecked
-                        />
-                        <label className="form-check-label" htmlFor="momo">
-                          MoMo
-                        </label>
-                      </div>
-                      <div className="form-check mb-3">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="payment_method"
-                          value="VNPay"
-                          id="vnpay"
-                        />
-                        <label className="form-check-label" htmlFor="vnpay">
-                          VNPay
-                        </label>
-                      </div>
                       <div className="form-check mb-3">
                         <input
                           className="form-check-input"

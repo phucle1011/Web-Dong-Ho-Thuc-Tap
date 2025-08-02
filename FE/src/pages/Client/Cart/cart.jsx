@@ -86,29 +86,16 @@ const Cart = ({ cart = true }) => {
         setShowConfirm(true);
     };
 
-    const handleDelete = async ({ id }) => {
+    const handleDelete = async (id) => {
         const user = JSON.parse(localStorage.getItem("user"));
-
         try {
             await axios.delete(`${Constants.DOMAIN_API}/delete-to-carts/${id}`, {
-                headers: {
-                    "user": user.id,
-                },
+                headers: { user: user.id },
             });
-
-            setCartItems((prevItems) =>
-                prevItems.filter((item) => item.product_variant_id !== id)
-            );
-
+            setCartItems((prev) => prev.filter((item) => item.product_variant_id !== id));
             toast.success("Xóa sản phẩm khỏi giỏ hàng thành công");
-            await fetchCart();
         } catch (error) {
-            const message = error.response?.data?.message || "";
-            if (message === "Không tìm thấy sản phẩm trong giỏ hàng để xóa") {
-                toast.warning("Sản phẩm không tồn tại trong giỏ hàng");
-            } else {
-                toast.error("Xóa sản phẩm thất bại");
-            }
+            // xử lý lỗi
         } finally {
             setShowConfirm(false);
             setDeleteItemId(null);
@@ -157,74 +144,43 @@ const Cart = ({ cart = true }) => {
     };
 
     const QuantityInput = ({ quantity, onChange, stock }) => {
-        const handleDecrease = () => {
-            if (quantity > 1) {
-                onChange(quantity - 1);
-            }
-        };
+  const handleDecrease = () => {
+    if (quantity > 1) onChange(quantity - 1);
+  };
+  const handleIncrease = () => {
+    if (quantity < stock) onChange(quantity + 1);
+    else toast.info("Không thể tăng thêm vì đã đạt số lượng tối đa trong kho");
+  };
 
-        const handleIncrease = () => {
-            if (quantity < stock) {
-                onChange(quantity + 1);
-            } else {
-                toast.info("Không thể tăng thêm vì đã đạt số lượng tối đa trong kho");
-            }
-        };
+  return (
+    <div className="flex items-center w-[120px] h-[30px] border rounded overflow-hidden">
+      <button
+        type="button"
+        onClick={handleDecrease}
+        className="items-center justify-center border-r border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 mb-2"
+      >
+        –
+      </button>
 
-        return (
-            <div
-                className="d-flex align-items-center border rounded overflow-hidden"
-                style={{ width: "120px", height: "36px" }}
-            >
-                <button
-                    onClick={handleDecrease}
-                    className="btn p-0 d-flex align-items-center justify-content-center border-0"
-                    type="button"
-                    style={{
-                        width: "36px",
-                        height: "100%",
-                        backgroundColor: "transparent",
-                        fontSize: "20px",
-                        boxShadow: "none",
-                    }}
-                >
-                    -
-                </button>
+      <input
+        type="number"
+        min="1"
+        max={stock}
+        value={quantity}
+        readOnly
+        className="flex-1 text-center h-full"
+      />
 
-                <input
-                    type="number"
-                    min="1"
-                    max={stock}
-                    step="1"
-                    value={quantity}
-                    onChange={(e) => {
-                        const val = parseInt(e.target.value, 10);
-                        if (val >= 1 && val <= stock) {
-                            onChange(val);
-                        }
-                    }}
-                    className="form-control text-center border-0"
-                    style={{ width: "58px", height: "100%" }}
-                    readOnly
-                />
-
-                <button
-                    onClick={handleIncrease}
-                    className="btn p-0 d-flex align-items-center justify-content-center border-0"
-                    type="button"
-                    style={{
-                        width: "36px",
-                        height: "100%",
-                        backgroundColor: "transparent",
-                        fontSize: "20px",
-                        boxShadow: "none",
-                    }}
-                >
-                    +
-                </button>
-            </div>
-        );
-    };
+      <button
+        type="button"
+        onClick={handleIncrease}
+        className="items-center justify-center border-l border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 mb-2"
+      >
+        +
+      </button>
+    </div>
+  );
+};
 
     const renderCartContent = () => (
         <div className="w-full">
@@ -414,7 +370,7 @@ const Cart = ({ cart = true }) => {
             <FormDelete
                 isOpen={showConfirm}
                 onClose={() => setShowConfirm(false)}
-                onConfirm={handleDelete}
+                onConfirm={() => handleDelete(deleteItemId)}
                 message={deleteMessage}
                 Id={deleteItemId}
             />
@@ -428,61 +384,46 @@ const Cart = ({ cart = true }) => {
         </div>
     );
 
-   const renderCheckoutSection = () => (
-    <div className="d-flex justify-content-end w-100">
-        <div style={{ width: '100%', maxWidth: '500px' }}>
-            <div className="d-flex align-items-center justify-content-between mb-3">
-                <p className="fs-5 fw-medium text-qblack mt-5">
-                    Tổng cộng: {Number(totalPrice).toLocaleString("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                    })}
-                </p>
-            </div>
-
-            {selectedItems.length > 0 ? (
-                <Link
-                    to={{
-                        pathname: "/checkout",
-                        state: {
-                            selectedProductVariants: selectedItems,
-                            cartItems: cartItems.filter((item) =>
-                                selectedItems.includes(item.product_variant_id)
-                            ),
-                            totalPrice,
-                            originalTotalPrice,
-                            finalTotal: totalPrice,
-                        },
-                    }}
-                    onClick={() => {
-                        const checkoutData = {
-                            selectedProductVariants: selectedItems,
-                            cartItems: cartItems.filter((item) =>
-                                selectedItems.includes(item.product_variant_id)
-                            ),
-                            totalPrice,
-                            originalTotalPrice,
-                            finalTotal: totalPrice,
-                        };
-                        localStorage.setItem("checkoutData", JSON.stringify(checkoutData));
-                    }}
-                >
-                    <div className="w-100 h-[70px] bg-secondary bg-opacity-25 d-flex justify-content-center align-items-center cursor-not-allowed mb-5">
-                        <span className="text-sm fw-semibold">Tiến hành thanh toán</span>
-                    </div>
-                </Link>
-            ) : (
-                <div className="w-100 h-[50px] bg-secondary bg-opacity-25 d-flex justify-content-center align-items-center cursor-not-allowed">
-                    {/* <span className="text-sm fw-semibold text-muted">Tiến hành thanh toán</span> */}
+    const renderCheckoutSection = () => (
+        <div className="d-flex justify-content-end w-100">
+            <div style={{ width: '100%', maxWidth: '500px' }}>
+                <div className="d-flex align-items-center justify-content-between mb-3">
+                    <p className="fs-5 fw-medium text-qblack mt-5">
+                        Tổng cộng: {Number(totalPrice).toLocaleString("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                        })}
+                    </p>
                 </div>
-            )}
-            {selectedItems.length === 0 && (
-                <p className="text-danger text-sm">Vui lòng chọn ít nhất một sản phẩm để thanh toán.</p>
-            )}
-        </div>
-    </div>
-);
 
+                {selectedItems.length > 0 ? (
+                    <Link
+                        to={{
+                            pathname: "/checkout",
+                            state: { /* ... */ },
+                        }}
+                        className="no-underline"  // <-- thêm ở đây
+                        onClick={() => {
+                            /* ... */
+                        }}
+                    >
+                        <div className="w-100 h-[50px] bg-secondary bg-opacity-25 d-flex justify-content-center align-items-center cursor-not-allowed">
+                            <span className="text-xl fw-semibold">
+                                Tiến hành thanh toán
+                            </span>
+                        </div>
+                    </Link>
+                ) : (
+                    <div className="w-100 h-[50px] bg-secondary bg-opacity-25 d-flex justify-content-center align-items-center cursor-not-allowed">
+                        {/* <span className="text-sm fw-semibold text-muted">Tiến hành thanh toán</span> */}
+                    </div>
+                )}
+                {selectedItems.length === 0 && (
+                    <p className="text-danger text-sm">Vui lòng chọn ít nhất một sản phẩm để thanh toán.</p>
+                )}
+            </div>
+        </div>
+    );
 
     if (cart === false) {
         return (

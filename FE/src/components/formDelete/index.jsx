@@ -1,5 +1,3 @@
-// src/components/FormDelete/index.jsx
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { FaExclamationTriangle } from 'react-icons/fa';
@@ -38,7 +36,11 @@ export default function FormDelete({ isOpen, onClose, onConfirm, message, idToDe
   return ReactDOM.createPortal(
     <div style={overlayStyle}>
       <div style={boxStyle}>
-        <FaExclamationTriangle style={{ fontSize: '2.5rem', color: '#dc2626', marginBottom: '0.5rem' }} />
+        <FaExclamationTriangle
+  className="block mx-auto mb-2 text-red-600"
+  style={{ fontSize: '2.5rem' }}
+/>
+
         <h3 style={{ marginBottom: '0.75rem', fontSize: '1.125rem', fontWeight: 600 }}>
           Xác nhận xóa
         </h3>
