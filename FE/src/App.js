@@ -38,18 +38,11 @@ import UserManage from "./view/pages/admin/user/index";
 import AddressManage from "./view/pages/admin/address/index";
 function AdminLayout() {
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-  {/* Sidebar HeaderAdmin chiếm 25% */}
-  <div style={{ width: "25%", backgroundColor: "#f5f5f5" }}>
-    <HeaderAdmin />
-  </div>
+    <div>
+  <HeaderAdmin />
 
-  {/* Nội dung chính chiếm 75% */}
-  <div style={{ width: "75%", padding: "20px" }}>
-    <Outlet />
-  </div>
-</div>
-
+      <Outlet />
+    </div>
   );
 }
 
