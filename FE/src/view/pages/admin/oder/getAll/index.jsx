@@ -65,6 +65,8 @@ const Order = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [statusFilter, setStatusFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
   const [statusCounts, setStatusCounts] = useState({
     all: 0,
     pending: 0,
@@ -110,15 +112,15 @@ const Order = () => {
       }
     } catch (error) {
       console.error("Lỗi khi lấy đơn hàng:", error);
-      toast.error("Lỗi khi lấy danh sách đơn hàng");
+      // toast.error("Lỗi khi lấy danh sách đơn hàng");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchOrders(currentPage, statusFilter, searchTerm);
-  }, [currentPage, statusFilter, searchTerm]);
+    fetchOrders(currentPage, statusFilter, searchQuery);
+  }, [currentPage, statusFilter, searchQuery]);
 
   const deleteOrder = async () => {
     if (!selectedOrder) return;
@@ -170,29 +172,13 @@ const Order = () => {
     setCurrentPage(1);
   };
 
-  const handleSearchSubmit = async () => {
+  const handleSearchSubmit = () => {
     if (searchTerm.trim() === '') {
       toast.warning("Vui lòng nhập mã đơn hàng hoặc tên người dùng cần tìm.");
       return;
     }
     setCurrentPage(1);
-    const token = getCookie(Constants.COOKIE_TOKEN);
-    try {
-      const res = await axios.get(`${Constants.DOMAIN_API}/admin/orders/search`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: { searchTerm: searchTerm.trim() },
-      });
-      if (res.data.data.length === 0) {
-        toast.warning("Không tìm thấy đơn hàng nào.");
-      }
-      setOrders(res.data.data);
-      setTotalPages(1);
-      toast.success("Tìm kiếm đơn hàng thành công");
-    } catch (error) {
-      console.error("Lỗi khi tìm kiếm đơn hàng:", error);
-      toast.error("Không tìm thấy đơn hàng");
-      setOrders([]);
-    }
+    setSearchQuery(searchTerm.trim());
   };
 
   const handleExcelExport = async () => {
@@ -361,7 +347,7 @@ const Order = () => {
             type="text"
             value={searchTerm}
             onChange={handleSearchChange}
-            placeholder="Vui lòng nhập mã đơn hàng hoặc tên khách hàng..."
+            placeholder="Vui lòng nhập tên khách hàng..."
             className="search-input"
           />
           <button onClick={handleSearchSubmit} className="search-button mb-2">
@@ -371,7 +357,7 @@ const Order = () => {
             <button
               onClick={() => {
                 setSearchTerm("");
-                fetchOrders(currentPage, statusFilter);
+                setSearchQuery("");
               }}
               className="search-button mb-2"
               style={{ marginLeft: "0" }}
@@ -379,6 +365,7 @@ const Order = () => {
               Xem tất cả
             </button>
           )}
+
         </div>
         <div className="overflow-x-auto mr-5">
           <table className="w-full border-collapse border border-gray-300 text-left text-sm mb-3 mr-2">
@@ -402,7 +389,7 @@ const Order = () => {
                 orders.map((order, idex) => (
                   <React.Fragment key={order.id}>
                     <tr>
-                      <td className="p-2 border border-gray-300">{idex+1}</td>
+                      <td className="p-2 border border-gray-300">{idex + 1}</td>
                       <td className="p-2 border border-gray-300">{order.order_code || "(không có mã)"}</td>
                       <td className="p-2 border border-gray-300">{order.userOrder?.name || order.user?.name || "Không rõ"}</td>
                       <td className="p-2 border border-gray-300">{order.order_date ? new Date(order.order_date).toLocaleString("vi-VN", { hour12: false }) : (order.created_at ? new Date(order.created_at).toLocaleString("vi-VN", { hour12: false }) : "Không rõ")}</td>
@@ -481,7 +468,7 @@ const Order = () => {
         )}
 
         <div className="d-flex justify-content-center mt-3">
-          <div className="d-flex align-items-center flex-wrap mb-3">
+          <div className="d-flex align-items-center flex-wrap gap-1 mb-3">
             <button
               disabled={currentPage === 1}
               onClick={() => handlePageChange(1)}

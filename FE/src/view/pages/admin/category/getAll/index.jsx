@@ -194,7 +194,7 @@ const renderPagination = () => (
               Tìm kiếm
             </button>
             {searchTerm && (
-              <button onClick={handleClearSearch} className="search-button">
+              <button onClick={handleClearSearch} className="search-button mb-2">
                 Xem tất cả
               </button>
             )}

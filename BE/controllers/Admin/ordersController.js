@@ -25,8 +25,7 @@ class OrderController {
             if (searchTerm) {
                 where[Op.or] = [
                     { '$user.name$': { [Op.like]: `%${searchTerm}%` } },
-                    { '$user.phone$': { [Op.like]: `%${searchTerm}%` } },
-                    { code: { [Op.like]: `%${searchTerm}%` } }
+                    { '$user.phone$': { [Op.like]: `%${searchTerm}%` } }
                 ];
             }
 
@@ -58,7 +57,8 @@ class OrderController {
                     {
                         model: UserModel,
                         as: 'user',
-                        attributes: ['id', 'name', 'email', 'phone']
+                        attributes: ['id', 'name', 'email', 'phone'],
+                                                required: !!searchTerm
                     }
                 ]
             });

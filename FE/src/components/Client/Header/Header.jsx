@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import logo from "../../../assets/img/logo.webp";
 import "./header.css";
+import Constants from "../../../Constants";
+import axios from "axios";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -50,6 +52,32 @@ const [cartCount, setCartCount] = useState(0);
     // Hoặc nếu trang /shop xử lý state:
     // navigate("/shop", { state: { search: searchTerm } });
   };
+
+  useEffect(() => {
+  const fetchCartCount = async () => {
+    if (!isAuth) return;
+
+    try {
+      const token = cookies.token;
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      const res = await axios.get(`${Constants.DOMAIN_API}/carts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          user: user.id,
+        },
+      });
+
+      const cartItems = res.data.data;
+      const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+      setCartCount(totalQuantity);
+    } catch (error) {
+      console.error("Lỗi khi lấy số lượng giỏ hàng:", error);
+    }
+  };
+
+  fetchCartCount();
+}, [isAuth, cookies.token]);
 
   return (
     <header className="header">
@@ -99,7 +127,7 @@ const [cartCount, setCartCount] = useState(0);
             }}
           >
             <FaShoppingCart />
-            <span className="cart-count">3</span>
+{cartCount > 0 && <span className="cart-count">{cartCount}</span>}
           </Link>
 
           {isAuth && user ? (
