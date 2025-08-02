@@ -31,8 +31,6 @@ export default function CheckoutPage() {
     shippingFee: 0,
     shippingService: "Đang tính...",
     formattedAmount: "0",
-    promoDiscount: 0,
-    voucherDiscount: 0,
   });
     const [discountInfo, setDiscountInfo] = useState(null);
   const [finalTotal, setFinalTotal] = useState(0);
@@ -590,11 +588,16 @@ export default function CheckoutPage() {
     setIsCalculatingShipping(true);
 
     try {
+
       if (!defaultAddress) {
-        setShippingData({
-          fee: 0,
-          service: "Chưa có địa chỉ",
-          total: totalPrice
+        setFinalData(prev => {
+          const amount = Math.max(0, prev.total - prev.voucherDiscount - prev.promoDiscount);
+          return {
+            ...prev,
+            shippingFee: 0,
+            shippingService: "Chưa có địa chỉ",
+            formattedAmount: amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+          };
         });
         return;
       }
@@ -638,12 +641,15 @@ export default function CheckoutPage() {
 
           if (response.data.success) {
             const shippingFee = response.data.data.total;
-            const total = totalPrice + shippingFee;
+            const total = totalPrice - (discountInfo?.voucherDiscount || 0) - (discountInfo?.promoDiscount || 0) + shippingFee;
 
-            setShippingData({
-              fee: shippingFee,
-              service: service.name,
-              total: total
+            setFinalData({
+              total: totalPrice,
+              shippingFee: shippingFee,
+              shippingService: service.name,
+              promoDiscount: discountInfo?.promoDiscount || 0,
+              voucherDiscount: discountInfo?.voucherDiscount || 0,
+              formattedAmount: Number(total).toLocaleString("vi-VN", { style: "currency", currency: "VND" })
             });
             return;
           }
@@ -652,19 +658,24 @@ export default function CheckoutPage() {
         }
       }
 
-      setShippingData({
-        fee: 0,
-        service: "Không hỗ trợ giao hàng tới khu vực này",
-        total: totalPrice
+      setFinalData(prev => {
+        const amount = Math.max(0, prev.total - prev.voucherDiscount - prev.promoDiscount);
+        return {
+          ...prev,
+          shippingFee: 0,
+          shippingService: "Không hỗ trợ giao hàng tới khu vực này",
+          formattedAmount: amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+        };
       });
 
     } catch (error) {
       console.error("Lỗi tính phí vận chuyển:", error);
-      setShippingData({
-        fee: 0,
-        service: "Lỗi tính phí",
-        total: totalPrice
-      });
+      setFinalData(prev => ({
+        ...prev,
+        shippingFee: 0,
+        shippingService: "Lỗi tính phí",
+        formattedAmount: Number(prev.total - prev.voucherDiscount - prev.promoDiscount).toLocaleString("vi-VN", { style: "currency", currency: "VND" })
+      }));
     } finally {
       setIsCalculatingShipping(false);
     }
@@ -716,170 +727,156 @@ export default function CheckoutPage() {
   };
 
 const handleCheckout = async () => {
-  console.log("🚀 handleCheckout được gọi");
+    console.log("🚀 handleCheckout được gọi");
 
-  // Bước 1: Kiểm tra điều kiện không cho phép đặt hàng
-  if (isSubmitting || isCalculatingShipping) {
-    console.warn("⚠️ isSubmitting hoặc isCalculatingShipping = true");
-    toast.warning("Vui lòng chờ hệ thống tính toán phí vận chuyển...");
-    return;
-  }
-
-  console.log("📦 Final data before checkout:", finalData);
-
-  if (
-    finalData.shippingService === "Đang tính..." ||
-    finalData.shippingService === "Chưa có địa chỉ"
-  ) {
-    toast.error("Vui lòng chờ hệ thống tính toán phí vận chuyển hoàn tất hoặc thêm địa chỉ giao hàng");
-    return;
-  }
-
-  if (finalData.shippingService === "Không hỗ trợ giao hàng tới khu vực này") {
-    toast.error("Rất tiếc, chúng tôi chưa hỗ trợ giao hàng tới địa chỉ của bạn");
-    return;
-  }
-
-  try {
-    setIsSubmitting(true);
-
-    const selectedPaymentMethod = (document.querySelector('input[name="payment_method"]:checked')?.value || "").trim();
-    console.log("💳 Selected payment method:", selectedPaymentMethod);
-
-    if (!selectedPaymentMethod) {
-      toast.error("Vui lòng chọn phương thức thanh toán");
+    if (isSubmitting || isCalculatingShipping) {
+      toast.warning("Vui lòng chờ hệ thống tính toán phí vận chuyển...");
       return;
     }
 
-    const name = user?.name?.trim();
-    if (!name) {
-      toast.error("Vui lòng nhập họ và tên");
+    if (
+      finalData.shippingService === "Đang tính..." ||
+      finalData.shippingService === "Chưa có địa chỉ"
+    ) {
+      toast.error("Vui lòng chờ hệ thống tính toán phí vận chuyển hoàn tất hoặc thêm địa chỉ giao hàng");
       return;
     }
 
-    const email = user?.email?.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email) {
-      toast.error("Vui lòng nhập email");
-      return;
-    } else if (!emailRegex.test(email)) {
-      toast.error("Email không đúng định dạng");
+    if (finalData.shippingService === "Không hỗ trợ giao hàng tới khu vực này") {
+      toast.error("Rất tiếc, chúng tôi chưa hỗ trợ giao hàng tới địa chỉ của bạn");
       return;
     }
 
-    const phone = user?.phone?.trim();
-    const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
-    if (!phone) {
-      toast.error("Vui lòng nhập số điện thoại");
-      return;
-    } else if (!phoneRegex.test(phone)) {
-      toast.error("Số điện thoại không hợp lệ");
-      return;
-    }
+    try {
+      setIsSubmitting(true);
+      
+      const selectedPaymentMethod = (document.querySelector('input[name="payment_method"]:checked')?.value || "").trim();
+      console.log("💳 Selected payment method:", selectedPaymentMethod);
 
-    if (!defaultAddress || !defaultAddress.address_line) {
-      toast.error("Vui lòng chọn hoặc thêm địa chỉ giao hàng");
-      return;
-    }
-
-    const payload = {
-      products: checkoutItems.map(item => ({
-        id: item.id,
-        user_id: item.user_id,
-        product_variant_id: item.product_variant_id,
-        quantity: item.quantity,
-        variant: {
-          id: item.product_variant_id,
-          sku: item.variant.sku || `SKU-${item.product_variant_id}`,
-          price: parseFloat(item.variant.promotion?.discounted_price || item.variant.price || 0),
-          original_price: parseFloat(item.variant.price || 0),
-          product: {
-            name: item.product?.name || "Không tên"
-          },
-          images: item.variant.images || [],
-          attributeValues: item.variant.attributeValues || []
-        }
-      })),
-      user_id: user.id,
-      name: user.name,
-      phone: user.phone,
-      email: user.email,
-      address: defaultAddress?.address_line || "",
-      note: noteValue,
-      promotion: selectedVoucher ? selectedVoucher.id : null,
-      promo_discount: discountInfo?.promoDiscount || 0,
-      voucher_discount: discountInfo?.voucherDiscount || 0,
-      promotion_user_id: discountInfo?.promotion_user_id || null,
-      payment_method: selectedPaymentMethod,
-      shipping_fee: finalData.shippingFee || 0,
-      amount: Math.max(0, finalData.total - (discountInfo?.voucherDiscount || 0) - (discountInfo?.promoDiscount || 0)) + (finalData.shippingFee || 0),
-      orderId: `ORD-${Date.now()}`,
-      orderDescription: `Thanh toan don hang cho ${user.name}`,
-      orderType: 'other'
-    };
-
-    console.log("📤 Gửi đơn hàng với payload:", payload);
-
-    // VNPay
-    if (selectedPaymentMethod === "VNPay") {
-      const response = await axios.post(`${Constants.DOMAIN_API}/orders-vnpay`, payload);
-      if (response.data.success && response.data.paymentUrl) {
-        window.location.href = response.data.paymentUrl;
+      if (!selectedPaymentMethod) {
+        toast.error("Vui lòng chọn phương thức thanh toán");
         return;
       }
 
-      toast.error(response.data.message || "Không thể khởi tạo thanh toán VNPay. Vui lòng thử lại.");
-      return;
-    }
-
-    // Momo hoặc COD
-    let url = `${Constants.DOMAIN_API}/orders`;
-    if (selectedPaymentMethod === "momo") {
-      url = `${Constants.DOMAIN_API}/orders-momo`;
-    }
-
-    const response = await axios.post(url, payload);
-
-    if (response.data.success) {
-      const successfullyOrderedProductIds = response.data.data?.successfullyOrderedProductIds || [];
-
-      for (const variantId of successfullyOrderedProductIds) {
-        await deleteCartItem(variantId);
+      // Validate thông tin người dùng
+      const name = user?.name?.trim();
+      if (!name) {
+        toast.error("Vui lòng nhập họ và tên");
+        return;
       }
 
-      setCheckoutItems(prev =>
-        prev.filter(item => !successfullyOrderedProductIds.includes(item.product_variant_id))
-      );
+      const email = user?.email?.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) {
+        toast.error("Vui lòng nhập email");
+        return;
+      } else if (!emailRegex.test(email)) {
+        toast.error("Email không đúng định dạng");
+        return;
+      }
 
-      if (selectedPaymentMethod === "momo" && response.data?.data?.payUrl) {
-        const payUrl = response.data.data.payUrl;
-        if (payUrl.startsWith("https://")) {
-          window.open(payUrl, "_self");
-        } else {
-          toast.error("Liên kết thanh toán MoMo không hợp lệ.");
+      const phone = user?.phone?.trim();
+      const phoneRegex = /^(0[3|5|7|8|9])+([0-9]{8})$/;
+      if (!phone) {
+        toast.error("Vui lòng nhập số điện thoại");
+        return;
+      } else if (!phoneRegex.test(phone)) {
+        toast.error("Số điện thoại không hợp lệ");
+        return;
+      }
+
+      if (!defaultAddress || !defaultAddress.address_line) {
+        toast.error("Vui lòng chọn hoặc thêm địa chỉ giao hàng");
+        return;
+      }
+
+      // Chuẩn bị payload
+      const payload = {
+        products: checkoutItems.map(item => ({
+          product_variant_id: item.product_variant_id,
+          quantity: item.quantity,
+          price: parseFloat(item.variant.promotion?.discounted_price || item.variant.price || 0)
+        })),
+        customer_name: name,
+        customer_phone: phone,
+        customer_email: email,
+        shipping_address: `${defaultAddress.address_line}, ${defaultAddress.ward}, ${defaultAddress.district}, ${defaultAddress.city}`,
+        note: noteValue,
+        payment_method: selectedPaymentMethod,
+        shipping_fee: finalData.shippingFee,
+        total_amount: finalData.total + finalData.shippingFee,
+        status: selectedPaymentMethod === "COD" ? "pending" : "paid"
+      };
+
+      console.log("📤 Gửi đơn hàng với payload:", payload);
+
+      const token = localStorage.getItem("token");
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
+      };
+
+      // Xử lý từng phương thức thanh toán
+      let response;
+      if (selectedPaymentMethod === "VNPay") {
+        response = await axios.post(`${Constants.DOMAIN_API}/orders/vnpay`, payload, config);
+      } else if (selectedPaymentMethod === "momo") {
+        response = await axios.post(`${Constants.DOMAIN_API}/orders/momo`, payload, config);
       } else {
-        toast.success("Đặt hàng thành công!");
-        navigate("/cart");
+        // COD và các phương thức khác
+        response = await axios.post(`${Constants.DOMAIN_API}/orders`, payload, config);
       }
+
+      console.log("📩 Response từ server:", response.data);
+
+      if (response.data.success) {
+        // Xóa sản phẩm đã đặt hàng khỏi giỏ hàng
+        const orderedIds = checkoutItems.map(item => item.product_variant_id);
+        for (const variantId of orderedIds) {
+          await deleteCartItem(variantId);
+        }
+
+        // Xử lý chuyển hướng cho các phương thức thanh toán online
+        if (selectedPaymentMethod === "VNPay" && response.data.paymentUrl) {
+          window.location.href = response.data.paymentUrl;
+          return;
+        }
+
+        if (selectedPaymentMethod === "momo" && response.data.payUrl) {
+          window.open(response.data.payUrl, "_self");
+          return;
+        }
+
+        // Thông báo thành công và chuyển hướng
+        toast.success("Đặt hàng thành công! Mã đơn hàng: " + response.data.order_code);
+        navigate("/order-success", { 
+          state: { 
+            orderId: response.data.order_id,
+            orderCode: response.data.order_code 
+          } 
+        });
+      } else {
+        throw new Error(response.data.message || "Đặt hàng không thành công");
+      }
+    } catch (error) {
+      console.error("❌ Lỗi đặt hàng:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      toast.error(`Lỗi khi đặt hàng: ${errorMsg}`);
+      
+      // Hiển thị chi tiết lỗi trong console để debug
+      if (error.response) {
+        console.error("Chi tiết lỗi từ server:", {
+          status: error.response.status,
+          data: error.response.data,
+          headers: error.response.headers
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-  } catch (error) {
-    console.error("❌ Lỗi đặt hàng:", error);
-    const serverMessage = error.response?.data?.message;
-
-    if (serverMessage?.includes("Giao dịch bị từ chối")) {
-      toast.error("Giao dịch bị từ chối: Vui lòng kiểm tra tài khoản thanh toán hoặc dùng phương thức khác.");
-    } else if (serverMessage?.includes("Số tiền thanh toán không hợp lệ")) {
-      toast.error("Số tiền thanh toán không hợp lệ: phải từ 10.000đ đến 50.000.000đ.");
-    } else {
-      toast.error(serverMessage || "Có lỗi xảy ra khi đặt hàng.");
-    }
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-
+  };
   return (
     <div childrenClasses="pt-0 pb-0">
       <div className="checkout-page-wrapper w-full bg-white pb-[60px]">

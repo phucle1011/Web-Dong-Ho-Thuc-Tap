@@ -388,6 +388,7 @@ class OrderController {
             note,
             shipping_fee,
         } = req.body;
+        console.log("📥 Nhận yêu cầu tạo đơn hàng:", req.body);
 
         if (!products || products.length === 0) {
             return res.status(400).json({ message: "Giỏ hàng trống." });
