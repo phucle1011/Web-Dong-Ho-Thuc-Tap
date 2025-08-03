@@ -18,31 +18,42 @@ const AddressManage = () => {
   const navigate = useNavigate();
   const baseURL = constant.DOMAIN_API;
 
-  const fetchAddresses = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get(`${baseURL}/admin/address/list`, {
-        params: {
-          page: currentPage,
-          limit: DEFAULT_LIMIT,
-          search: searchTerm.trim(),
-        },
-      });
+const fetchAddresses = async () => {
+  try {
+    setLoading(true);
+    const res = await axios.get(`${baseURL}/admin/address/list`, {
+      params: {
+        page: currentPage,
+        limit: DEFAULT_LIMIT,
+        search: searchTerm.trim(),
+      },
+    });
 
-      const { data = [], total = 0 } = res.data;
-      const unique = data.reduce((acc, cur) => {
-        if (!acc.find((a) => a.user_id === cur.user_id)) acc.push(cur);
-        return acc;
-      }, []);
-      setAddresses(unique);
-      setTotalPages(Math.ceil(total / DEFAULT_LIMIT));
-    } catch (err) {
-      console.error("Lỗi khi lấy danh sách địa chỉ:", err);
-      toast.error("Lỗi khi lấy danh sách địa chỉ");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const { data = [], total = 0 } = res.data;
+
+    // Lọc địa chỉ theo user_id duy nhất
+    const unique = data.reduce((acc, cur) => {
+      if (!acc.find((a) => a.user_id === cur.user_id)) acc.push(cur);
+      return acc;
+    }, []);
+
+    // 👉 Sắp xếp theo tên người dùng (nếu có)
+    unique.sort((a, b) => {
+      const nameA = a.user?.name?.toLowerCase() || "";
+      const nameB = b.user?.name?.toLowerCase() || "";
+      return nameA.localeCompare(nameB);
+    });
+
+    setAddresses(unique);
+    setTotalPages(Math.ceil(total / DEFAULT_LIMIT));
+  } catch (err) {
+    console.error("Lỗi khi lấy danh sách địa chỉ:", err);
+    toast.error("Lỗi khi lấy danh sách địa chỉ");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   useEffect(() => {
     fetchAddresses();
@@ -99,7 +110,7 @@ const AddressManage = () => {
                   <th className="border p-2">Quận/Huyện</th>
                   <th className="border p-2">Mặc định</th>
                   <th className="border p-2">Ngày tạo</th>
-                  <th className="border p-2">Hành động</th>
+                  {/* <th className="border p-2">Hành động</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -120,7 +131,7 @@ const AddressManage = () => {
                       <td className="border p-2">{addr.district}</td>
                       <td className="border p-2 text-center">{addr.is_default ? "✔" : ""}</td>
                       <td className="border p-2">{formatDate(addr.created_at)}</td>
-                      <td className="border p-2 text-center">
+                      {/* <td className="border p-2 text-center">
                         <button
                           className="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
                           title="Xem chi tiết"
@@ -128,7 +139,7 @@ const AddressManage = () => {
                         >
                           <FaEye />
                         </button>
-                      </td>
+                      </td> */}
                     </tr>
                   ))
                 )}

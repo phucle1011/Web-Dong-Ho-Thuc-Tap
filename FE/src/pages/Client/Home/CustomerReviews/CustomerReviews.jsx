@@ -1,4 +1,4 @@
-// src/components/CustomerReviews.jsx
+
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import axios from "axios";
@@ -43,7 +43,7 @@ const CustomerReviews = () => {
 
                 setReviews(mapped);
             } catch (err) {
-                console.error("❌ Lỗi lấy bình luận:", err);
+                console.error(" Lỗi lấy bình luận:", err);
             }
         };
 
@@ -57,7 +57,6 @@ const CustomerReviews = () => {
                 <Slider {...settings} className="reviews">
                     {reviews.map((review) => (
                         <div key={review.id} className="review-card">
-
                             <h3>{review.name}</h3>
                             <div className="stars">
                                 {"★".repeat(review.rating)}
