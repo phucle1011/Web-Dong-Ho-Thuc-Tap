@@ -59,6 +59,8 @@ router.post("/sendEmail", ContactController.sendEmail);
 
 //------------------[ COMMENTS ]------------------  
 router.post('/comments',CommentController.create);
+router.get('/comments/product/:productId',CommentController.getByProduct);
+
 
 
 
