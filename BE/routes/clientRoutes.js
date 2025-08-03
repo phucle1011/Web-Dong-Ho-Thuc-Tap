@@ -54,7 +54,7 @@ router.post('/user/:userId/addresses', AddressController.addAddress);
 //------------------[ USERS ]------------------
 router.put('/users/:id', UserController.updateUserInfo);
 
-//------------------[ ADDRESS ]------------------\
+//------------------[ contact ]------------------\
 router.post("/sendEmail", ContactController.sendEmail);
 
 //------------------[ COMMENTS ]------------------  
