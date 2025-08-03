@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Constants from "../../../Constants";
+import { toast } from "react-toastify";
 import "./register.css";
 
 const Register = () => {
@@ -19,6 +20,7 @@ const Register = () => {
         try {
             const res = await axios.post(`${Constants.DOMAIN_API}/register`, data);
             console.log("Đăng ký thành công:", res.data);
+             toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
             navigate("/login");
         } catch (err) {
             // Bắt lỗi "Email đã tồn tại"
@@ -27,6 +29,7 @@ const Register = () => {
                 err.response.status === 400 &&
                 err.response.data.message === "Email đã tồn tại"
             ) {
+                toast.error("Email đã tồn tại. Vui lòng chọn email khác!");
                 setError("email", {
                     type: "manual",
                     message: "Email đã tồn tại. Vui lòng chọn email khác",

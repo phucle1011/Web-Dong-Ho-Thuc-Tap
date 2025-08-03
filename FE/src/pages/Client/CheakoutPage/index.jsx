@@ -521,7 +521,7 @@ export default function CheckoutPage() {
       return province.ProvinceID;
     } catch (error) {
       console.error("Lỗi khi lấy ProvinceID:", error.message);
-      toast.error("Không thể lấy mã tỉnh");
+      // toast.error("Không thể lấy mã tỉnh");
       return null;
     }
   };
