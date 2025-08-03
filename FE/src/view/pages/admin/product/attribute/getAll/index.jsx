@@ -9,7 +9,7 @@ import {
   FaChevronRight,
   FaAngleDoubleLeft,
   FaAngleDoubleRight,
-  FaTrashAlt,
+  FaTrashAlt,FaEdit,FaEye
 } from "react-icons/fa";
 
 function AttributeGetAll() {
@@ -76,59 +76,62 @@ function AttributeGetAll() {
     }
   };
 
-  const renderPagination = () => {
-    const pages = [];
-    const start = Math.max(1, currentPage - 1);
-    const end = Math.min(totalPages, currentPage + 1);
+  const renderPagination = () => (
+  <div className="flex justify-center mt-6 space-x-1">
+    <button
+      onClick={() => setCurrentPage(1)}
+      disabled={currentPage === 1}
+      className="px-2 py-1 border rounded disabled:opacity-50"
+    >
+      <FaAngleDoubleLeft />
+    </button>
 
-    for (let i = start; i <= end; i++) {
-      pages.push(
-        <button
-          key={i}
-          onClick={() => handlePageChange(i)}
-          className={`px-3 py-1 border rounded ${i === currentPage ? "bg-blue-600 text-white" : "bg-white"}`}
-        >
-          {i}
-        </button>
-      );
-    }
+    <button
+      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+      disabled={currentPage === 1}
+      className="px-2 py-1 border rounded disabled:opacity-50"
+    >
+      <FaChevronLeft />
+    </button>
 
-    return (
-      <div className="flex justify-center items-center gap-1 mt-4">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(1)}
-          className="px-2 py-1 border rounded disabled:opacity-50"
-        >
-          <FaAngleDoubleLeft />
-        </button>
-        <button
-          disabled={currentPage === 1}
-          onClick={() => handlePageChange(currentPage - 1)}
-          className="px-2 py-1 border rounded disabled:opacity-50"
-        >
-          <FaChevronLeft />
-        </button>
+    {Array.from({ length: totalPages }).map((_, i) => {
+      const page = i + 1;
+      if (Math.abs(page - currentPage) <= 1) {
+        return (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`px-3 py-1 border rounded ${
+              page === currentPage
+                ? "bg-blue-600 text-white"
+                : "hover:bg-gray-100"
+            }`}
+          >
+            {page}
+          </button>
+        );
+      }
+      return null;
+    })}
 
-        {pages}
+    <button
+      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+      disabled={currentPage === totalPages}
+      className="px-2 py-1 border rounded disabled:opacity-50"
+    >
+      <FaChevronRight />
+    </button>
 
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(currentPage + 1)}
-          className="px-2 py-1 border rounded disabled:opacity-50"
-        >
-          <FaChevronRight />
-        </button>
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => handlePageChange(totalPages)}
-          className="px-2 py-1 border rounded disabled:opacity-50"
-        >
-          <FaAngleDoubleRight />
-        </button>
-      </div>
-    );
-  };
+    <button
+      onClick={() => setCurrentPage(totalPages)}
+      disabled={currentPage === totalPages}
+      className="px-2 py-1 border rounded disabled:opacity-50"
+    >
+      <FaAngleDoubleRight />
+    </button>
+  </div>
+);
+
 
   return (
             <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
@@ -139,10 +142,10 @@ function AttributeGetAll() {
     </Link>
   </div>
 
-  <div className="mb-4 d-flex gap-2">
+  <div className="search-container flex gap-2 mb-4">
     <input
       type="text"
-      className="form-control"
+      className="search-input flex-1"
       placeholder="Nhập tên thuộc tính cần tìm..."
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
@@ -150,56 +153,70 @@ function AttributeGetAll() {
         if (e.key === "Enter") handleSearch();
       }}
     />
-    <button onClick={handleSearch} className="btn btn-primary">
-      <i className="fa fa-search"></i>
-    </button>
+    <button onClick={handleSearch} className="search-button mb-2">
+Tìm kiếm    </button>
     {searchTerm && (
       <button
         onClick={handleClearSearch}
-        className="btn btn-secondary text-nowrap"
+        className="search-button mb-2"
       >
         Xem tất cả
       </button>
     )}
   </div>
 
-  <table className="table table-bordered table-striped">
-    <thead className="table-light">
+
+<table className="w-full table-auto border border-gray-300">
+  <thead className="bg-gray-100">
+    <tr>
+      <th className="border p-2">#</th>
+      <th className="border p-2">Tên thuộc tính</th>
+      <th className="border p-2">Ngày tạo</th>
+      <th className="border p-2 text-center">Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    {attributes.length === 0 ? (
       <tr>
-        <th>#</th>
-        <th>Tên thuộc tính</th>
-        <th>Ngày tạo</th>
-        <th className="text-center">Hành động</th>
+        <td colSpan="4" className="border p-4 text-center">
+          Không có thuộc tính nào.
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      {attributes.map((attr, index) => (
-        <tr key={attr.id}>
-          <td className="text-center">
+    ) : (
+      attributes.map((attr, index) => (
+        <tr key={attr.id} className="hover:bg-gray-50">
+          <td className="border p-2 text-center">
             {(currentPage - 1) * perPage + index + 1}
           </td>
-          <td>{attr.name}</td>
-          <td className="text-center">
+          <td className="border p-2">{attr.name}</td>
+          <td className="border p-2 text-center">
             {new Date(attr.created_at).toLocaleDateString()}
           </td>
-          <td className="text-center">
-            <Link
-              to={`/admin/attribute/edit/${attr.id}`}
-              className="btn btn-warning btn-sm me-2"
-            >
-              <i className="fa-solid fa-pen-to-square"></i>
-            </Link>
-            <button
-              onClick={() => setSelectedAttribute(attr)}
-              className="btn btn-outline-danger btn-sm"
-            >
-              <FaTrashAlt />
-            </button>
-          </td>
+          <td className="border p-2">
+  <div className="flex justify-center items-center gap-2">
+    <Link
+      to={`/admin/attribute/edit/${attr.id}`}
+      className="btn btn-warning flex items-center justify-center p-0"
+      style={{ width: 36, height: 36 }}
+    >
+      <FaEdit className="text-white" size={20} />
+    </Link>
+    <button
+      onClick={() => setSelectedAttribute(attr)}
+      className="w-9 h-9 bg-red-600 text-white flex items-center justify-center rounded mb-2"
+      style={{ width: 36, height: 36 }}
+    >
+      <FaTrashAlt size={18} />
+    </button>
+  </div>
+</td>
+
         </tr>
-      ))}
-    </tbody>
-  </table>
+      ))
+    )}
+  </tbody>
+</table>
+
 
   {renderPagination()}
 
