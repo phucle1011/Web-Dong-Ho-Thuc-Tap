@@ -61,14 +61,14 @@ const FeaturedProducts = () => {
 
     return (
         <section className="featured-products">
-            <h2>Sản Phẩm Nổi Bật</h2>
+            {/* <h2>Sản Phẩm Nổi Bật</h2>
             {products.length > 0 ? (
                 <Slider {...settings} className="featured-products">
                     {products.map(renderProduct)}
                 </Slider>
             ) : (
                 <p>Không có sản phẩm nổi bật.</p>
-            )}
+            )} */}
         </section>
     );
 };

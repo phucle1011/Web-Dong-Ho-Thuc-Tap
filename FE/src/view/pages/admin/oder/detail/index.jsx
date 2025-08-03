@@ -171,12 +171,12 @@ function OrderDetail() {
                 </tr>
               </tfoot>
             </table>
-            <div className="mt-3 flex justify-end gap-4 no-printms-3">
+            <div className="mt-3 flex justify-start gap-4">
               <button
                 onClick={() => navigate("/admin/orders/getAll")}
-                className="btn btn-primary"
+                className="bg-gray-500 px-4 py-2 text-white rounded hover:bg-gray-600 transition"
               >
-                Quay lại
+                &larr; Quay lại
               </button>
             </div>
           </div>

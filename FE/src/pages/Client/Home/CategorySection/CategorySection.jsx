@@ -50,7 +50,7 @@ function CategorySection() {
 
     return (
         <section className="home-categories">
-            <h2>Danh Mục Sản Phẩm</h2>
+            {/* <h2>Danh Mục Sản Phẩm</h2> */}
             <div className="categories-list">
                 {targetGroups.map(renderTargetGroup)}
             </div>
