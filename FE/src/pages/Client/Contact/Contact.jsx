@@ -25,12 +25,12 @@ const ContactPage = () => {
     try {
       await axios.post("http://localhost:5000/sendEmail", formData);
       setSubmitted(true);
-      toast.success("🎉 Gửi email thành công! Chúng tôi sẽ liên hệ bạn sớm.");
+      toast.success(" Gửi email thành công! Chúng tôi sẽ liên hệ bạn sớm.");
       setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
       setTimeout(() => setSubmitted(false), 3000);
     } catch (error) {
       console.error("Lỗi gửi email:", error);
-      toast.error("❌ Gửi thất bại. Vui lòng thử lại sau.");
+      toast.error(" Gửi thất bại. Vui lòng thử lại sau.");
     }
   };
 
@@ -43,10 +43,10 @@ const ContactPage = () => {
         subject: "Câu hỏi thường gặp",
         message: faqText,
       });
-      toast.success("📩 Đã gửi câu hỏi: " + faqText);
+      toast.success(" Đã gửi câu hỏi: " + faqText);
     } catch (error) {
       console.error("Lỗi gửi FAQ:", error);
-      toast.error("❌ Gửi câu hỏi thất bại.");
+      toast.error(" Gửi câu hỏi thất bại.");
     }
   };
 
@@ -115,7 +115,8 @@ const ContactPage = () => {
         </div>
       </div>
 
-      <ToastContainer position="top-center" autoClose={3000} />
+      {/* ✅ Đã sửa vị trí toast sang top-right */}
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };
