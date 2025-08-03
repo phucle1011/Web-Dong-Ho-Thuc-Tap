@@ -6,10 +6,26 @@ import "slick-carousel/slick/slick-theme.css";
 import "./ShopHeroSection.css";
 
 const banners = [
-  { id: 1, title: "Thời Trang Xu Hướng 2025", desc: "Khám phá bộ sưu tập mới nhất tại Poly Fashion Shop", img: require("../../../../assets/img/xuhuong.webp") },
-  { id: 2, title: "Bộ Sưu Tập Hè", desc: "Phong cách năng động cho mùa hè rực rỡ", img: require("../../../../assets/img/muahe.webp") },
-  { id: 3, title: "Thời Trang Công Sở", desc: "Lịch lãm, chuyên nghiệp, phù hợp môi trường làm việc", img: require("../../../../assets/img/congso.webp") }
+  {
+    id: 1,
+    title: "Đồng Hồ Thời Trang Cao Cấp",
+    desc: "Khám phá bộ sưu tập đồng hồ sang trọng tại QKA Watch Store",
+    img: require("../../../../assets/img/w1.jpg")
+  },
+  {
+    id: 2,
+    title: "Đồng Hồ Hè 2025",
+    desc: "Thiết kế trẻ trung, bền bỉ – phù hợp cho mọi hoạt động",
+    img: require("../../../../assets/img/w2.jpg")
+  },
+  {
+    id: 3,
+    title: "Đồng Hồ Doanh Nhân",
+    desc: "Tôn lên phong cách lịch lãm và đẳng cấp trong công việc",
+    img: require("../../../../assets/img/w3.jpg")
+  }
 ];
+
 
 function ShopHeroSection() {
   const settings = {
