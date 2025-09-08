@@ -184,7 +184,6 @@ const AdminProductList = () => {
                 <FaPlus className="mr-2" /> Thêm sản phẩm
               </Link>
             </div>
-
           </div>
 
           {/* Search & Filter */}
@@ -274,29 +273,35 @@ const AdminProductList = () => {
                       <td className="border p-2">
                         {prod.category?.name || "-"}
                       </td>
-                      <td className="border p-2 text-center space-x-2">
-                        <Link
-                          to={`/admin/products/detail/${prod.id}`}
-                          className="inline-block px-3 py-1 bg-blue-600 text-white rounded mt-2"
-                          title="Xem chi tiết"
-                        >
-                          <FaEye />
-                        </Link>
-                        <Link
-                          to={`/admin/products/addVariant/${prod.id}`}
-                          className="inline-block px-3 py-1 bg-yellow-500 text-white rounded mt-2"
-                          title="Thêm biến thể"
-                        >
-                          <Plus size={15}/>
-                        </Link>
-                        <button
-                          onClick={() => setSelectedProduct(prod)}
-                          className="inline-block px-3 py-1 bg-red-600 text-white rounded mb-2"
-                          title="Xóa"
-                        >
-                          <FaTrash />
-                        </button>
-                      </td>
+                      <td className="border p-2">
+  <div className="flex justify-center items-center gap-2">
+    <Link
+      to={`/admin/products/detail/${prod.id}`}
+      className="bg-blue-600 flex items-center justify-center rounded"
+      style={{ width: 36, height: 36 }}
+      title="Xem chi tiết"
+    >
+      <FaEye className="text-white" size={18} />
+    </Link>
+    <Link
+      to={`/admin/products/addVariant/${prod.id}`}
+      className="bg-yellow-500 flex items-center justify-center rounded"
+      style={{ width: 36, height: 36 }}
+      title="Thêm biến thể"
+    >
+      <FaEdit className="text-white" size={18} />
+    </Link>
+    <button
+      onClick={() => setSelectedProduct(prod)}
+      className="bg-red-600 text-white flex items-center justify-center rounded"
+      style={{ width: 36, height: 36 }}
+      title="Xóa sản phẩm"
+    >
+      <FaTrash size={16} />
+    </button>
+  </div>
+</td>
+
                     </tr>
                   ))
                 )}
