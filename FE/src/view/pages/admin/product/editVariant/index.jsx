@@ -353,8 +353,8 @@ const EditVariantForm = () => {
 
     {/* Nút submit */}
     <div className="d-flex gap-3">
-      <button type="submit" className="btn btn-primary">Cập nhật</button>
-      <Link to="/admin/products/getAll" className="btn btn-secondary">
+      <button type="submit" className="btn btn-primary h-10">Cập nhật</button>
+      <Link to="/admin/products/getAll" className="btn btn-secondary h-10 mt-2.5">
         Quay lại
       </Link>
     </div>

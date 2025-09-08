@@ -138,16 +138,23 @@ export default function ProductDetail() {
       return toast.error("Bạn cần đăng nhập để mua hàng");
     }
     try {
-      await axios.post(`${Constants.DOMAIN_API}/add-to-carts`, {
-        userId:           currentUserId,
+    await axios.post(
+      `${Constants.DOMAIN_API}/add-to-carts`,
+      {
         productVariantId: selectedVariant.id,
         quantity
-      });
-      toast.success("Đã thêm vào giỏ hàng!");
-    } catch {
-      toast.error("Lỗi thêm vào giỏ hàng");
-    }
-  };
+      },
+      {
+        headers: {
+          "x-user-id": currentUserId,    // <-- thêm dòng này
+        },
+      }
+    );
+    toast.success("Đã thêm vào giỏ hàng!");
+  } catch {
+    toast.error("Lỗi thêm vào giỏ hàng");
+  }
+};
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
@@ -291,30 +298,34 @@ export default function ProductDetail() {
             </div>
           )}
           <div>
-            <h3 className="uppercase text-sm font-semibold mb-2">Biến thể</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {variants.map((v) => (
-                <button
-                  key={v.id}
-                  onClick={() => handleVariantSelect(v)}
-                  className={`border rounded-xl p-3 ${
-                    selectedVariant?.id === v.id ? "border-blue-600 ring-2" : "hover:shadow"
-                  }`}
-                >
-                  <p className="truncate font-semibold">{toText(v.name) || toText(v.sku)}</p>
-                  <p className="text-red-600 font-bold">{toVND(showPrice(v).sale)}</p>
-                  <p className="text-xs mt-1">
-                    {(v.stock ?? 0) > 0 ? `Còn lại: ${v.stock}` : "Hết hàng"}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </div>
+  <h3 className="uppercase text-sm font-semibold mb-2">Biến thể</h3>
+  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+    {variants.map((v) => (
+      <button
+        key={v.id}
+        onClick={() => handleVariantSelect(v)}
+        className={`
+          bg-white border rounded-xl p-3
+          ${selectedVariant?.id === v.id 
+            ? "border-blue-600 ring-2" 
+            : "hover:shadow"}
+        `}
+      >
+        <p className="truncate font-semibold">{toText(v.name) || toText(v.sku)}</p>
+        <p className="text-red-600 font-bold">{toVND(showPrice(v).sale)}</p>
+        <p className="text-xs mt-1">
+          {(v.stock ?? 0) > 0 ? `Còn lại: ${v.stock}` : "Hết hàng"}
+        </p>
+      </button>
+    ))}
+  </div>
+</div>
+
           <div className="flex items-center gap-3">
             <div className="inline-flex items-center border rounded-lg overflow-hidden">
-              <button onClick={() => setQuantity((q) => Math.max(1, q - 1))}>−</button>
-              <span className="px-4">{quantity}</span>
-              <button onClick={() =>
+              <button className="mb-2 h-10" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>−</button>
+              <span className="px-4 h-5">{quantity}</span>
+              <button className="mb-2" onClick={() =>
                 setQuantity((q) =>
                   selectedVariant
                     ? Math.min(q + 1, selectedVariant.stock ?? q + 1)

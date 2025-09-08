@@ -475,15 +475,15 @@ class OrderController {
             await t.commit();
 
             const currentDateTime = new Date(Date.now() + 7 * 60 * 60 * 1000);
-            await OrderController.sendOrderConfirmationEmail(
-                newOrder,
-                { customer_name, customer_phone },
-                products,
-                customer_email,
-                currentDateTime,
-                customer_phone,
-                customer_name,
-            );
+            // await OrderController.sendOrderConfirmationEmail(
+            //     newOrder,
+            //     { customer_name, customer_phone },
+            //     products,
+            //     customer_email,
+            //     currentDateTime,
+            //     customer_phone,
+            //     customer_name,
+            // );
 
             const successfullyOrderedProductIds = products.map(p => p.variant.id);
             return res.status(201).json({
@@ -918,17 +918,17 @@ class OrderController {
 
             await t.commit();
 
-            try {
-                await OrderController.sendOrderConfirmationEmail(
-                    newOrder,
-                    { name, phone },
-                    emailProducts,
-                    email,
-                    new Date()
-                );
-            } catch (mailErr) {
-                console.error("Lỗi gửi email xác nhận đơn hàng:", mailErr);
-            }
+            // try {
+            //     // await OrderController.sendOrderConfirmationEmail(
+            //     //     newOrder,
+            //     //     { name, phone },
+            //     //     emailProducts,
+            //     //     email,
+            //     //     new Date()
+            //     // );
+            // } catch (mailErr) {
+            //     console.error("Lỗi gửi email xác nhận đơn hàng:", mailErr);
+            // }
 
             return res.redirect("http://localhost:3000/cart");
         } catch (error) {

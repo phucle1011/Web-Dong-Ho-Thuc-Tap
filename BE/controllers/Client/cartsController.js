@@ -124,7 +124,7 @@ class CartController {
 
     static async addToCart(req, res) {
         try {
-            const userId = req.headers["x-user-id"];
+          const userId = req.body.userId ?? req.headers['x-user-id'];
             const { productVariantId, quantity } = req.body;
 
             const productVariant = await ProductVariantsModel.findOne({

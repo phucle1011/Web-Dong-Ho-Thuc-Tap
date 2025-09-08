@@ -13,7 +13,9 @@ import {
   FaPlus,
   FaTrash,
   FaEdit,
+  
 } from "react-icons/fa";
+import { Plus } from "lucide-react";
 
 const AdminProductList = () => {
   const [products, setProducts] = useState([]);
@@ -79,55 +81,82 @@ const AdminProductList = () => {
   };
 
   const renderPagination = () => (
-    <div className="flex justify-center mt-6 space-x-1">
-      <button
-        onClick={() => setCurrentPage(1)}
-        disabled={currentPage === 1}
-        className="px-2 py-1 border rounded disabled:opacity-50"
-      >
-        <FaAngleDoubleLeft />
-      </button>
-      <button
-        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-        disabled={currentPage === 1}
-        className="px-2 py-1 border rounded disabled:opacity-50"
-      >
-        <FaChevronLeft />
-      </button>
-      {Array.from({ length: totalPages }).map((_, i) => {
-        const page = i + 1;
-        if (Math.abs(page - currentPage) <= 1) {
-          return (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`px-3 py-1 border rounded ${
-                page === currentPage
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-gray-100"
-              }`}
-            >
-              {page}
-            </button>
-          );
-        }
-        return null;
-      })}
-      <button
-        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-        disabled={currentPage === totalPages}
-        className="px-2 py-1 border rounded disabled:opacity-50"
-      >
-        <FaChevronRight />
-      </button>
-      <button
-        onClick={() => setCurrentPage(totalPages)}
-        disabled={currentPage === totalPages}
-        className="px-2 py-1 border rounded disabled:opacity-50"
-      >
-        <FaAngleDoubleRight />
-      </button>
-    </div>
+    <div className="d-flex justify-content-center mt-3">
+              <div className="d-flex align-items-center flex-wrap gap-1 mb-3">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(1)}
+                  className="px-3 py-1 border rounded bg-[#1e40af] text-white disabled:opacity-50 disabled:bg-gray-300"
+                >
+                  <FaAngleDoubleLeft />
+                </button>
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  className="px-3 py-1 border rounded bg-[#1e40af] text-white disabled:opacity-50 disabled:bg-gray-300"
+                >
+                  <FaChevronLeft />
+                </button>
+    
+                {currentPage > 2 && (
+                  <>
+                    <button
+                      onClick={() => setCurrentPage(1)}
+                      className="px-3 py-1 border rounded bg-[#1e40af] text-white hover:bg-[#1e40af]/90"
+                    >
+                      1
+                    </button>
+                    {currentPage > 3 && <span className="px-2">...</span>}
+                  </>
+                )}
+    
+                {[...Array(totalPages)].map((_, i) => {
+                  const page = i + 1;
+                  if (page >= currentPage - 1 && page <= currentPage + 1) {
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`px-3 py-1 border rounded ${currentPage === page
+                          ? "bg-[#1e40af] text-white"
+                          : "bg-[#1e40af] text-white hover:bg-[#1e40af]/90"
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  }
+                  return null;
+                })}
+    
+                {currentPage < totalPages - 1 && (
+                  <>
+                    {currentPage < totalPages - 2 && <span className="px-2">...</span>}
+                    <button
+                      onClick={() => setCurrentPage(totalPages)}
+                      className="px-3 py-1 border rounded bg-[#1e40af] text-white hover:bg-[#1e40af]/90"
+                    >
+                      {totalPages}
+                    </button>
+                  </>
+                )}
+    
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  className="px-3 py-1 border rounded bg-[#1e40af] text-white disabled:opacity-50 disabled:bg-gray-300"
+                >
+                  <FaChevronRight />
+                </button>
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(totalPages)}
+                  className="px-3 py-1 border rounded bg-[#1e40af] text-white disabled:opacity-50 disabled:bg-gray-300"
+                >
+                  <FaAngleDoubleRight />
+                </button>
+              </div>
+            </div>
   );
 
   return (
@@ -141,20 +170,20 @@ const AdminProductList = () => {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-semibold">Danh sách sản phẩm</h2>
             <div className="flex gap-3">
-  <Link
-    to="/admin/attribute/getall"
-    className="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded no-underline hover:no-underline"
-  >
-    <FaEye className="mr-2" /> Quản lý thuộc tính
-  </Link>
+              <Link
+                to="/admin/attribute/getall"
+                className="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded no-underline hover:no-underline"
+              >
+                <FaEye className="mr-2" /> Quản lý thuộc tính
+              </Link>
 
-  <Link
-    to="/admin/products/create"
-    className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded no-underline hover:no-underline"
-  >
-    <FaPlus className="mr-2" /> Thêm sản phẩm
-  </Link>
-</div>
+              <Link
+                to="/admin/products/create"
+                className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded no-underline hover:no-underline"
+              >
+                <FaPlus className="mr-2" /> Thêm sản phẩm
+              </Link>
+            </div>
 
           </div>
 
@@ -182,14 +211,14 @@ const AdminProductList = () => {
             </select>
             <button
               onClick={handleSearch}
-              className="px-4 py-2 bg-gray-800 text-white rounded"
+              className="px-4 py-2 bg-gray-800 text-white rounded mb-2"
             >
               Tìm kiếm
             </button>
             {(searchInput || selectedCategory) && (
               <button
                 onClick={clearFilter}
-                className="px-4 py-2 bg-gray-500 text-white rounded"
+                className="px-4 py-2 bg-gray-500 text-white rounded mb-2"
               >
                 Xem tất cả
               </button>
@@ -234,11 +263,10 @@ const AdminProductList = () => {
                       </td>
                       <td className="border p-2 text-center">
                         <span
-                          className={`px-2 py-1 rounded-full text-xs ${
-                            prod.status === 1
+                          className={`px-2 py-1 rounded-full text-xs ${prod.status === 1
                               ? "bg-green-100 text-green-800"
                               : "bg-red-100 text-red-800"
-                          }`}
+                            }`}
                         >
                           {prod.status === 1 ? "Hiển thị" : "Ẩn"}
                         </span>
@@ -249,21 +277,21 @@ const AdminProductList = () => {
                       <td className="border p-2 text-center space-x-2">
                         <Link
                           to={`/admin/products/detail/${prod.id}`}
-                          className="inline-block px-3 py-1 bg-blue-600 text-white rounded"
+                          className="inline-block px-3 py-1 bg-blue-600 text-white rounded mt-2"
                           title="Xem chi tiết"
                         >
                           <FaEye />
                         </Link>
                         <Link
                           to={`/admin/products/addVariant/${prod.id}`}
-                          className="inline-block px-3 py-1 bg-yellow-500 text-white rounded"
+                          className="inline-block px-3 py-1 bg-yellow-500 text-white rounded mt-2"
                           title="Thêm biến thể"
                         >
-                          <FaEdit />
+                          <Plus size={15}/>
                         </Link>
                         <button
                           onClick={() => setSelectedProduct(prod)}
-                          className="inline-block px-3 py-1 bg-red-600 text-white rounded"
+                          className="inline-block px-3 py-1 bg-red-600 text-white rounded mb-2"
                           title="Xóa"
                         >
                           <FaTrash />

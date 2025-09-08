@@ -146,7 +146,7 @@ const AddProduct = () => {
         <input
           type="file"
           accept="image/*"
-          className="form-control form-control-sm"
+          className="form-control form-control-sm h-10"
           onChange={(e) => setThumbnailFile(e.target.files[0])}
         />
       </div>
@@ -170,11 +170,11 @@ const AddProduct = () => {
       <button
         type="submit"
         disabled={loading}
-        className="btn btn-primary btn-sm"
+        className="btn btn-primary btn-sm h-10"
       >
         {loading ? "Đang thêm..." : "Thêm sản phẩm"}
       </button>
-      <Link to="/admin/products/getAll" className="btn btn-secondary btn-sm">
+      <Link to="/admin/products/getAll" className="btn btn-secondary btn-sm h-10 mt-2.5">
         Quay lại
       </Link>
     </div>

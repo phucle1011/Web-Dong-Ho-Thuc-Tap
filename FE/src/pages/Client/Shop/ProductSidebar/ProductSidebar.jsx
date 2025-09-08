@@ -93,7 +93,7 @@ const ProductSidebar = () => {
 
   return (
     <div className="container-sidebar">
-      <aside className="shop-sidebar">
+      <aside className="shop-sidebar mt-3">
         <h3>Bộ Lọc</h3>
 
         <div className="filter-section">

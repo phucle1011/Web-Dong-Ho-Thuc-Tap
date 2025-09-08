@@ -285,7 +285,7 @@ const Order = () => {
               selected={startDate}
               onChange={(date) => setStartDate(date)}
               dateFormat="yyyy-MM-dd"
-              className="border px-2 py-1 rounded"
+              className="border px-2 py-1 rounded w-10"
               placeholderText="Chọn ngày bắt đầu"
             />
 

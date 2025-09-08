@@ -10,6 +10,7 @@ import {
   FaAngleDoubleLeft,
   FaAngleDoubleRight,
   FaTrashAlt,
+  FaEdit
 } from "react-icons/fa";
 
 function AttributeGetAll() {
@@ -131,87 +132,90 @@ function AttributeGetAll() {
   };
 
   return (
-            <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
-  <div className="d-flex justify-content-between align-items-center mb-4">
-    <h2 className="h5 fw-semibold">Danh sách thuộc tính</h2>
-    <Link to="/admin/attribute/create" className="btn btn-primary">
-      + Thêm thuộc tính
-    </Link>
-  </div>
+    <div style={{ marginLeft: "14rem" }} className="min-h-screen bg-gray-100 p-4">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="h5 fw-semibold">Danh sách thuộc tính</h2>
+        <Link to="/admin/attribute/create" className="btn btn-primary">
+          + Thêm thuộc tính
+        </Link>
+      </div>
 
-  <div className="mb-4 d-flex gap-2">
-    <input
-      type="text"
-      className="form-control"
-      placeholder="Nhập tên thuộc tính cần tìm..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") handleSearch();
-      }}
-    />
-    <button onClick={handleSearch} className="btn btn-primary">
-      <i className="fa fa-search"></i>
-    </button>
-    {searchTerm && (
-      <button
-        onClick={handleClearSearch}
-        className="btn btn-secondary text-nowrap"
-      >
-        Xem tất cả
-      </button>
-    )}
-  </div>
+      <div className="mb-4 d-flex gap-2">
+        <input
+          type="text"
+          className="form-control h-10 mt-2"
+          placeholder="Nhập tên thuộc tính cần tìm..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSearch();
+          }}
+        />
+        <button onClick={handleSearch} className="btn btn-primary h-10">
+          Tìm
+        </button>
+        {searchTerm && (
+          <button
+            onClick={handleClearSearch}
+            className="btn btn-secondary text-nowrap"
+          >
+            Xem tất cả
+          </button>
+        )}
+      </div>
 
-  <table className="table table-bordered table-striped">
-    <thead className="table-light">
-      <tr>
-        <th>#</th>
-        <th>Tên thuộc tính</th>
-        <th>Ngày tạo</th>
-        <th className="text-center">Hành động</th>
-      </tr>
-    </thead>
-    <tbody>
-      {attributes.map((attr, index) => (
-        <tr key={attr.id}>
-          <td className="text-center">
-            {(currentPage - 1) * perPage + index + 1}
-          </td>
-          <td>{attr.name}</td>
-          <td className="text-center">
-            {new Date(attr.created_at).toLocaleDateString()}
-          </td>
-          <td className="text-center">
-            <Link
-              to={`/admin/attribute/edit/${attr.id}`}
-              className="btn btn-warning btn-sm me-2"
-            >
-              <i className="fa-solid fa-pen-to-square"></i>
-            </Link>
-            <button
-              onClick={() => setSelectedAttribute(attr)}
-              className="btn btn-outline-danger btn-sm"
-            >
-              <FaTrashAlt />
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
+      <table className="table table-bordered table-striped">
+        <thead className="table-light">
+          <tr>
+            <th>#</th>
+            <th>Tên thuộc tính</th>
+            <th>Ngày tạo</th>
+            <th className="text-center">Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          {attributes.map((attr, index) => (
+            <tr key={attr.id}>
+              <td className="text-center">
+                {(currentPage - 1) * perPage + index + 1}
+              </td>
+              <td>{attr.name}</td>
+              <td className="text-center">
+                {new Date(attr.created_at).toLocaleDateString()}
+              </td>
+              <td className="text-center">
+                <div className="d-flex justify-content-center align-items-center gap-2">
+                  <Link
+                    to={`/admin/attribute/edit/${attr.id}`}
+                    className="btn btn-warning btn-sm mt-2"
+                  >
+                    <FaEdit />
+                  </Link>
+                  <button
+                    onClick={() => setSelectedAttribute(attr)}
+                    className="btn btn-danger btn-sm"
+                  >
+                    <FaTrashAlt />
+                  </button>
+                </div>
+              </td>
 
-  {renderPagination()}
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-  {selectedAttribute && (
-    <FormDelete
-      isOpen={true}
-      onClose={() => setSelectedAttribute(null)}
-      onConfirm={deleteAttribute}
-      message={`Bạn có chắc chắn muốn xoá thuộc tính "${selectedAttribute.name}" không?`}
-    />
-  )}
-</div>
+      {renderPagination()}
+
+      {selectedAttribute && (
+        <FormDelete
+          isOpen={true}
+          onClose={() => setSelectedAttribute(null)}
+          onConfirm={deleteAttribute}
+          message={`Bạn có chắc chắn muốn xoá thuộc tính "${selectedAttribute.name}" không?`}
+        />
+      )}
+    </div>
 
   );
 }
